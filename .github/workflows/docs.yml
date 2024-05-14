@@ -1,0 +1,22 @@
+name: Publish MkDocs
+on:
+  push:
+    branches:
+      - main
+jobs:
+  deploy:
+    name: Deploy Mkdocs to gh-pages branch
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get repository
+        uses: actions/checkout@v2
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Copy notebooks into docs
+        run: cp -r notebooks/* docs/ | echo "No notebooks found"
+      - name: Deploy Mkdocs
+        run: mkdocs gh-deploy --force
