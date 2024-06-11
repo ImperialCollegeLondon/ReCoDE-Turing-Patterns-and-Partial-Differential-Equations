@@ -1,0 +1,4 @@
+Settings _____________ 
+20 !!! nx - size of x domain
+0 1 !!! xl, xr - start and end points of x domain
+4   !!! iDiffOrder - order of finite differences scheme 
