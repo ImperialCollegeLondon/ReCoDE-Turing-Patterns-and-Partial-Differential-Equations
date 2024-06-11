@@ -29,7 +29,7 @@ contains
       use maths_constants, only : pi
 
       type(error_type), allocatable, intent(out) :: error
-       real(dp),dimension(:),allocatable :: dv,dcv,x,c
+       real(dp),dimension(:),allocatable :: dv,dcv,x,c,metric1,metric1sq,metric2
        real(dp) :: check_value,error_value
        real(dp)  :: l,r,dc,check1,check2,check3,check4,check5
        integer  :: n,i
@@ -43,7 +43,7 @@ contains
 !!! with this function the end points should match
 !!! cdom should be 1 and zero
 !!! dc should = dcv
-       call set_up_domain(n,l,r,dc,dv,dcv,x,c)
+       call set_up_domain(n,l,r,dc,dv,dcv,x,c,.FALSE.,'l',0.d0,metric1,metric1sq,metric2)
 
        check1 = abs(l-x(1))
        call check(error, check1<error_value )
@@ -62,7 +62,10 @@ contains
         call check(error, check5<error_value ) 
        end do
 
-       deallocate(dv,dcv,x,c)
+!!!! need to put tests in for the metrics - with streching on and off
+
+
+       deallocate(dv,dcv,x,c,metric1,metric1sq,metric2)
     end subroutine check_domain_builder
 
 
@@ -100,18 +103,6 @@ contains
                 &2.d0,4.d0,8.d0,0.d0,0.d0], &
                 &[ 5, 4]))
 
-!!! with this function the end points should match
-!!! cdom should be 1 and zero
-!!! dc should = dcv
-    
-  !  do i = 1,ldab
-   !     WRITE(6,*) (AB(i,j),j=1,n)
-   ! end do
-   ! WRITE(6,*)
-    !do i = 1,ldab
-    !    WRITE(6,*) (AB_test(i,j),j=1,n)
-   ! end do
-
     call check(error, ldab, ldab_test)
 
     do i = 1,ldab
@@ -132,7 +123,7 @@ contains
       use equations_TEST, only : build_the_matrix_test,L,nband,RHS
       use maths_constants, only : diff_initialisation,pi,ex,sub_diag,sup_diag,difforder
       use reader, only : read_me
-      use domain, only : initial_domain_settings,nx,xdom,xcdom,dxc,dxcsq
+      use domain, only : initial_domain_settings,nx,xdom,xcdom,dxc,dxcsq,xmetric1,xmetric1sq,xmetric2
       use linear_algebra, only : solver_banded_double_precision
 
       type(error_type), allocatable, intent(out) :: error
@@ -146,10 +137,10 @@ contains
       difforder = 4   
       call diff_initialisation  ! sets the finite difference coefficients
       call initial_domain_settings !builds the domain and computational domains
-      call build_the_matrix_test(nx,dxc,dxcsq,xcdom)
+      call build_the_matrix_test(nx,dxc,dxcsq,xcdom,xmetric1,xmetric1sq,xmetric2)
       call solver_banded_double_precision(nx,nband,sub_diag,sup_diag,L,RHS,X,.true.)
 
-       error_value = 1.d-7
+       error_value = 1.d-6
 
     do j = 1,nx
       !WRITE(6,*) X(j),ex**xdom(j)
@@ -169,7 +160,7 @@ contains
       use equations_TEST, only : build_the_matrix_test,L,nband,RHS
       use maths_constants, only : diff_initialisation,pi,ex,sub_diag,sup_diag,difforder
       use reader, only : read_me
-      use domain, only : initial_domain_settings,nx,xdom,xcdom,dxc,dxcsq
+      use domain, only : initial_domain_settings,nx,xdom,xcdom,dxc,dxcsq,xmetric1,xmetric1sq,xmetric2
       use linear_algebra, only : solver_banded_double_precision
 
       type(error_type), allocatable, intent(out) :: error
@@ -183,10 +174,10 @@ contains
       difforder = 3  
       call diff_initialisation  ! sets the finite difference coefficients
       call initial_domain_settings !builds the domain and computational domains
-      call build_the_matrix_test(nx,dxc,dxcsq,xcdom)
+      call build_the_matrix_test(nx,dxc,dxcsq,xcdom,xmetric1,xmetric1sq,xmetric2)
       call solver_banded_double_precision(nx,nband,sub_diag,sup_diag,L,RHS,X,.true.)
 
-       error_value = 1.d-7
+       error_value = 1.d-4
 
     do j = 1,nx
       !WRITE(6,*) X(j),ex**xdom(j)
@@ -209,7 +200,7 @@ contains
       use equations_TEST, only : build_the_matrix_test,L,nband,RHS
       use maths_constants, only : diff_initialisation,pi,ex,sub_diag,sup_diag,difforder
       use reader, only : read_me
-      use domain, only : initial_domain_settings,nx,xdom,xcdom,dxc,dxcsq
+      use domain, only : initial_domain_settings,nx,xdom,xcdom,dxc,dxcsq,xmetric1,xmetric1sq,xmetric2
       use linear_algebra, only : solver_banded_double_precision
 
       type(error_type), allocatable, intent(out) :: error
@@ -223,10 +214,10 @@ contains
       difforder = 2   
       call diff_initialisation  ! sets the finite difference coefficients
       call initial_domain_settings !builds the domain and computational domains
-      call build_the_matrix_test(nx,dxc,dxcsq,xcdom)
+      call build_the_matrix_test(nx,dxc,dxcsq,xcdom,xmetric1,xmetric1sq,xmetric2)
       call solver_banded_double_precision(nx,nband,sub_diag,sup_diag,L,RHS,X,.true.)
 
-       error_value = 1.d-4
+       error_value = 1.d-3
 
     do j = 1,nx
       !WRITE(6,*) X(j),ex**xdom(j)

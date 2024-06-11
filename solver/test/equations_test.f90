@@ -10,7 +10,7 @@ module equations_test
 
 contains
 
-subroutine build_the_matrix_test(n,ch,chsq,cdom)
+subroutine build_the_matrix_test(n,ch,chsq,cdom,metric1,metric1sq,metric2)
 
 !!! sets up a matrix equation in the form L * u = RHS
 !!! D is the RHS, Lx is the matrix
@@ -18,6 +18,11 @@ subroutine build_the_matrix_test(n,ch,chsq,cdom)
 	integer,intent(in) :: n !! size of domain
 	real(dp),intent(in) :: ch,chsq !computational distance/squared
 	real(dp),dimension(:),allocatable,intent(in) :: cdom ! computational domain
+
+
+	!! grid streching metric terms
+	real(dp),dimension(:),allocatable,intent(in) :: metric1,metric1sq,metric2
+
 
 !!!! relevent vectors/infomation
 	real(dp),dimension(:,:),allocatable :: Ltemp
@@ -34,16 +39,17 @@ subroutine build_the_matrix_test(n,ch,chsq,cdom)
 !!! first call the equation
 	call equation1_BC_Bot(cdom(1),ain,bin,cin,din)
 !!! then apply the correct scalings - ch or chsq etc
-	call scales(A(1),B(1),C(1),D(1),ain,bin,cin,din,ch,chsq)
+	call scales(A(1),B(1),C(1),D(1),ain,bin,cin,din,ch,chsq,metric1(1),metric1sq(1),metric2(1))
+
 
 	call equation1_BC_Top(cdom(n),ain,bin,cin,din)
-	call scales(A(n),B(n),C(n),D(n),ain,bin,cin,din,ch,chsq)
+	call scales(A(n),B(n),C(n),D(n),ain,bin,cin,din,ch,chsq,metric1(n),metric1sq(n),metric2(n))
 
 
 !!! Interior
 	do ii = 2,n-1
 		call equation1(cdom(ii),ain,bin,cin,din)
-		call scales(A(ii),B(ii),C(ii),D(ii),ain,bin,cin,din,ch,chsq)
+		call scales(A(ii),B(ii),C(ii),D(ii),ain,bin,cin,din,ch,chsq,metric1(ii),metric1sq(ii),metric2(ii))
 	end do
 
 	call derivative_runner(n,A,B,C,Ltemp)

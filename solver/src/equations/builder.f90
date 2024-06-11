@@ -28,18 +28,19 @@ subroutine band_the_matrix(n,A,kl,ku,LDAB,AB)
 end subroutine band_the_matrix
 
 
-subroutine scales(A,B,C,D,ai,bi,ci,di,ch,chsq)
+subroutine scales(A,B,C,D,ai,bi,ci,di,ch,chsq,metric1,metric1sq,metric2)
 real(dp),intent(in) :: ai,bi,ci,di ! entries from the equation
 real(dp),intent(in) :: ch,chsq ! computational distance and computational distance squared
+real(dp),intent(in) :: metric1,metric1sq,metric2 ! metric terms
 real(dp), intent(out) :: A,B,C,D ! outputs
 
 !!!! this subroutine evaluates the terms of the equations in the
 !!!! computational domain and corrects them with the relevent metrics
 
 	A=  ai
-	B = bi*ch
-	C = ci*chsq
-	D = di*chsq
+	B = (bi*metric1-ai*metric2/metric1)*ch
+	C = ci*metric1sq*chsq
+	D = di*metric1sq*chsq
 
 end subroutine scales
 
