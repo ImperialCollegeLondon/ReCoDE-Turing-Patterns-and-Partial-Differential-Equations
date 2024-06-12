@@ -25,7 +25,6 @@ subroutine build_the_matrix(n,ch,chsq,cdom,metric1,metric1sq,metric2)
 
 
 !!!! relevent vectors/infomation
-!	real(dp),dimension(:,:),allocatable :: Ltemp
 	real(dp),dimension(:),allocatable :: A,B,C,D
 	real(dp) :: Ain,Bin,Cin,Din
 	integer :: ii,i,j
