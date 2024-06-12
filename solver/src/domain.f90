@@ -71,14 +71,14 @@ Subroutine set_up_domain(n,left,right,d,dx,dc,x,c,gs_on,&
 ! computational domain via grid streching. The computational domain will have 
 ! evenly space grid points }
 !
-! @param      n          How many points in domain
-! @param      left       The left boundary 
-! @param      right      The right bounday 
-! @param      gs_on      Grid strech on - is the grid streching on? (logical)
-! @param      pb_loc     The pertubation location (left or right)
-!                          - if gs_on true then is the equation singular at left or right boundary (character)
-! @param      gs         The grid strech parameter 
-!                          - if gs_on true then half the grid points will be clustered between pb_loc and gs
+! @param      n             How many points in domain
+! @param      left          The left boundary 
+! @param      right         The right bounday 
+! @param      gs_on         Grid strech on - is the grid streching on? (logical)
+! @param      pb_loc        The pertubation location (left or right)
+!                            - if gs_on true then is the equation singular at left or right boundary (character)
+! @param      gs            The grid strech parameter 
+!                            - if gs_on true then half the grid points will be clustered between pb_loc and gs
 ! 
 ! @Return      d            computational distance (scalar + constant)
 ! @Return      dx           physical distance (vector)

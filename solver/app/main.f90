@@ -34,8 +34,9 @@ program main
   deallocate(L)
   
   WRITE(6,*)
+  WRITE(6,'(5(A20,x))') 'Physical domain', 'Comp Domain', 'Numerical Soln','Exact Soln','error'
   do i = 1,nx
-    WRITE(6,*) xdom(i),xcdom(i),x(i),ex**xdom(i)
+    WRITE(6,'(4(f20.14,1x),e20.10)') xdom(i),xcdom(i),x(i),ex**xdom(i),abs(x(i)-ex**xdom(i))
   end do
-
+  WRITE(6,*)
 end program main
