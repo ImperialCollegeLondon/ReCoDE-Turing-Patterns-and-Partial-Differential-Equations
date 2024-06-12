@@ -43,7 +43,7 @@ contains
 !!! with this function the end points should match
 !!! cdom should be 1 and zero
 !!! dc should = dcv
-       call set_up_domain(n,l,r,dc,dv,dcv,x,c,.FALSE.,'l',0.d0,metric1,metric1sq,metric2)
+       call set_up_domain(n,l,r,dc,dv,dcv,x,c,.FALSE.,0.d0,metric1,metric1sq,metric2)
 
        check1 = abs(l-x(1))
        call check(error, check1<error_value )

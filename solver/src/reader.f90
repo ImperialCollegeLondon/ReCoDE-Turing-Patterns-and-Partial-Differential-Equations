@@ -6,7 +6,7 @@ Logical :: file_exists
 contains 
 
 subroutine read_me
-use domain, only : nx,xl,xr,x_singular_pertubation_location,xhalf,x_grid_strech_on
+use domain, only : nx,xl,xr,xhalf,x_grid_strech_on
 use maths_constants, only : DiffOrder
 integer :: x_grid_strech_on_integer
 
@@ -26,7 +26,7 @@ inquire (file='settings.input', exist=file_exists)
 	read(1,*) ! x settings
 	read(1,*) nx
 	read(1,*) xl,xr
-	read(1,*) x_grid_strech_on_integer,x_singular_pertubation_location,xhalf
+	read(1,*) x_grid_strech_on_integer,xhalf
 	read(1,*) ! general settings
 	read(1,*) DiffOrder
 

@@ -25,7 +25,6 @@ use type_kinds, only : dp
 ! xmetric1sq        dx/dc vector squared
 ! xmetric2          dx^2/dc^2 vector
 ! x_grid_strech_on                    turns on (TRUE) or off (FALSE) grid stretch function
-! x_singular_pertubation_location     location of singular perturbation left boundary (L) or right (r)
 ! xhalf                               puts halve the points intbetween left or right boundary and xhalf
 
 
@@ -36,7 +35,6 @@ real(dp), dimension(:),allocatable :: dx_vec,dxc_vec
 real(dp) :: dxc,dxcsq 
 real(dp), dimension(:),allocatable :: xmetric1,xmetric1sq,xmetric2 
 logical :: x_grid_strech_on
-character*1 :: x_singular_pertubation_location 
 real(dp) :: xhalf                     
                     
 contains 
@@ -52,7 +50,7 @@ Subroutine initial_domain_settings
 
   !!! sets up x and xc domains and metrics
   call set_up_domain(nx,xl,xr,dxc,dx_vec,dxc_vec,xdom,xcdom,x_grid_strech_on,&
-          &x_singular_pertubation_location,xhalf,xmetric1,xmetric1sq,xmetric2)
+          &xhalf,xmetric1,xmetric1sq,xmetric2)
 
   dxcsq = dxc*dxc
 
@@ -64,7 +62,7 @@ End Subroutine initial_domain_settings
 
 
 Subroutine set_up_domain(n,left,right,d,dx,dc,x,c,gs_on,&
-                    &pb_loc,gs,metric1,metric1sq,metric2)
+                    &gs,metric1,metric1sq,metric2)
 
 !!
 ! @brief      { Set up domain builds a physical domain whihch is mapped to a 
@@ -75,8 +73,6 @@ Subroutine set_up_domain(n,left,right,d,dx,dc,x,c,gs_on,&
 ! @param      left          The left boundary 
 ! @param      right         The right bounday 
 ! @param      gs_on         Grid strech on - is the grid streching on? (logical)
-! @param      pb_loc        The pertubation location (left or right)
-!                            - if gs_on true then is the equation singular at left or right boundary (character)
 ! @param      gs            The grid strech parameter 
 !                            - if gs_on true then half the grid points will be clustered between pb_loc and gs
 ! 
@@ -98,8 +94,7 @@ real(dp),intent(out), dimension(:),allocatable :: dx,dc
 real(dp),intent(out), dimension(:),allocatable :: x,c 
 
 !!!! grid streching settings
-logical,intent(in) :: gs_on
-character*1,intent(in) :: pb_loc
+logical,intent(in)  :: gs_on
 real(dp),intent(in) :: gs
 real(dp),intent(out),dimension(:),allocatable :: metric1,metric2,metric1sq
 
@@ -132,7 +127,7 @@ real(dp) :: sizer
   Case(.FALSE.)
     call mapping_no_strech(c,left,sizer,x)
   Case(.TRUE.)
-    call mapping_strech(n,c,left,right,sizer,pb_loc,gs,x)
+    call mapping_strech(n,c,left,sizer,gs,x)
   End Select
    
   ! find the derivatives xdom.. i.e. the metrics
@@ -152,13 +147,13 @@ real(dp),dimension(:),allocatable,intent(inout) ::  mapping
 Return
 End Subroutine
 
-Subroutine mapping_strech(n,c,left,right,size,pb_loc,half,mapping)
+Subroutine mapping_strech(n,c,left,size,gs,mapping)
 
 !!
 ! @brief  {builds the mapping from the computational plane to the physical plane 
 !                  dependendent on grid streching. 
 !                  If grid streching is on then the function clusters 
-!                  half the points between one boundary and pb_loc. 
+!                  half the points between left boundary and the variable gs
 !                  If grid streching is off then the function is a linear map
 !                  
 !                  The function is defined by:: 
@@ -177,42 +172,30 @@ Subroutine mapping_strech(n,c,left,right,size,pb_loc,half,mapping)
 ! @param      on_off          Turns on the grid streching if true
 ! @param      c               computational domain
 ! @param      left            The left boundary 
-! @param      right           The right boundary
 ! @param      size            The size of the domain
-! @param      pb_loc          The pertubation location (left or right)
-! @param      half            Half the grid points will be clustered between a boundary and variable half
+! @param      gs              Half the grid points will be clustered between a left boundary and variable gs
 !
 ! @Return     physical domain coordinate corresponding to computational domain gird
 !!
 
-integer,intent(in) :: n ! size of domain
+integer,intent(in) :: n 
 real(dp),dimension(:),allocatable,intent(in) :: c
-real(dp),intent(in) :: left,right,half,size
-character*1,intent(in) :: pb_loc
+real(dp),intent(in) :: left,gs,size
 real(dp),dimension(:),allocatable,intent(inout)  ::  mapping
 real(dp)  :: a,b,half_temporary
 
   ! we build the mapping for the domain size [0, 1] and then rescale back
-  ! we therefore scale half to be half within [0,1]  
+  ! we therefore scale gs to be half within [0,1]  
    
-  half_temporary = (half - left)/size
+  half_temporary = (gs - left)/size
 
-  Select Case(pb_loc)
-  Case('L','l')
-   ! boundary layer is on the left boundary
+  a = 1.d0*half_temporary/(1.d0 - 2.d0*half_temporary)
+  b = 1.d0 + a/1.d0
+  mapping(:) = a*c(:)/(b-c(:))
 
-    a = 1.d0*half_temporary/(1.d0 - 2.d0*half_temporary)
-    b = 1.d0 + a/1.d0
-    mapping(:) = a*c(:)/(b-c(:))
+  !! scale back up
 
-    !! scale back up
-
-    mapping(:) = mapping(:)*size + left
-
-  Case('R','r')
-    WRITE(6,*) 'Have not implemented yet pertubation at right boundary yet'
-    STOP
-  End Select
+  mapping(:) = mapping(:)*size + left
 
 Return
 End Subroutine mapping_strech

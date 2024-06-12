@@ -2,6 +2,6 @@ Settings ________________
 !!! xdomain settings_____
 20 					!!! nx - size of x domain
 0 1 				!!! xl, xr - start and end points of x domain
-1,L,0.4 		!!! x strech on or off, location of BL (L or R), grid strech parameter
+1,0.4 		!!! x strech on or off, grid strech parameter
 !!! general settings_____
 4   				!!! iDiffOrder - order of finite differences scheme 
