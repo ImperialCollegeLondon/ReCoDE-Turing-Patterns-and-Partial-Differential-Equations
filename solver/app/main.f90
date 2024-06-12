@@ -35,7 +35,7 @@ program main
   
   WRITE(6,*)
   do i = 1,nx
-    WRITE(6,*) x(i),ex**xdom(i)
+    WRITE(6,*) xdom(i),xcdom(i),x(i),ex**xdom(i)
   end do
 
 end program main
