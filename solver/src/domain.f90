@@ -17,8 +17,6 @@ use type_kinds, only : dp
 ! xcdom             computational x domain
 ! xl                x left boundary           
 ! xr                x right boundary
-! dx_vec            vector of x distances
-! dxc_vec           vector of computational distance (always) contant ! might remove 
 ! dxc               scalar computational distance
 ! dxcsq             scalar computational distance square
 ! xmetric1          dx/dc vector
@@ -31,7 +29,6 @@ use type_kinds, only : dp
 integer :: nx 
 real(dp), dimension(:),allocatable :: xdom, xcdom 
 real(dp) :: xl,xr 
-real(dp), dimension(:),allocatable :: dx_vec,dxc_vec
 real(dp) :: dxc,dxcsq 
 real(dp), dimension(:),allocatable :: xmetric1,xmetric1sq,xmetric2 
 logical :: x_grid_strech_on
@@ -49,7 +46,7 @@ Subroutine initial_domain_settings
 !!
 
   !!! sets up x and xc domains and metrics
-  call set_up_domain(nx,xl,xr,dxc,dx_vec,dxc_vec,xdom,xcdom,x_grid_strech_on,&
+  call set_up_domain(nx,xl,xr,dxc,xdom,xcdom,x_grid_strech_on,&
           &xhalf,xmetric1,xmetric1sq,xmetric2)
 
   dxcsq = dxc*dxc
@@ -61,7 +58,7 @@ End Subroutine initial_domain_settings
 
 
 
-Subroutine set_up_domain(n,left,right,d,dx,dc,x,c,gs_on,&
+Subroutine set_up_domain(n,left,right,d,x,c,gs_on,&
                     &gs,metric1,metric1sq,metric2)
 
 !!
@@ -77,8 +74,6 @@ Subroutine set_up_domain(n,left,right,d,dx,dc,x,c,gs_on,&
 !                            - if gs_on true then half the grid points will be clustered between pb_loc and gs
 ! 
 ! @Return      d            computational distance (scalar + constant)
-! @Return      dx           physical distance (vector)
-! @Return      dc           computational distance (vector + constant)
 ! @Return      x            The physical domain (vector)
 ! @Return      c            Computational domain (vector)
 ! @Return      metric1      The metric dx/dc (vector)
@@ -90,7 +85,6 @@ Subroutine set_up_domain(n,left,right,d,dx,dc,x,c,gs_on,&
 integer, intent(in)  :: n 
 real(dp),intent(in)  :: left,right 
 real(dp),intent(out) :: d              
-real(dp),intent(out), dimension(:),allocatable :: dx,dc 
 real(dp),intent(out), dimension(:),allocatable :: x,c 
 
 !!!! grid streching settings
@@ -102,19 +96,16 @@ integer :: i,k
 real(dp) :: sizer 
 
   ! allocate the vectors
-  allocate(x(1:n),c(1:n),dx(1:n),dc(1:n),metric1(1:n),metric1sq(1:n),metric2(1:n))
+  allocate(x(1:n),c(1:n),metric1(1:n),metric1sq(1:n),metric2(1:n))
 
   ! set size of domain
   sizer = right - left
 
   !! set computation distance
   d = 1.d0/(n-1.d0)
-  dc = d
 
   ! set the left boundary
-  c(1) = 0.d0
-  ! first distance is zero - only have one point
-  dx(1) = 0.d0
+  c(1) = 0
 
   ! build the computational domain (evenly spaced by d)
   Do i = 2,n
@@ -132,6 +123,11 @@ real(dp) :: sizer
    
   ! find the derivatives xdom.. i.e. the metrics
   call metrics(n,x,d,metric1,metric1sq,metric2)
+  ! find the physical distances
+
+  !Do i = 1,n
+  !  Write(6,*)i, metric1(i),metric2(i)
+  !End Do
 
 Return
 End Subroutine set_up_domain
@@ -188,6 +184,12 @@ real(dp)  :: a,b,half_temporary
   ! we therefore scale gs to be half within [0,1]  
    
   half_temporary = (gs - left)/size
+
+
+ !half_temporary cannot equal 0.5
+  if ((half_temporary-0.5d0)==0.d0)then
+    half_temporary = 0.5000001d0
+  end if
 
   a = 1.d0*half_temporary/(1.d0 - 2.d0*half_temporary)
   b = 1.d0 + a/1.d0

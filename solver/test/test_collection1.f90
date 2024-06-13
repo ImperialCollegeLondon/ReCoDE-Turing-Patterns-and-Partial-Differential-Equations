@@ -29,7 +29,7 @@ contains
       use maths_constants, only : pi
 
       type(error_type), allocatable, intent(out) :: error
-       real(dp),dimension(:),allocatable :: dv,dcv,x,c,metric1,metric1sq,metric2
+       real(dp),dimension(:),allocatable :: x,c,metric1,metric1sq,metric2
        real(dp) :: check_value,error_value
        real(dp)  :: l,r,dc,check1,check2,check3,check4,check5
        integer  :: n,i
@@ -43,7 +43,7 @@ contains
 !!! with this function the end points should match
 !!! cdom should be 1 and zero
 !!! dc should = dcv
-       call set_up_domain(n,l,r,dc,dv,dcv,x,c,.FALSE.,0.d0,metric1,metric1sq,metric2)
+       call set_up_domain(n,l,r,dc,x,c,.FALSE.,0.d0,metric1,metric1sq,metric2)
 
        check1 = abs(l-x(1))
        call check(error, check1<error_value )
@@ -57,15 +57,15 @@ contains
        check4 = abs(1.d0-c(n))
        call check(error, check4<error_value )     
 
-       do i = 1,n
-        check5 = abs(dc-dcv(n)) 
+       do i = 2,n
+        check5 = abs(dc-(c(i)-c(i-1)))
         call check(error, check5<error_value ) 
        end do
 
 !!!! need to put tests in for the metrics - with streching on and off
 
 
-       deallocate(dv,dcv,x,c,metric1,metric1sq,metric2)
+       deallocate(x,c,metric1,metric1sq,metric2)
     end subroutine check_domain_builder
 
 
@@ -180,7 +180,6 @@ contains
        error_value = 1.d-4
 
     do j = 1,nx
-      !WRITE(6,*) X(j),ex**xdom(j)
       test_value = abs(x(j)-ex**xdom(j))
       call check(error, test_value < error_value)
     end do 
