@@ -1,16 +1,12 @@
-Module domain
-use type_kinds, only : dp
-
-!{ Builds/computes the domains of the problem - 
-!        each domain has a computational domain and physical domain and corresponding metric terms
-!         Computatioanl grid goes from 0 to 1
-!         Physical grid goes from left to right (read in from reader)
-!         
-!        }
 !!
-
-!!!!! domains parameters
-!!! xdomain parameters
+!{ Builds/computes the domains of the problem - 
+!  each domain has a computational domain and physical domain and corresponding metric terms
+!  Computatioanl grid goes from 0 to 1
+!  Physical grid goes from left to right (read in from reader)  
+!  }
+!!
+!
+! xdomain parameters
 !____________________________________________________
 ! nx                number of points in x domain
 ! xdom              physical x domain (vector)    
@@ -22,9 +18,11 @@ use type_kinds, only : dp
 ! xmetric1          dx/dc vector
 ! xmetric1sq        dx/dc vector squared
 ! xmetric2          dx^2/dc^2 vector
-! x_grid_strech_on                    turns on (TRUE) or off (FALSE) grid stretch function
-! xhalf                               puts halve the points intbetween left or right boundary and xhalf
-
+! x_grid_strech_on  turns on (TRUE) or off (FALSE) grid stretch function
+! xhalf             puts half the points intbetween left boundary and xhalf
+!! 
+Module domain
+use type_kinds, only : dp
 
 integer :: nx 
 real(dp), dimension(:),allocatable :: xdom, xcdom 
@@ -36,42 +34,37 @@ real(dp) :: xhalf
                     
 contains 
 
-
-
-Subroutine initial_domain_settings
-
 !!
 ! @brief      { This builds the physical and computational domains given 
-!                 above in the Module}
+!               above in the module
+!               }
 !!
+Subroutine initial_domain_settings
 
-  !!! sets up x and xc domains and metrics
+  ! sets up x and xc domains and metrics
   call set_up_domain(nx,xl,xr,dxc,xdom,xcdom,x_grid_strech_on,&
           &xhalf,xmetric1,xmetric1sq,xmetric2)
 
   dxcsq = dxc*dxc
 
-
-  !!! will add in y-domain in future
+  ! will add in y-domain in future
 End Subroutine initial_domain_settings
 
 
 
-
-Subroutine set_up_domain(n,left,right,d,x,c,gs_on,&
-                    &gs,metric1,metric1sq,metric2)
-
 !!
 ! @brief      { Set up domain builds a physical domain whihch is mapped to a 
-! computational domain via grid streching. The computational domain will have 
-! evenly space grid points }
+!               computational domain via grid streching. 
+!               The computational domain will have evenly space grid points 
+!               }
 !
 ! @param      n             How many points in domain
 ! @param      left          The left boundary 
 ! @param      right         The right bounday 
 ! @param      gs_on         Grid strech on - is the grid streching on? (logical)
 ! @param      gs            The grid strech parameter 
-!                            - if gs_on true then half the grid points will be clustered between pb_loc and gs
+!                            - if gs_on true then half the grid points will be clustered 
+!                            - between the left boundary and gs
 ! 
 ! @Return      d            computational distance (scalar + constant)
 ! @Return      x            The physical domain (vector)
@@ -81,6 +74,7 @@ Subroutine set_up_domain(n,left,right,d,x,c,gs_on,&
 ! @Return      metric2      The metric dx^2/dc^2 (vector)
 !
 !!
+Subroutine set_up_domain(n,left,right,d,x,c,gs_on,gs,metric1,metric1sq,metric2)
 
 integer, intent(in)  :: n 
 real(dp),intent(in)  :: left,right 
@@ -101,7 +95,7 @@ real(dp) :: sizer
   ! set size of domain
   sizer = right - left
 
-  !! set computation distance
+  ! set computation distance
   d = 1.d0/(n-1.d0)
 
   ! set the left boundary
@@ -123,7 +117,6 @@ real(dp) :: sizer
    
   ! find the derivatives xdom.. i.e. the metrics
   call metrics(n,x,d,metric1,metric1sq,metric2)
-  ! find the physical distances
 
   !Do i = 1,n
   !  Write(6,*)i, metric1(i),metric2(i)
@@ -132,47 +125,63 @@ real(dp) :: sizer
 Return
 End Subroutine set_up_domain
 
+
+
+!!
+! @brief      { builds the linear mapping function which maps the physical domain 
+!               (from left to right) to the computational domain [0,1] with evenly spaced
+!               points
+!               }
+!
+! @param      c        computatioanal domain
+! @param      left     The left boundary 
+! @param      size     The size of the boundary
+! @param      mapping  The mapping
+!
+! @Return     mapping  Physical domain coordinate corresponding to computational domain gird
+!!
 Subroutine mapping_no_strech(c,left,size,mapping)
 real(dp),dimension(:),allocatable,intent(in) :: c
 real(dp),intent(in) :: left,size
 real(dp),dimension(:),allocatable,intent(inout) ::  mapping
 
-  !!!! simple linear domain mapping
+  ! simple linear domain mapping
   mapping(:) = left + size*c(:)
 
 Return
 End Subroutine
 
-Subroutine mapping_strech(n,c,left,size,gs,mapping)
 
 !!
 ! @brief  {builds the mapping from the computational plane to the physical plane 
-!                  dependendent on grid streching. 
-!                  If grid streching is on then the function clusters 
-!                  half the points between left boundary and the variable gs
-!                  If grid streching is off then the function is a linear map
+!          dependendent on grid streching. 
+!          If grid streching is on then the function clusters 
+!          half the points between left boundary and the variable gs
+!          If grid streching is off then the function is a linear map
 !                  
-!                  The function is defined by:: 
+!          The function is defined by:: 
 
-!                  eta = a\lambda/(b-\lambda)
-!                  b = 1 + a
-!                  a = h/(1-2*h)
+!          eta = a\lambda/(b-\lambda)
+!          b = 1 + a
+!          a = h/(1-2*h)
 !                  
-!                  where 
-!                  \lambda is computational distance between 0 and 1
-!                  \eta is the physical distance between 0 and 1
-!                  h is the clustering point: half the grid points are placed between 0 and h
-!                  (h must be between 0 and 1 and not 1/2)
+!          where 
+!          \lambda is computational distance between 0 and 1
+!          \eta is the physical distance between 0 and 1
+!          h is the clustering point: half the grid points are placed between 0 and h
+!          (h must be between 0 and 1 and not 1/2)
+!          }
 !
-! @param      n               Size of the domain
-! @param      on_off          Turns on the grid streching if true
-! @param      c               computational domain
-! @param      left            The left boundary 
-! @param      size            The size of the domain
-! @param      gs              Half the grid points will be clustered between a left boundary and variable gs
+! @param      n          Size of the domain
+! @param      on_off     Turns on the grid streching if true
+! @param      c          computational domain
+! @param      left       The left boundary 
+! @param      size       The size of the domain
+! @param      gs         Half the grid points will be clustered between a left boundary and variable gs
 !
-! @Return     physical domain coordinate corresponding to computational domain gird
+! @Return     mapping    Physical domain coordinate corresponding to computational domain gird
 !!
+Subroutine mapping_strech(n,c,left,size,gs,mapping)
 
 integer,intent(in) :: n 
 real(dp),dimension(:),allocatable,intent(in) :: c
@@ -185,11 +194,12 @@ real(dp)  :: a,b,half_temporary
    
   half_temporary = (gs - left)/size
 
-
- !half_temporary cannot equal 0.5
+ !half_temporary cannot equal 0.5 otherwise divide by 0
   if ((half_temporary-0.5d0)==0.d0)then
     half_temporary = 0.5000001d0
   end if
+
+  ! build the mapping from inbetween 0 and 1
 
   a = 1.d0*half_temporary/(1.d0 - 2.d0*half_temporary)
   b = 1.d0 + a/1.d0
@@ -204,27 +214,27 @@ End Subroutine mapping_strech
 
 
 
-Subroutine metrics(n,x,ch,metric1,metric1sq,metric2)
-
 !!
-! @brief      { Computes the metrics of the coordinate mapping}
+! @brief      {Computes the metrics of the coordinate mapping
+!              }
 !
-! @param      n          Size of the domain
-! @param      x          Physical coodinate (vector)
-! @param      ch         Computational distance (scaler)
+! @param      n             Size of the domain
+! @param      x             Physical coodinate (vector)
+! @param      ch            Computational distance (scaler)
 ! 
 ! @Return      metric1      The metric dx/dc (vector)
 ! @Return      metric1sq    The metric dx/dc square vector
 ! @Return      metric2      The metric dx^2/dc^2 (vector)
 !!
+Subroutine metrics(n,x,ch,metric1,metric1sq,metric2)
 
 integer,intent(in) :: n ! size of domain
 real(dp),dimension(:),allocatable,intent(in) :: x
 real(dp),intent(in) :: ch ! computatioanl distance
 real(dp),dimension(:),allocatable,intent(inout) :: metric1,metric2,metric1sq
 
-  !! dx and dxx are dx/dc and d^2/dc^2 respectively
-  !! calculate using finite differences Subroutine 
+  ! dx and dxx are dx/dc and d^2/dc^2 respectively
+  ! calculate using finite differences Subroutine 
 
   !!!! find the first difference
   call first_difference(n,x,metric1)
@@ -232,7 +242,7 @@ real(dp),dimension(:),allocatable,intent(inout) :: metric1,metric2,metric1sq
   !!!! find the second difference
   call second_difference(n,x,metric2)
 
-  !!! divide by computational distances to turn differences 
+  ! divide by computational distances to turn differences 
 
   metric1   = metric1/ch
   metric2   = metric2/(ch*ch)
@@ -242,23 +252,21 @@ End Subroutine metrics
 
 
 
+!!
+! @brief      {This function computes the first difference of the function func
+!              It uses the constants D1,D2 which contain the relevent finite difference coefficients 
+!              }
+!
+! @param      n      size of domain
+! @param      func   function to difference 
+!
+! @return     deriv  the difference function 
 Subroutine first_difference(n, func, deriv)
 use maths_constants, only : D1,D2
 integer, intent(in) :: n ! dimension of vector
 real(dp), dimension(:),allocatable,intent(in) ::    func
 real(dp), dimension(:),allocatable,intent(inout) :: deriv
 integer :: i
-
-!!
-! @brief      {This function computes the first difference of the function func
-!               It uses the constants D1,D2 which contain the relevent finite difference
-!               coefficients }
-!
-! @param      n      size of domain
-! @param      func   function to difference 
-!
-! @return     deriv  the difference function 
-
 
   deriv = 0.d0 
 
@@ -278,6 +286,7 @@ integer :: i
   ! the middle points use central differences and only require 5 points (entires 2 to 6 in the D1(3,:) row)
   ! in the above cases we summed across 6 points and whereas now we sum across 6 points and n-4 times. 
   ! As n-4>6 we construct the vectorisation in n. This should be more efficient.
+  ! Constructing the vectorisation in n is more efficient
 
   Do i = 2,6
     deriv(3:n-2) = deriv(3:n-2) + D1(3,i)*func((3-4+i):(n-2-4+i))
@@ -286,23 +295,23 @@ integer :: i
 Return
 End Subroutine first_difference
 
+
+
+!!
+! @brief      {This function computes the first difference of the function func
+!              It uses the constants D1,D2 which contain the relevent finite difference coefficients 
+!              }
+!
+! @param      n      size of domain
+! @param      func   function to difference
+!
+! @return     deriv  the second difference function 
 Subroutine second_difference(n, func, deriv)
 use maths_constants, only : D1,D2
 integer, intent(in) :: n ! dimension of vector
 real(dp), dimension(:),allocatable,intent(in) ::    func
 real(dp), dimension(:),allocatable,intent(inout) :: deriv
 integer :: i
-
-!!
-! @brief      {This function computes the first difference of the function func
-!               It uses the constants D1,D2 which contain the relevent finite difference
-!               coefficients }
-!
-! @param      n      size of domain
-! @param      func   function to difference
-!
-! @return     deriv  the second difference function 
-
 
   deriv = 0.d0 
 
@@ -322,6 +331,7 @@ integer :: i
   ! the middle points use central differences and only require 5 points (entires 2 to 6 in the D1(3,:) row)
   ! in the above cases we summed across 6 points and whereas now we sum across 6 points and n-4 times. 
   ! As n-4>6 we construct the vectorisation in n. This should be more efficient.
+  ! Constructing the vectorisation in n is more efficient
 
   Do i = 2,6
     deriv(3:n-2) = deriv(3:n-2) + D2(3,i)*func((3-4+i):(n-2-4+i))
