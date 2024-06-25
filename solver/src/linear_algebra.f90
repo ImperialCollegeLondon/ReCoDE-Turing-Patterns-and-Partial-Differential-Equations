@@ -1,142 +1,164 @@
-module linear_algebra
-    use equations, only : band_the_matrix
-	use type_kinds, only: sp,dp
-	implicit none
-  	external :: sgesv,dgbsvx ! lapack linear solve
+!!
+!{ Sets up the linear algebra solving Subroutines with Lapack integration
+! }
+!!
+Module linear_algebra
+   use equations, only: band_the_matrix
+   use type_kinds, only: sp, dp
+   implicit none
+   external :: dgbsvx ! lapack double precision linear solve
 
-   contains
+contains
+!!
+! @brief      { This subroutine sets up and solves linear systems with double precision
+!               Solves the system l * soln = rhs
+!               soln and rhs are vectors size nband
+!               l is a banded or non-banded matrix (dimension nband * n_input)
+!               
+!               All lapack subroutine terms have been taken from the website and copied directly
+!               netlib.org/lapack/explore-html/d1/da6/group__gbsvx_ga38273d98ae4d598529fc9647ca847ce2.html#ga38273d98ae4d598529fc9647ca847ce2
+!               }
+!
+! @param      n_input   Leading dimension of the system
+! @param      nband     Second dimension of matrix l
+! @param      sub_diag  Number of subdiagonal of l
+! @param      sup_diag  Number of superdiagonals of l
+! @param      l         Matrix dimension nband * n (matrix)
+! @param      rhs       The known rhs (vector)
+! @param      banded    Logical asking if the matrix is already banded (used for testing)
+!
+! @return     soln      The solution of the system
+!!
+   Subroutine solver_banded_double_precision(n_input, nband, sub_diag, sup_diag, l, rhs, soln, banded)
+      integer, intent(in) :: n_input, nband, sub_diag, sup_diag 
+      real(dp), dimension(:, :), allocatable, intent(in)  :: l 
+      real(dp), dimension(:), allocatable, intent(in) :: rhs 
+      real(dp), dimension(:), allocatable, intent(out)   :: soln 
+      logical, intent(in) :: banded
+      integer :: i, j
 
-subroutine solver_single_precision(n,lda,A,NRHS,ldb,B)
-!https://www.netlib.org/lapack/single/sgesv.f
-    real(sp),dimension(:,:),allocatable,intent(inout) :: A
-    real(sp),dimension(:,:),allocatable,intent(inout) :: B
-    integer,intent(in) :: n,lda,NRHS,ldb
-    integer,dimension(:),allocatable :: ipiv
-    integer :: INFO
+    !! Lapack specific terms - lapack gives the required dimension of each term. Copy from website.
+    !! X is soln
+    !! B is the rhs 
+    !! AB is the matrix 
+    !! Everything else sets the correct settings
+    !! Note that in dgbsvx B and X can be a matrices. We however do not need this 
 
-!!! A  (LDA,N)
-!!! B N-by-NRHS
-!!! n The number of linear equations
-!!! lda  The leading dimension of the array A.
-!!! nrhs The number of right hand sides,
-!!! ldb The leading dimension of the array B.  LDB >= max(1,N).
+      character*1 ::   FACT
+      character*1 ::  TRANS
+      integer   ::  N
+      integer   ::  KL
+      integer   ::  KU
+      integer   ::  NRHS
+      real(dp), dimension(:, :), allocatable :: AB
+      integer   ::  LDAB
+      real(dp), dimension(:, :), allocatable  ::   AFB
+      integer   ::  LDAFB
+      integer, dimension(:), allocatable  ::   IPIV
+      character*1 ::   EQUED
+      real(dp), dimension(:), allocatable  ::  R
+      real(dp), dimension(:), allocatable  ::  C
+      real(dp), dimension(:, :), allocatable :: B
+      integer   ::  LDB
+      real(dp), dimension(:, :), allocatable :: X
+      integer   ::  LDX
+      real(dp)  ::  RCOND
+      real(dp), dimension(:), allocatable  :: FERR
+      real(dp), dimension(:), allocatable  ::  BERR
+      real(dp), dimension(:), allocatable  ::  WORK
+      integer, dimension(:), allocatable  ::  IWORK
+      integer   ::  INFO
 
-	 allocate(ipiv(n))
+      !! Lapack specific settings
+      !! LU decomposition used to solve the system
+      FACT = 'N' 
+      !! We don't want to use the transpose of l
+      TRANS = 'N'
 
-	 call sgesv(n, NRHS, a, lda, ipiv, b, ldb, info)
+      !! Setting correct diagonals and dimensions
 
-    if (info /= 0) then
-        print '(a, i0)', 'Error: ', info
-        stop
-    end if
+      KL = sub_diag
+      KU = sup_diag
+      N = n_input
+      NRHS = 1
 
-    deallocate(ipiv)
+      !! Asks if the matrix is already banded - if not will band the matrix
+      !! use in testing
 
-end subroutine solver_single_precision
+      Select Case (banded)
+      Case (.TRUE.)
+         LDAB = nband
+         allocate (AB(LDAB, n_input))
+         AB = l
 
-subroutine solver_banded_double_precision(n_input,nband,sub_diag,sup_diag,L,RHS,soln,banded)
-integer,intent(in) :: n_input, nband,sub_diag,sup_diag ! dimension, second dimension, sub and super diags
-real(dp),dimension(:,:),allocatable,intent(in)  :: L !(nband*n)
-real(dp),dimension(:),allocatable,intent(in) :: RHS !(n)
-real(dp),dimension(:),allocatable,intent(out)   :: soln !(n)
-logical,intent(in) :: banded
-integer :: i,j
+    !!! For testing
+      Case (.FALSE.)
 
-!! copied directly from: 
-!https://netlib.org/lapack/explore-html/d1/da6/group__gbsvx_ga38273d98ae4d598529fc9647ca847ce2.html#ga38273d98ae4d598529fc9647ca847ce2
+         Call band_the_matrix(N, l, KL, KU, LDAB, AB)
 
-    character*1 ::   fact
-    character*1 ::  trans
-    integer   ::  n
-    integer   ::  kl
-    integer   ::  ku
-    integer   ::  nrhs
-    real(dp), dimension(:,:), allocatable :: ab
-    integer   ::  ldab
-    real(dp), dimension(:,:), allocatable  ::   afb
-    integer   ::  ldafb
-    integer, dimension(:), allocatable  ::   ipiv
-    character*1 ::   equed
-    real(dp), dimension(:), allocatable  ::  r
-    real(dp), dimension(:), allocatable  ::  c
-    real(dp), dimension(:,:), allocatable :: b
-    integer   ::  ldb
-    real(dp), dimension(:,:), allocatable :: x
-    integer   ::  ldx
-    real(dp)  ::  rcond
-    real(dp), dimension(:), allocatable  :: ferr
-    real(dp), dimension(:), allocatable  ::  berr
-    real(dp), dimension(:), allocatable  ::  work
-    integer, dimension(:),allocatable  ::  iwork
-    integer   ::  info        
+      End Select
 
+      !! More lapack specific settings (copied from website)
 
-    fact = 'N'
-    trans = 'N'
+      LDAFB = 2*KL + KU + 1
+      allocate (AFB(LDAFB, N)) !output
 
-    kl = sub_diag
-    ku = sup_diag
-    n = n_input
-    nrhs = 1
+      allocate (IPIV(1:N)) !output
 
-select case(banded)
-case(.TRUE.) 
-    ldab = nband
-    allocate(ab(ldab,n_input))
-    ab = L
+      EQUED = 'N'
 
-    !!! FOR TESTING
-case(.FALSE.)
+      allocate (R(1:N), C(1:N))
 
-    call band_the_matrix(n,L,kl,ku,LDAB,AB)
+      LDB = N ! Dimension of B
+      allocate (B(LDB, NRHS))
+      B(:, 1) = rhs
 
-end select
+      LDX = N
+      allocate (X(LDX, NRHS))
 
-LDAFB = 2*KL+KU+1
-allocate(AFB(LDAFB,N)) !output 
+      allocate (BERR(NRHS), FERR(NRHS))
 
-allocate(ipiv(1:N)) !output
-
-EQUED = 'N'
-
-allocate(R(1:N),C(1:N))
-
-ldb = N ! Dimension of B
-allocate(B(LDB,NRHS))
-B(:,1) = RHS 
-
-LDX = N
-allocate(X(LDX,NRHS))
-
-allocate(BERR(NRHS),FERR(NRHS))
-
-allocate(work(max(1,3*N)),iwork(N))
-
-    
-  call dgbsvx(FACT,TRANS,N,KL,KU,NRHS,AB,LDAB,AFB,LDAFB,IPIV,&
-  &EQUED,R,C,B,LDB,X,LDX,RCOND,FERR,BERR,WORK,IWORK,INFO)
-
-IF (INFO==0) THEN 
-  ELSE IF(INFO.LT.0) THEN
-    WRITE(6,*) 'Info < 0, dgbsvx, has an illegal input value'
-  ELSE IF((info.GT.0).AND.(info.LE.N)) THEN
-    WRITE(6,*) 'Matrix is not invertible'
-  ELSE IF (info==(N+1)) THEN
-    !Write(6,*) 'matrix is alomost singular - be careful with solution'
-  ELSE
-  WRITE(6,*) 'Other things are wrong in finding solution. Info = ',info
-END IF
-
-allocate(soln(1:n))
-do i = 1,n
-    soln(i) = x(i,1)
-end do
+      allocate (WORK(max(1, 3*N)), IWORK(N))
 
 
-deallocate(AB,AFB,IPIV,R,C,FERR,BERR,WORK,IWORK,X)
+      !! X is the output
+      Call dgbsvx(FACT, TRANS, N, KL, KU, NRHS, AB, LDAB, AFB, LDAFB, IPIV,&
+      &EQUED, R, C, B, LDB, X, LDX, RCOND, FERR, BERR, WORK, IWORK, INFO)
+
+     
+      ! If INFO is not equal to zero, then dgbsvx has failed
+      ! Writing messages allows us to determine what has gone wrong
+      ! These conditions are from the lapack website
+
+      If (INFO == 0) THEN
+      !!! dgbsvx has succeded
+      Else If (INFO .LT. 0) THEN
+         Write (6, *) 'INFO < 0, dgbsvx, has an illegal input value'
+         Write (6, *) 'INFO = ', INFO
+         Stop
+      Else If ((INFO .GT. 0) .AND. (INFO .LE. N)) THEN
+         Write (6, *) 'Matrix l is not invertible'
+         Write (6, *) 'INFO = ', INFO
+         Stop
+      Else If (INFO == (N + 1)) THEN
+         Write (6, *)   'Matrix l is alomost singular - be careful with solution'
+         Write (6, *) 'INFO = ', INFO
+         Stop
+      Else
+         Write (6, *) 'Something is wrong with dgbsvx' 
+         Write (6, *) 'INFO = ', INFO
+         Stop
+      End If
 
 
-end subroutine solver_banded_double_precision
+      !! Setting up output and moving it into the soln
+      allocate (soln(1:N))
+      Do i = 1, N
+         soln(i) = X(i, 1)
+      End Do
 
+      deallocate (AB, AFB, IPIV, R, C, FERR, BERR, WORK, IWORK, X)
+      Return
+   End Subroutine solver_banded_double_precision
 
-end module linear_algebra
+End Module linear_algebra
