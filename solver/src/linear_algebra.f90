@@ -3,7 +3,6 @@
 ! }
 !!
 Module linear_algebra
-   use equations, only: band_the_matrix
    use type_kinds, only: sp, dp
    implicit none
    external :: dgbsvx ! lapack double precision linear solve
@@ -14,7 +13,7 @@ contains
 !               Solves the system l * soln = rhs
 !               soln and rhs are vectors size nband
 !               l is a banded or non-banded matrix (dimension nband * n_input)
-!               
+!
 !               All lapack subroutine terms have been taken from the website and copied directly
 !               netlib.org/lapack/explore-html/d1/da6/group__gbsvx_ga38273d98ae4d598529fc9647ca847ce2.html#ga38273d98ae4d598529fc9647ca847ce2
 !               }
@@ -25,24 +24,22 @@ contains
 ! @param      sup_diag  Number of superdiagonals of l
 ! @param      l         Matrix dimension nband * n (matrix)
 ! @param      rhs       The known rhs (vector)
-! @param      banded    Logical asking if the matrix is already banded (used for testing)
 !
 ! @return     soln      The solution of the system
 !!
-   Subroutine solver_banded_double_precision(n_input, nband, sub_diag, sup_diag, l, rhs, soln, banded)
-      integer, intent(in) :: n_input, nband, sub_diag, sup_diag 
-      real(dp), dimension(:, :), allocatable, intent(in)  :: l 
-      real(dp), dimension(:), allocatable, intent(in) :: rhs 
-      real(dp), dimension(:), allocatable, intent(out)   :: soln 
-      logical, intent(in) :: banded
+   Subroutine solver_banded_double_precision(n_input, nband, sub_diag, sup_diag, l, rhs, soln)
+      integer, intent(in) :: n_input, nband, sub_diag, sup_diag
+      real(dp), dimension(:, :), allocatable, intent(in)  :: l
+      real(dp), dimension(:), allocatable, intent(in) :: rhs
+      real(dp), dimension(:), allocatable, intent(out)   :: soln
       integer :: i, j
 
     !! Lapack specific terms - lapack gives the required dimension of each term. Copy from website.
     !! X is soln
-    !! B is the rhs 
-    !! AB is the matrix 
+    !! B is the rhs
+    !! AB is the matrix
     !! Everything else sets the correct settings
-    !! Note that in dgbsvx B and X can be a matrices. We however do not need this 
+    !! Note that in dgbsvx B and X can be a matrices. We however do not need this
 
       character*1 ::   FACT
       character*1 ::  TRANS
@@ -71,7 +68,7 @@ contains
 
       !! Lapack specific settings
       !! LU decomposition used to solve the system
-      FACT = 'N' 
+      FACT = 'N'
       !! We don't want to use the transpose of l
       TRANS = 'N'
 
@@ -82,28 +79,15 @@ contains
       N = n_input
       NRHS = 1
 
-      !! Asks if the matrix is already banded - if not will band the matrix
-      !! use in testing
-
-      Select Case (banded)
-      Case (.TRUE.)
-         LDAB = nband
-         allocate (AB(LDAB, n_input))
-         AB = l
-
-    !!! For testing
-      Case (.FALSE.)
-
-         Call band_the_matrix(N, l, KL, KU, LDAB, AB)
-
-      End Select
+      LDAB = nband
+      allocate (AB(LDAB, n_input))
+      AB = l
 
       !! More lapack specific settings (copied from website)
 
       LDAFB = 2*KL + KU + 1
-      allocate (AFB(LDAFB, N)) !output
-
-      allocate (IPIV(1:N)) !output
+      allocate (AFB(LDAFB, N))
+      allocate (IPIV(1:N))
 
       EQUED = 'N'
 
@@ -120,12 +104,10 @@ contains
 
       allocate (WORK(max(1, 3*N)), IWORK(N))
 
-
       !! X is the output
       Call dgbsvx(FACT, TRANS, N, KL, KU, NRHS, AB, LDAB, AFB, LDAFB, IPIV,&
       &EQUED, R, C, B, LDB, X, LDX, RCOND, FERR, BERR, WORK, IWORK, INFO)
 
-     
       ! If INFO is not equal to zero, then dgbsvx has failed
       ! Writing messages allows us to determine what has gone wrong
       ! These conditions are from the lapack website
@@ -141,15 +123,14 @@ contains
          Write (6, *) 'INFO = ', INFO
          Stop
       Else If (INFO == (N + 1)) THEN
-         Write (6, *)   'Matrix l is alomost singular - be careful with solution'
+         Write (6, *) 'Matrix l is alomost singular - be careful with solution'
          Write (6, *) 'INFO = ', INFO
          Stop
       Else
-         Write (6, *) 'Something is wrong with dgbsvx' 
+         Write (6, *) 'Something is wrong with dgbsvx'
          Write (6, *) 'INFO = ', INFO
          Stop
       End If
-
 
       !! Setting up output and moving it into the soln
       allocate (soln(1:N))

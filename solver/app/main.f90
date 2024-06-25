@@ -30,7 +30,7 @@ program main
   WRITE(6,*) '... Building matrix'
   call build_the_matrix(nx,dxc,dxcsq,xcdom,xmetric1,xmetric1sq,xmetric2)
 
-  call solver_banded_double_precision(nx,nband,sub_diag,sup_diag,L,RHS,X,.true.)
+  call solver_banded_double_precision(nx,nband,sub_diag,sup_diag,L,RHS,X)
   deallocate(L)
   
   WRITE(6,*)

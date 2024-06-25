@@ -2,12 +2,10 @@ module equations
    use type_kinds, only: dp
    use equations_definition, only: equation1, equation1_BC_Top, equation1_BC_Bot
    use equations_builder, only: scales, derivative_runner, band_the_matrix
-   use maths_constants, only: sub_diag, sup_diag
+   use maths_constants, only: sub_diag, sup_diag, nband
 
-   real(dp), dimension(:, :), allocatable :: L !! banded form matrix
-   integer :: nband                                                                                                  !! new dimension of L (nband x n)
+   real(dp), dimension(:, :), allocatable :: L !! banded form matrix                                                                                   !! new dimension of L (nband x n)
    real(dp), dimension(:), allocatable :: RHS !! right hand side of equation
-   real(dp), dimension(:, :), allocatable :: Ltemp
 contains
 
    subroutine build_the_matrix(n, ch, chsq, cdom, metric1, metric1sq, metric2)
@@ -29,7 +27,7 @@ contains
 
 !!! allocate
       allocate (A(n), B(n), C(n), D(n))
-      allocate (Ltemp(n, n))
+      allocate (L(nband, n))
 
 !!! Boundaries
 !!! first call the equation
@@ -46,13 +44,10 @@ contains
          call scales(A(ii), B(ii), C(ii), D(ii), ain, bin, cin, din, ch, chsq, metric1(ii), metric1sq(ii), metric2(ii))
       end do
 
-      call derivative_runner(n, A, B, C, Ltemp)
+      call derivative_runner(n, A, B, C, L)
       RHS = D
 
       deallocate (c, b, d, a)
-
-!!! put the matrix in banded form
-      call band_the_matrix(n, Ltemp, sub_diag, sup_diag, nband, L)
 
       return
    end subroutine build_the_matrix
