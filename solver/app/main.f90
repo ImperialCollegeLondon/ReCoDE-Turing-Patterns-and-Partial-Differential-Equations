@@ -9,6 +9,9 @@ program main
 
   real(dp),dimension(:),allocatable :: X
   integer :: i
+     real(dp), dimension(:, :), allocatable :: L !! banded form matrix
+   real(dp), dimension(:), allocatable :: RHS !! right hand side of equation
+
 
   WRITE(6,*)
   WRITE(6,*) '!!!!!!!!!!!!!!!!!!!!!!!!!'
@@ -28,7 +31,7 @@ program main
   WRITE(6,*) 'order of the finite differences', DiffOrder
 
   WRITE(6,*) '... Building matrix'
-  call build_the_matrix(nx,dxc,dxcsq,xcdom,xmetric1,xmetric1sq,xmetric2)
+  call build_the_matrix(nx,dxc,dxcsq,xcdom,xmetric1,xmetric1sq,xmetric2,L,RHS)
 
   call solver_banded_double_precision(nx,nband,sub_diag,sup_diag,L,RHS,X)
   deallocate(L)
