@@ -57,9 +57,9 @@ contains
 ! @param      di         right hand side coefficient
 ! @param      ch         computational stepsize
 ! @param      chsq       computational stepsize
-! @param      metric1    The metric 1 (defined in domains)
-! @param      metric1sq  The metric 1 squared (defined in domains)
-! @param      metric2    The metric 2 (defined in domains)
+! @param      metric1    The metric 1 (defined in Domains)
+! @param      metric1sq  The metric 1 squared (defined in Domains)
+! @param      metric2    The metric 2 (defined in Domains)
 !
 ! @return      A          second order derivative coefficient
 ! @return      B          first order derivative coefficient
@@ -149,7 +149,7 @@ contains
 
 !!
 ! @brief      { This function takes the first derivative coefficient and populates it into a diagonal banded matrix
-!               This subroutine is very similar to first_difference in domains.f90. However, here we do not sum the rows.}
+!               This subroutine is very similar to first_difference in Domains.f90. However, here we Do not sum the rows.}
 !
 ! @param      n      Dimension of the problem
 ! @param      B      The coefficient of first order derivative
@@ -173,20 +173,20 @@ contains
       Dtemp(1, 1:6) = D1(1, 1:6)*B(1)
       Dtemp(2, 1:6) = D1(2, 1:6)*B(2)
 
-!!! Here we wish to parallelize the following: specifically the j loop. However it is difficult to do with array notation as
+!!! Here we wish to parallelize the following: specifically the j loop. However it is difficult to Do with array notation as
 !   j is an index in both arrays of Dtemp. Therefore we make use of OpenMP library
-!   $omp parallel do: Tells the compiler to parallelize the loop.
+!   $omp Parallel Do: Tells the compiler to parallelize the loop.
 !   private(i): Declares i as a private variable, meaning each thread gets its own copy of i to avoid race conditions.
 !   note we have included the omp_lib library
 
       ! Parallelize the outer loop
-      !$omp parallel do private(i)
-      do j = 3, n - 2
-         do i = -2, 2
-            Dtemp(j, j + i) = D1(3, 4 + i)*B(j)
-         end do
-      end do
-      !$omp end parallel do
+      !$omp Parallel Do Private(i)
+         Do j = 3, n - 2
+            Do i = -2, 2
+               Dtemp(j, j + i) = D1(3, 4 + i)*B(j)
+            End Do
+         End Do
+      !$omp End Parallel Do
 
       Dtemp(n - 1, n - 5:n) = D1(4, 1:6)*B(n - 1)
       Dtemp(n, n - 5:n) = D1(5, 1:6)*B(n)
@@ -198,7 +198,7 @@ contains
 
 !!
 ! @brief      { This function takes the first derivative coefficient and populates it into a diagonal banded matrix
-!               This subroutine is very similar to second_difference in domains.f90. However, here we do not sum the rows.}
+!               This subroutine is very similar to second_difference in Domains.f90. However, here we Do not sum the rows.}
 !
 ! @param      n      Dimension of the problem
 ! @param      A      The coefficient of second order derivative
@@ -223,13 +223,13 @@ contains
       Dtemp(2, 1:6) = D2(2, 1:6)*A(2)
 
       ! Parallelize the outer loop
-      !$omp parallel do private(i)
-      do j = 3, n - 2
-         do i = -2, 2
-            Dtemp(j, j + i) = D2(3, 4 + i)*A(j)
-         end do
-      end do
-      !$omp end parallel do
+      !$omp Parallel Do Private(i)
+         Do j = 3, n - 2
+            Do i = -2, 2
+               Dtemp(j, j + i) = D2(3, 4 + i)*A(j)
+            End Do
+         End Do
+      !$omp End Parallel Do
 
       Dtemp(n - 1, n - 5:n) = D2(4, 1:6)*A(n - 1)
       Dtemp(n, n - 5:n) = D2(5, 1:6)*A(n)

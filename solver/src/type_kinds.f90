@@ -1,4 +1,6 @@
-module type_kinds
+!!Module that sets standard fortran errors and commands
+!!
+Module type_kinds
    use iso_fortran_env, only: int8, int16, int32, int64, real32, real64, &
                               input_unit, output_unit, error_unit
    implicit none
@@ -7,4 +9,4 @@ module type_kinds
    integer, parameter :: stdin = input_unit
    integer, parameter :: stdout = output_unit
    integer, parameter :: stderr = error_unit
-end module type_kinds
+End Module type_kinds

@@ -1,53 +1,77 @@
-module equations_definition
+!!{This module sets up the equations to solve - equation equation has three subroutines. 
+!  Equation, BC_Bot and BC_Top - representing the equation and both boundaries respectively}
+!!
+Module equations_definition
    use type_kinds, only: dp
    use maths_constants, only: pi, ex
+
 contains
 
-   subroutine equation1(x, A, B, C, D)
+!!
+! @brief      Sets up the first equation in the form A u_xx + B u_x + C u = D
+!
+! @param       x     physical domain input - can have variable coefficients with x
+! 
+! @return      A     second order derivative coefficient
+! @return      B     first order derivative coefficient
+! @return      C     zeroth order derivative coefficient
+! @return      D     RHS/inhomogenous term 
+!
+!!
+Subroutine equation1(x, A, B, C, D)
       real(dp), intent(in) :: x ! xpoisiton in the domain
       real(dp), intent(out) :: A, B, C, D
-
-!!!! this equation is in the form
-!!! A u_xx + B u_x + C u = D
 
       A = 1.d0
       B = 0.d0
       C = -1.d0
       D = 0.d0
 
-   end subroutine equation1
+   End Subroutine equation1
 
-   subroutine equation1_BC_Bot(x, A, B, C, D)
+!!
+! @brief      Sets up the bottom/lefthand boundary in the first equation in the form A u_xx + B u_x + C u = D
+!
+! @param       x     physical domain input - can have variable coefficients with x
+! 
+! @return      A     second order derivative coefficient
+! @return      B     first order derivative coefficient
+! @return      C     zeroth order derivative coefficient
+! @return      D     RHS/inhomogenous term 
+!
+!!
+   Subroutine equation1_BC_Bot(x, A, B, C, D)
       real(dp), intent(in) :: x ! xpoisiton in the domain
       real(dp), intent(out) :: A, B, C, D
-
-!!!! bottom/lefthand boundary
-
-!!!! this equation is in the form
-!!! A u_xx + B u_x + C u = D
 
       A = 0.d0
       B = 0.d0
       C = 1.d0
       D = 1.d0
 
-   end subroutine equation1_BC_Bot
+   End Subroutine equation1_BC_Bot
 
-   subroutine equation1_BC_Top(x, A, B, C, D)
+!!
+! @brief      Sets up the top/righthand boundary in the first equation in the form A u_xx + B u_x + C u = D
+!
+! @param       x     physical domain input - can have variable coefficients with x
+! 
+! @return      A     second order derivative coefficient
+! @return      B     first order derivative coefficient
+! @return      C     zeroth order derivative coefficient
+! @return      D     RHS/inhomogenous term 
+!
+!!
+   Subroutine equation1_BC_Top(x, A, B, C, D)
       real(dp), intent(in) :: x ! xpoisiton in the domain
       real(dp), intent(out) :: A, B, C, D
-
-!!!! top/righthand boundary
-
-!!!! this equation is in the form
-!!! A u_xx + B u_x + C u = D
 
       A = 0.d0
       B = 0.d0
       C = 1.d0
       D = ex
 
-   end subroutine equation1_BC_Top
+   End Subroutine equation1_BC_Top
 
-end module equations_definition
+End Module equations_definition
 
