@@ -1,47 +1,11 @@
-!!{This module sets up the subroutines so an equation can be discretised onto a streched grid
-!  band_the_matrix - is a banded matrix calculator}
+!!{This module sets up the subroutines so an equation can be discretised onto a streched grid}
 !!
 Module equations_builder
    use type_kinds, only: dp
    use maths_constants, only: D1, D2, sub_diag, sup_diag, nband
+   use matrix_control, only : band_the_matrix
 
 contains
-
-!!
-! @brief      { Takes a square matrix A (n * n) and returns a banded matrix AB (nband * n)
-!               This saves memory and computation time when a calculation is conducted with A}
-!
-!                We use the method from lapack:
-!                On entry, the matrix A in band storage, in rows 1 to sub_diag+sup_diag+1.
-!                The j-th column of A is stored in the j-th column of the array AB as follows:
-!                AB(sup_diag+1+i-j,j) = A(i,j) for max(1,j-sup_diag)<=i<=min(n,j+sub_diag)
-!
-!
-! @param      n      dimension of A
-! @param      A      square matrix to band (n * n)
-! @param      sub_diag     number of subdiagonals in A
-! @param      sup_diag     number of superdiagonals in A
-!
-! @return     nband  the new leading dimension of AB
-! @return     AB     the banded matrix, dimension (nband * n)
-!!
-   Subroutine band_the_matrix(n, A, AB)
-
-      integer, intent(in) :: n
-      real(dp), dimension(:, :), allocatable, intent(in) :: A
-      real(dp), dimension(:, :), allocatable, intent(out) :: AB
-      integer :: i, j
-
-      allocate (AB(nband, n))
-
-      Do j = 1, n
-      Do i = max(1, j - sup_diag), min(n, j + sub_diag)
-         AB(sup_diag + 1 + i - j, j) = A(i, j)
-      End Do
-      End Do
-
-      Return
-   End Subroutine band_the_matrix
 
 !!
 ! @brief      {This Subroutine takes the coefficient of the differential equation
@@ -143,7 +107,7 @@ contains
          Dtemp(ii, ii) = C(ii)
       End Do
 
-      Call band_the_matrix(n, Dtemp, Deriv)
+      Call band_the_matrix(n, Dtemp, sub_diag, sup_diag, nband, Deriv)
       deallocate (Dtemp)
    End Subroutine zero
 
@@ -191,7 +155,7 @@ contains
       Dtemp(n - 1, n - 5:n) = D1(4, 1:6)*B(n - 1)
       Dtemp(n, n - 5:n) = D1(5, 1:6)*B(n)
 
-      Call band_the_matrix(n, Dtemp, Deriv)
+      Call band_the_matrix(n, Dtemp, sub_diag, sup_diag, nband, Deriv)
       deallocate (Dtemp)
 
    End Subroutine first
@@ -234,7 +198,7 @@ contains
       Dtemp(n - 1, n - 5:n) = D2(4, 1:6)*A(n - 1)
       Dtemp(n, n - 5:n) = D2(5, 1:6)*A(n)
 
-      Call band_the_matrix(n, Dtemp, Deriv)
+      Call band_the_matrix(n, Dtemp, sub_diag, sup_diag, nband, Deriv)
       deallocate (Dtemp)
 
    End Subroutine second

@@ -6,6 +6,7 @@ Module equations
    use equations_builder
    !! here we allowing equations to read the equation definitions that we have set up:
    use equations_definition, only: equation1, equation1_BC_Top, equation1_BC_Bot
+   use equations_definition_test, only: equation1_test, equation1_BC_Top_test, equation1_BC_Bot_test
    use maths_constants, only: sub_diag, sup_diag, nband
 
 !!! L and RHS form the equation
@@ -76,6 +77,22 @@ contains
               Call equation1(cdom(i), At(i), Bt(i), Ct(i), Dt(i))
            End do
          !$omp End Parallel Do
+
+
+      !!! Equation TEST
+      Case (0)
+
+         !!! Boundaries
+         Call equation1_BC_Bot_test(cdom(1), At(1), Bt(1), Ct(1), Dt(1))
+         Call equation1_BC_Top_test(cdom(n), At(n), Bt(n), Ct(n), Dt(n))
+         !!! Interior
+
+         !$omp Parallel Do
+           Do i = 2, n - 1
+              Call equation1_test(cdom(i), At(i), Bt(i), Ct(i), Dt(i))
+           End do
+         !$omp End Parallel Do
+    
       Case Default
 
          Write (6, *) 'Equation Error: which_equation in equations.f90 should be 1'
