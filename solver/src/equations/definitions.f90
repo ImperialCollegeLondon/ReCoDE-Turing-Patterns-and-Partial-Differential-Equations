@@ -50,8 +50,8 @@ Subroutine equation1_non_linear(x, u, F, Fu)
 !!! F is a function of u - Fu is F'(u)
 !!!
 
-      F = sin(u)
-      Fu = cos(u)
+      F = u - u**2.d0
+      Fu = 1.d0 - 2.d0*u
 End Subroutine equation1_non_linear
 
 !!
@@ -70,8 +70,8 @@ End Subroutine equation1_non_linear
       real(dp), intent(out) :: A, B, C, D
 
       A = 0.d0
-      B = 0.d0
-      C = 1.d0
+      B = 1.d0
+      C = 0.d0
       D = 0.d0
 
    End Subroutine equation1_BC_Bot
@@ -92,8 +92,8 @@ End Subroutine equation1_non_linear
       real(dp), intent(out) :: A, B, C, D
 
       A = 0.d0
-      B = 0.d0
-      C = 1.d0
+      B = 1.d0
+      C = 0.d0
       D = 0.d0
 
    End Subroutine equation1_BC_Top
@@ -110,7 +110,8 @@ Subroutine equation1_initial_condition(x, IC)
       real(dp), intent(in) :: x ! xpoisiton in the domain
       real(dp), intent(out) :: IC
 
-      IC = sin(2.d0*pi*x)
+      !IC = sin(2.d0*pi*x)
+      IC = (cos(pi*x)**2.d0)
 
 End Subroutine equation1_initial_condition
 

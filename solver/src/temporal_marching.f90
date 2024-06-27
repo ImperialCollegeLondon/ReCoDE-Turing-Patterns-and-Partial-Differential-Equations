@@ -3,17 +3,14 @@
 Module temporal_marching
    use omp_lib
    use type_kinds
-   use reader, only : Time_switch, Non_Linear_switch
-   use Domain
-   use equations, only : build_the_matrix,equation1_initial_condition
-   use maths_constants, only : DiffOrder, nband, sub_diag, sup_diag
+   use reader, only: Time_switch, Non_Linear_switch
+   use domain
+   use equations, only: build_the_matrix, equation1_initial_condition
+   use maths_constants, only: DiffOrder, nband, sub_diag, sup_diag
    use linear_algebra
+   use Newtons_method, only : non_linear_iteration   
 
-   real(dp), dimension(:), allocatable :: X, temp ! temporary vectors
    real(dp), dimension(:, :), allocatable :: Soln ! solution
-   real(dp), dimension(:, :), allocatable :: L !! operator from equations
-   real(dp), dimension(:, :), allocatable :: L_March !! implicit marching operator
-   real(dp), dimension(:), allocatable :: RHS !! right hand side of equation
 
 contains
 
@@ -26,7 +23,6 @@ contains
    Subroutine march_runner
       integer :: i, j
 
-
       Write (6, *) 'size of x Domain::: ', nx, dxc
       Write (6, *) 'size of t Domain::: ', nt, dt
       Write (6, *) 'order of the finite differences', DiffOrder
@@ -36,9 +32,11 @@ contains
 
       allocate (Soln(1:nx, 1:nt))
 
-      do i = 1,nx
-      call equation1_initial_condition(xcdom(i), soln(i,1))
-      end do
+      !$omp Parallel Do
+      Do i = 1, nx
+         Call equation1_initial_condition(xcdom(i), soln(i, 1))
+      End Do
+      !$omp End Parallel Do
 
       Call implicit_march
 
@@ -75,10 +73,16 @@ contains
 ! @return     Soln - contains the soln to the PDE
 !!
    Subroutine implicit_march
-      integer :: i, j
+
+      real(dp), dimension(:), allocatable :: U, temp ! temporary vectors
+      real(dp), dimension(:, :), allocatable :: L !! operator from equations
+      real(dp), dimension(:, :), allocatable :: L_March !! implicit marching operator
+      real(dp), dimension(:), allocatable :: RHS !! right hand side of equation
+
+      integer :: i, j, iteration
 
 !!!! Build the opeator
-      allocate (temp(1:nx), X(nx))
+      allocate (temp(1:nx), U(nx))
       allocate (L_March(nband, 1:nx))
 
       !! Obtain the original operator L
@@ -94,12 +98,11 @@ contains
       !! These loops find those rows in banded form
 
       !$omp Parallel Do
-         Do j = 1, sub_diag
-            L_March(sub_diag + 2 - j, j) = L(sub_diag + 2 - j, j)
-            L_March(sub_diag + j, nx + 1 - j) = L(sub_diag + j, nx + 1 - j)
-         End Do
+      Do j = 1, sub_diag
+         L_March(sub_diag + 2 - j, j) = L(sub_diag + 2 - j, j)
+         L_March(sub_diag + j, nx + 1 - j) = L(sub_diag + j, nx + 1 - j)
+      End Do
       !$omp End Parallel Do
-
 
 !!!! March the operator
 
@@ -108,19 +111,25 @@ contains
 
       !! set the boundaries
 
-         temp(1) = RHS(1) 
+         temp(1) = RHS(1)
          temp(nx) = RHS(nx)
 
       !! set the interior points
          temp(2:nx - 1) = RHS(2:nx - 1)*Soln(2:nx - 1, j - 1)
 
          !!! solve the system
-         Call solver_banded_Double_precision(nx, nband, sub_diag, sup_diag, L_March, temp, X)
+         Call solver_banded_Double_precision(nx, nband, sub_diag, sup_diag, L_March, temp, U)
 
-         Soln(:, j) = X(:)
+         Select Case (Non_Linear_switch)
+         Case (1)
+            Call non_linear_iteration(L_March, temp, U, iteration)
+         Case Default
+         End Select
+
+         Soln(:, j) = U(:)
       End Do
 
-      deallocate (temp, X, L_March)
+      deallocate (temp, U, L_March)
 
    End Subroutine implicit_march
 

@@ -1,9 +1,11 @@
 Module reader
+   use type_kinds
    implicit none
 
    logical :: file_exists
    integer :: Time_switch
    integer :: Non_Linear_switch
+   real(dp) :: Newton_Error
 
 contains
 
@@ -22,25 +24,26 @@ contains
          Stop
       End Select
 
-      open (1, file='settings.input', status='old', action='read')
+      Open (1, file='settings.input', status='old', action='read')
 
-      read (1, *) !first line is title
-      read (1, *) Time_switch
-      read (1, *) Non_Linear_switch
-      read (1, *) 
-      read (1, *) ! x settings
-      read (1, *) nx
-      read (1, *) xl, xr
-      read (1, *) x_grid_strech_on_integer, xhalf
-      read (1, *) 
-      read (1, *) ! t settings
-      read (1, *) nt
-      read (1, *) tl, tr
-      read (1, *) 
-      read (1, *) ! general settings
-      read (1, *) DiffOrder
+      Read (1, *) !first line is title
+      Read (1, *) Time_switch
+      Read (1, *) Non_Linear_switch
+      Read (1, *)
+      Read (1, *) ! x settings
+      Read (1, *) nx
+      Read (1, *) xl, xr
+      Read (1, *) x_grid_strech_on_integer, xhalf
+      Read (1, *)
+      Read (1, *) ! t settings
+      Read (1, *) nt
+      Read (1, *) tl, tr
+      Read (1, *)
+      Read (1, *) ! general settings
+      Read (1, *) DiffOrder
+      Read (1, *) Newton_Error
 
-      close (1)
+      Close (1)
 
       Select Case (Time_switch)
       Case (1)
