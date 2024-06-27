@@ -3,7 +3,7 @@
 Module temporal_marching
    use omp_lib
    use type_kinds
-   use reader
+   use reader, only : Time_switch, Non_Linear_switch
    use Domain
    use equations, only : build_the_matrix
    use maths_constants, only : DiffOrder, nband, sub_diag, sup_diag
@@ -11,9 +11,6 @@ Module temporal_marching
 
    real(dp), dimension(:), allocatable :: X, temp ! temporary vectors
    real(dp), dimension(:, :), allocatable :: Soln ! solution
-   
-
-
    real(dp), dimension(:, :), allocatable :: L !! operator from equations
    real(dp), dimension(:, :), allocatable :: L_March !! implicit marching operator
    real(dp), dimension(:), allocatable :: RHS !! right hand side of equation
@@ -76,6 +73,7 @@ contains
    Subroutine linear_implicit_march
       integer :: i, j
 
+!!!! Build the opeator
       allocate (temp(1:nx), X(nx))
       allocate (L_March(nband, 1:nx))
 
@@ -97,6 +95,9 @@ contains
             L_March(sub_diag + j, nx + 1 - j) = L(sub_diag + j, nx + 1 - j)
          End Do
       !$omp End Parallel Do
+
+
+!!!! March the operator
 
       !!! Begin the march in time
       Do j = 2, nt

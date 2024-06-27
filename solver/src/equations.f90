@@ -74,7 +74,7 @@ contains
 
          !$omp Parallel Do
          Do i = 2, n - 1
-            Call equation1(cdom(i), At(i), Bt(i), Ct(i), Dt(i))
+            Call equation1_linear(cdom(i), At(i), Bt(i), Ct(i), Dt(i))
          End do
          !$omp End Parallel Do
 

@@ -35,7 +35,7 @@ Program main
    Case (1)
       WRITE(6,*) 'Parabolic Solver'
       Call march_runner
-      stop
+      Stop
    End Select
 
 End Program main

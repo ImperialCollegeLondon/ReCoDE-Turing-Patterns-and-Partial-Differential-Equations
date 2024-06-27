@@ -3,6 +3,7 @@ Module reader
 
    logical :: file_exists
    integer :: Time_switch
+   integer :: Non_Linear_switch
 
 contains
 
@@ -25,13 +26,17 @@ contains
 
       read (1, *) !first line is title
       read (1, *) Time_switch
+      read (1, *) Non_Linear_switch
+      read (1, *) 
       read (1, *) ! x settings
       read (1, *) nx
       read (1, *) xl, xr
       read (1, *) x_grid_strech_on_integer, xhalf
+      read (1, *) 
       read (1, *) ! t settings
       read (1, *) nt
       read (1, *) tl, tr
+      read (1, *) 
       read (1, *) ! general settings
       read (1, *) DiffOrder
 
