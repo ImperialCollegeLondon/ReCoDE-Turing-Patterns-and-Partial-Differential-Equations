@@ -20,8 +20,8 @@
 ! xmetric2          dx^2/dc^2 vector
 ! x_grid_strech_on  turns on (TRUE) or off (FALSE) grid stretch function
 ! xhalf             puts half the points intbetween left boundary and xhalf
-! 
-! 
+!
+!
 ! time domain parameters
 !____________________________________________________
 ! nt                number of points in time
@@ -72,23 +72,23 @@ contains
    ! @brief      {Set up time domain}
    !!
    Subroutine time_domain
-   integer :: i
+      integer :: i
 
       !!! set up time domain
-      allocate(tdom(1:nt))
+      allocate (tdom(1:nt))
       tdom(1) = tl
 
       dt = (tr - tl)/(nt - 1.d0)
 
       !$omp Parallel Do
-         Do i = 2, nt
-            tdom(i) = tl + (i - 1)*dt
-         End Do
+      Do i = 2, nt
+         tdom(i) = tl + (i - 1)*dt
+      End Do
       !$omp End Parallel Do
 
-      If (tdom(nt)==tr) then
+      If (tdom(nt) == tr) then
       Else
-         Write (6,*) 'Error 1 in time_domain'
+         Write (6, *) 'Error 1 in time_domain'
       End if
 
    End Subroutine time_domain
@@ -144,9 +144,9 @@ contains
 
       ! build the computational domain (evenly spaced by d)
       !$omp Parallel Do
-         Do i = 2, n
-            c(i) = (i - 1)*d
-         End Do
+      Do i = 2, n
+         c(i) = (i - 1)*d
+      End Do
       !$omp End Parallel Do
 
       ! build the physical domain

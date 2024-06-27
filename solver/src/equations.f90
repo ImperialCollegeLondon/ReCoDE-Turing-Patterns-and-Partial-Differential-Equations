@@ -8,7 +8,7 @@ Module equations
    use equations_definition
    use equations_definition_test
    use maths_constants, only: sub_diag, sup_diag, nband
-   use reader, only : Time_switch
+   use reader, only: Time_switch
 
 !!! L and RHS form the equation
 contains
@@ -60,7 +60,6 @@ contains
     !! At,Bt,Ct and Dt form the coefficients of the discretised equation in the form Atu'' + Btu' + Ctu = Dt
     !! A,B,C and D are then the corrected coefficients given grid streching transfomations
 
-      
     !! here we use OpenMP to parallelise the Do Loops - no infomation is shared between loops
 
       Select Case (which_equation)
@@ -74,9 +73,9 @@ contains
          !!! Interior
 
          !$omp Parallel Do
-           Do i = 2, n - 1
-              Call equation1(cdom(i), At(i), Bt(i), Ct(i), Dt(i))
-           End do
+         Do i = 2, n - 1
+            Call equation1(cdom(i), At(i), Bt(i), Ct(i), Dt(i))
+         End do
          !$omp End Parallel Do
 
       !!! Equation TEST
@@ -88,22 +87,22 @@ contains
          !!! Interior
 
          !$omp Parallel Do
-           Do i = 2, n - 1
-              Call equation1_test(cdom(i), At(i), Bt(i), Ct(i), Dt(i))
-           End do
+         Do i = 2, n - 1
+            Call equation1_test(cdom(i), At(i), Bt(i), Ct(i), Dt(i))
+         End do
          !$omp End Parallel Do
-    
+
       Case Default
 
          Write (6, *) 'Equation Error: which_equation in equations.f90 should be 1'
 
       End Select
-   
+
     !! Apply the correct scallings
       !$omp Parallel Do
-        Do i = 1, n 
-           Call scales(A(i), B(i), C(i), D(i), At(i), Bt(i), Ct(i), Dt(i), ch, chsq, metric1(i), metric1sq(i), metric2(i))
-        End Do
+      Do i = 1, n
+         Call scales(A(i), B(i), C(i), D(i), At(i), Bt(i), Ct(i), Dt(i), ch, chsq, metric1(i), metric1sq(i), metric2(i))
+      End Do
       !$omp End Parallel Do
 
     !!! Derivative runner moves the coefficients into a banded matrix L
@@ -119,25 +118,24 @@ contains
    !!
    ! @brief      {Sets the initial condition for the temporal march}
    !
-   ! @param      n     dimension of computational spatial domain 
-   ! @param      cdom  computational spatial domain 
-   ! 
+   ! @param      n     dimension of computational spatial domain
+   ! @param      cdom  computational spatial domain
+   !
    ! @return      soln  solution
    !!
-   Subroutine initial_condition(n,cdom,soln)
-   integer,intent(in) :: n
-   real(dp), dimension(:), allocatable, intent(in) :: cdom   
-   real(dp), dimension(:,:), allocatable, intent(inout) :: soln
-   integer :: i
+   Subroutine initial_condition(n, cdom, soln)
+      integer, intent(in) :: n
+      real(dp), dimension(:), allocatable, intent(in) :: cdom
+      real(dp), dimension(:, :), allocatable, intent(inout) :: soln
+      integer :: i
 
-   !$omp Parallel Do
-      Do i = 1,n
-       Call equation1_initial_condition(cdom(i), soln(i,1)) 
+      !$omp Parallel Do
+      Do i = 1, n
+         Call equation1_initial_condition(cdom(i), soln(i, 1))
       End Do
-    !$omp End Parallel Do
+      !$omp End Parallel Do
 
    End Subroutine initial_condition
-
 
 End Module equations
 

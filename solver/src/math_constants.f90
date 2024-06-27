@@ -6,7 +6,7 @@ Module maths_constants
    use maths_constants_diff_coeff, only: DiffOrder, D1, D2, diff_initialisation,&
                    &sub_diag, sup_diag, nband
 
-!! note that::: 
+!! note that:::
    ! DiffOrder   order of the equation, 2, 3 or 4
    ! sub_diag    number of sub_diagonals of the given matrices
    ! sup_diag    number of super_diagonals of the given matrices

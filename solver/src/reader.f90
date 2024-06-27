@@ -7,7 +7,7 @@ Module reader
 contains
 
    Subroutine read_me
-      use domain, only: nx, xl, xr, xhalf, x_grid_strech_on, nt,tl,tr
+      use domain, only: nx, xl, xr, xhalf, x_grid_strech_on, nt, tl, tr
       use maths_constants, only: DiffOrder
       integer :: x_grid_strech_on_integer
 

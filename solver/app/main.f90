@@ -7,16 +7,10 @@ Program main
    use maths_constants
    use equations
    use linear_algebra
-   use solve_ode, only : solver
-   use temporal_marching, only : march
+   use solve_bvp, only : solve_runner
+   use temporal_marching, only : march_runner
    implicit none
-   external :: DGBMV
 
-   integer :: i,j
-   real(dp), dimension(:), allocatable :: X,X1
-   real(dp), dimension(:,:), allocatable :: Soln
-   real(dp), dimension(:, :), allocatable :: L !! banded form matrix
-   real(dp), dimension(:), allocatable :: RHS,temp !! right hand side of equation
 
    Write (6, *)
    Write (6, *) '!!!!!!!!!!!!!!!!!!!!!!!!!'
@@ -35,13 +29,14 @@ Program main
 
    Select Case (Time_switch)
    Case (0)
-      Call solver
+      WRITE(6,*) 'Ellipitc Solver'
+      Call solve_runner
       Stop
    Case (1)
-      Call march
+      WRITE(6,*) 'Parabolic Solver'
+      Call march_runner
       stop
    End Select
-
 
 End Program main
 

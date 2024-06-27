@@ -1,6 +1,6 @@
 !!{The module that set up and runs the BVP Solver}
 !!
-Module solve_ode
+Module solve_bvp
    use type_kinds
    use reader
    use domain
@@ -8,20 +8,19 @@ Module solve_ode
    use equations
    use linear_algebra
 
-   contains
+contains
 
 !!
 ! @brief      {Subroutine that sets up a BVP solver for the equation given in definitions.f90}
 !
 ! @return     Solves the BVP in the form A u_xx + B u_x + C = D. Boundary conditions can be general
 !!
+   Subroutine solve_runner
 
-   Subroutine solver
-
-   integer :: i,j
-   real(dp), dimension(:), allocatable :: X
-   real(dp), dimension(:, :), allocatable :: L !! banded form matrix
-   real(dp), dimension(:), allocatable :: RHS !! right hand side of equation
+      integer :: i, j
+      real(dp), dimension(:), allocatable :: X
+      real(dp), dimension(:, :), allocatable :: L !! banded form matrix
+      real(dp), dimension(:), allocatable :: RHS !! right hand side of equation
 
       Write (6, *) 'size of x domain::: ', nx
       Write (6, *) 'order of the finite differences', DiffOrder
@@ -34,14 +33,14 @@ Module solve_ode
 
       Call build_the_matrix(nx, dxc, dxcsq, xcdom, xmetric1, xmetric1sq, xmetric2, 1, L, RHS)
 
-      !! Solve the equation 
+      !! Solve the equation
 
       Call solver_banded_double_precision(nx, nband, sub_diag, sup_diag, L, RHS, X)
       deallocate (L, RHS)
 
-      !! Print the results      
+      !! Print the results
 
-      Open(10,file='BVP.dat')
+      Open (10, file='BVP.dat')
 
       Write (6, '(5(A20,x))') 'Physical domain', 'Comp Domain', 'Numerical Soln'!, 'Exact Soln', 'error'
       Write (10, '(5(A20,x))') 'Physical domain', 'Comp Domain', 'Numerical Soln'!, 'Exact Soln', 'error'
@@ -49,16 +48,14 @@ Module solve_ode
          Write (6, '(4(f20.14,1x),e20.10)') xdom(i), xcdom(i), X(i)!, ex**xdom(i), abs(x(i)-ex**xdom(i))
          Write (10, '(4(f20.14,1x),e20.10)') xdom(i), xcdom(i), X(i)!, ex**xdom(i), abs(x(i)-ex**xdom(i))
       End Do
-      Close(10)
+      Close (10)
       Write (6, *)
 
-      deallocate(X)
+      deallocate (X)
 
       Return
 
-   End Subroutine solver
+   End Subroutine solve_runner
 
-End Module solve_ode
-
-
+End Module solve_bvp
 

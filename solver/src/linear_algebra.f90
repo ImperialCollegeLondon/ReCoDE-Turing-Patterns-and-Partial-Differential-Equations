@@ -24,22 +24,22 @@ contains
 ! @param      sub_diag     number of subdiagonals in A
 ! @param      sup_diag     number of superdiagonals in A
 ! @param      nband  the new leading dimension of AB
-! 
+!
 ! @return     AB     the banded matrix, dimension (nband * n)
 !!
    Subroutine band_the_matrix(n, A, sub_diag, sup_diag, nband, AB)
 
       integer, intent(in) :: n
       real(dp), dimension(:, :), allocatable, intent(in) :: A
-      integer, intent(in) :: sub_diag, sup_diag,nband
+      integer, intent(in) :: sub_diag, sup_diag, nband
       real(dp), dimension(:, :), allocatable, intent(out) :: AB
       integer :: i, j, btest
 
       btest = sub_diag + sup_diag + 1
 
-      If (nband==btest) then
+      If (nband == btest) then
       Else
-        Write (6,*) 'Error 1 in band_the_matrix...'
+         Write (6, *) 'Error 1 in band_the_matrix...'
       End If
 
       allocate (AB(nband, n))
@@ -52,7 +52,6 @@ contains
 
       Return
    End Subroutine band_the_matrix
-
 
 !!
 ! @brief      { This subroutine sets up and solves linear systems with double precision
