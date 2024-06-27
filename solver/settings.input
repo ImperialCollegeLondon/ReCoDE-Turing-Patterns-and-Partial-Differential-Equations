@@ -1,10 +1,10 @@
 Settings ________________
-0           !!! Time_switch (time marching if 1)
-1           !!! Non_Linear_switch (non linear if 1)
+1           !!! Time_switch (time marching if 1)
+0           !!! Non_Linear_switch (non linear if 1)
 
 !!! xdomain settings_____
-11 					!!! nx - size of x domain
--0.1,0.1 				!!! xl, xr - start and end points of x domain
+21 					!!! nx - size of x domain
+0,1 				!!! xl, xr - start and end points of x domain
 0,1      		!!! x strech on or off, grid strech parameter
 
 !!! temportal marching settings_____

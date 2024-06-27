@@ -1,7 +1,7 @@
 close all
 clear all
 
-X = readmatrix('1.dat');
+X = readmatrix('IVBP.dat');
 w = width(X(1,:))
 h = height(X(:,1))
 

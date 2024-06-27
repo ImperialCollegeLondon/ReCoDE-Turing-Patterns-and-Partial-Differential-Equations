@@ -5,7 +5,7 @@ Module temporal_marching
    use type_kinds
    use reader, only : Time_switch, Non_Linear_switch
    use Domain
-   use equations, only : build_the_matrix
+   use equations, only : build_the_matrix,equation1_initial_condition
    use maths_constants, only : DiffOrder, nband, sub_diag, sup_diag
    use linear_algebra
 
@@ -36,7 +36,11 @@ contains
 
       allocate (Soln(1:nx, 1:nt))
 
-      Call linear_implicit_march
+      do i = 1,nx
+      call equation1_initial_condition(xcdom(i), soln(i,1))
+      end do
+
+      Call implicit_march
 
       open (10, file='IVBP.dat')
       Write (10, '(20000(f20.14,1x))') 0.d0, (tDom(j), j=1, nt)
@@ -70,7 +74,7 @@ contains
 !
 ! @return     Soln - contains the soln to the PDE
 !!
-   Subroutine linear_implicit_march
+   Subroutine implicit_march
       integer :: i, j
 
 !!!! Build the opeator
@@ -118,7 +122,7 @@ contains
 
       deallocate (temp, X, L_March)
 
-   End Subroutine linear_implicit_march
+   End Subroutine implicit_march
 
 End Module temporal_marching
 

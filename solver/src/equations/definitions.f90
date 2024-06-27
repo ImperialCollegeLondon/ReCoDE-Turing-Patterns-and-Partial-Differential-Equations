@@ -29,7 +29,7 @@ Subroutine equation1_linear(x, A, B, C, D)
 
       A = 1.d0
       B = 0.d0
-      C = 1.d0
+      C = 0.d0
       D = 1.d0
 
 End Subroutine equation1_linear
@@ -72,7 +72,7 @@ End Subroutine equation1_non_linear
       A = 0.d0
       B = 0.d0
       C = 1.d0
-      D = 1.d0
+      D = 0.d0
 
    End Subroutine equation1_BC_Bot
 
