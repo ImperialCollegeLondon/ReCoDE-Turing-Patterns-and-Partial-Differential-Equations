@@ -1,9 +1,8 @@
 !!{Module test to test LAPACK and the lacpack Caller Subroutine solver_banded_double_precision}
 !!
 Module test_collection_lapack
-   use linear_algebra, only: solver_banded_double_precision
+   use linear_algebra, only: band_the_matrix, solver_banded_double_precision
    use testdrive, only: error_type, unittest_type, new_unittest, check
-   use matrix_control, only: band_the_matrix
    implicit none
 
    public :: collect_tests_lapack

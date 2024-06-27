@@ -1,7 +1,20 @@
 Settings ________________
+1           !!! Time_switch
 !!! xdomain settings_____
 21 					!!! nx - size of x domain
 0,1 				!!! xl, xr - start and end points of x domain
 0,1      		!!! x strech on or off, grid strech parameter
+!!! temportal domain settings_____
+801          !!! nt - size of x domain
+0,0.1         !!! tl, tr - start and end points of x domain
 !!! general settings_____
-4   				!!! iDiffOrder - order of finite differences scheme 
+4   				!!! iDiffOrder - order of finite differences scheme
+
+
+If Time_switch = 0 then we solve an ODE of the form
+
+          A u_xx + B u_x + C u + D = 0
+
+If Time_switch = 1 then we solve an ODE of the form
+
+          A u_xx + B u_x + C u + D = u_t

@@ -20,6 +20,7 @@ contains
       testsuite = [ &
         new_unittest("test Domain builder (set_up_Domain) ", check_domain_builder), &
         new_unittest("test banded matrix calculations  ", check_banded_matrix), &
+        new_unittest("test banded matrix multiplication ", check_banded_matrix_multiplication), &
         new_unittest("test bvp solver with no streching ", check_bvp_solver_4th_order_no_streching), &
         new_unittest("test bvp solver with streching ", check_bvp_solver_4th_order_streching) &
         &]
@@ -114,6 +115,15 @@ contains
                   &2.d0, 4.d0, 8.d0, 0.d0, 0.d0], &
                   &[5, 4]))
 
+    !  Do i = 1, n
+    !     Write(6, *) (A(i,j),j=1,n)
+    !  End Do
+    !  Write(6,*)
+    !  Do i = 1, ldab
+    !     Write(6, *) (AB(i,j),j=1,n)
+    !  End Do
+
+
       Do i = 1, ldab
       Do j = 1, n
          Call check(error, ab(i, j), ab_test(i, j))
@@ -124,6 +134,57 @@ contains
 
       Return
    End Subroutine check_banded_matrix
+
+      !!
+   ! @brief      checks the banded matrix multiplication module
+   !
+   ! @return      error
+   !!
+   Subroutine check_banded_matrix_multiplication(error)
+      use type_kinds, only: dp
+      use matrix_control, only: band_the_matrix
+      use maths_constants, only: pi
+
+      external :: DGBMV
+      type(error_type), allocatable, intent(out) :: error
+      real(dp), dimension(:, :), allocatable :: A, AB
+      real(dp), dimension(:), allocatable :: Vec,Sol1,Sol2
+      real(dp) :: error_value
+      integer  :: n, KL, KU, LDAB
+      integer  :: i, j
+
+      error_value = 1.d-8
+
+      n = 5
+      KL = 2
+      KU = 1
+      LDAB = KL + KU + 1
+      allocate (A(n, n), Vec(n), Sol1(n),Sol2(n))
+
+      !! set up unbanded matrix
+
+      A = reshape([2.d0, 3.d0, 2.d0, 0.d0, 0.d0, &
+                  & 1.d0, 3.d0, 2.d0, 4.d0, 0.d0, &
+                  & 0.d0, 2.d0, 2.d0, 12.d0, 8.d0, &
+                  & 0.d0, 0.d0, 4.d0, 13.d0, 17.d0, &
+                  & 0.d0, 0.d0, 0.d0, 7.d0, 1.d0], &
+                  &[5, 5])
+
+      Vec = ([1.d0, 2.d0, 0.d0, 3.d0, -4.d0])
+
+      Call band_the_matrix(n, A, KL, KU, LDAB, AB)
+
+      Sol1 = matmul(A,vec)
+      
+      Call DGBMV('N', n, n, KL, KU, 1.d0, AB, LDAB, Vec, 1, 0.d0, Sol2, 1)
+
+      Do j = 1, n
+         Call check(error, Sol1(j), Sol2(j))
+      End Do
+      deallocate (A, AB, Vec, Sol1, Sol2)
+
+      Return
+   End Subroutine check_banded_matrix_multiplication
 
    !!
    ! @brief      {Checks the BVP solver is correct when there is no grid streching}
@@ -148,7 +209,7 @@ contains
 
       !call read_me  ! opens settings.input and reads
 
-      nx = 21
+      nx = 21; nt = 20
       xl = 0.d0; xr = 1.d0
       x_grid_strech_on = .FALSE.
       DiffOrder = 4
@@ -165,7 +226,7 @@ contains
          test_value = abs(x(j) - ex**xdom(j))
       End Do
 
-      deallocate (xdom, xcdom, X)
+      deallocate (xdom, xcdom, X, tdom)
       Write (6, '(a,1x,e12.4)') '     Error Value::', error_value
 
       Return
@@ -192,7 +253,7 @@ contains
       real(dp), dimension(:, :), allocatable :: L !! banded form matrix
       real(dp), dimension(:), allocatable :: RHS !! right hand side of equation
 
-      nx = 21
+      nx = 21; nt = 20
       xl = 0.d0; xr = 1.d0
       x_grid_strech_on = .TRUE.
       xhalf = 0.3d0
@@ -209,7 +270,7 @@ contains
          test_value = abs(x(j) - ex**xdom(j))
       End Do
 
-      deallocate (xdom, xcdom, X)
+      deallocate (xdom, xcdom, X, tdom)
 
       Write (6, '(a,1x,e12.4)') '     Error Value::', error_value
 

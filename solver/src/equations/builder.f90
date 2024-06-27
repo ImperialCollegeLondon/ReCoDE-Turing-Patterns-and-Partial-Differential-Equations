@@ -3,7 +3,7 @@
 Module equations_builder
    use type_kinds, only: dp
    use maths_constants, only: D1, D2, sub_diag, sup_diag, nband
-   use matrix_control, only : band_the_matrix
+   use linear_algebra, only : band_the_matrix
 
 contains
 
@@ -39,10 +39,10 @@ contains
 !!!! this Subroutine evaluates the terms of the equations in the
 !!!! computational Domain and corrects them with the relevent metrics
 
-      A = ai
-      B = (bi*metric1 - ai*metric2/metric1)*ch
-      C = ci*metric1sq*chsq
-      D = di*metric1sq*chsq
+      A = ai/(metric1sq*chsq)
+      B = ((bi*metric1 - ai*metric2/metric1)*ch)/(metric1sq*chsq)
+      C = ci
+      D = di
 
    End Subroutine scales
 

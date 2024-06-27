@@ -20,10 +20,20 @@
 ! xmetric2          dx^2/dc^2 vector
 ! x_grid_strech_on  turns on (TRUE) or off (FALSE) grid stretch function
 ! xhalf             puts half the points intbetween left boundary and xhalf
+! 
+! 
+! time domain parameters
+!____________________________________________________
+! nt                number of points in time
+! tdom              time domain (vector)
+! tl                initial time
+! tr                final time
 !!
 Module domain
    use type_kinds, only: dp
+   use omp_lib
 
+!!! x domain
    integer :: nx
    real(dp), dimension(:), allocatable :: xdom, xcdom
    real(dp) :: xl, xr
@@ -31,6 +41,11 @@ Module domain
    real(dp), dimension(:), allocatable :: xmetric1, xmetric1sq, xmetric2
    logical :: x_grid_strech_on
    real(dp) :: xhalf
+
+!!! time domain
+   integer :: nt
+   real(dp), dimension(:), allocatable :: tdom
+   real(dp) :: tl, tr, dt
 
 contains
 
@@ -41,6 +56,9 @@ contains
 !!
    Subroutine initial_domain_settings
 
+      !Set up time domain
+      Call time_domain
+
       ! sets up x and xc domains and metrics
       Call set_up_domain(nx, xl, xr, dxc, xdom, xcdom, x_grid_strech_on,&
               &xhalf, xmetric1, xmetric1sq, xmetric2)
@@ -49,6 +67,31 @@ contains
 
       ! will add in y-domain in future
    End Subroutine initial_domain_settings
+
+   !!
+   ! @brief      {Set up time domain}
+   !!
+   Subroutine time_domain
+   integer :: i
+
+      !!! set up time domain
+      allocate(tdom(1:nt))
+      tdom(1) = tl
+
+      dt = (tr - tl)/(nt - 1.d0)
+
+      !$omp Parallel Do
+         Do i = 2, nt
+            tdom(i) = tl + (i - 1)*dt
+         End Do
+      !$omp End Parallel Do
+
+      If (tdom(nt)==tr) then
+      Else
+         Write (6,*) 'Error 1 in time_domain'
+      End if
+
+   End Subroutine time_domain
 
 !!
 ! @brief      { Set up domain builds a physical domain whihch is mapped to a
@@ -100,9 +143,11 @@ contains
       c(1) = 0
 
       ! build the computational domain (evenly spaced by d)
-      Do i = 2, n
-         c(i) = (i - 1)*d
-      End Do
+      !$omp Parallel Do
+         Do i = 2, n
+            c(i) = (i - 1)*d
+         End Do
+      !$omp End Parallel Do
 
       ! build the physical domain
 

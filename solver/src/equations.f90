@@ -5,9 +5,10 @@ Module equations
    use type_kinds, only: dp
    use equations_builder
    !! here we allowing equations to read the equation definitions that we have set up:
-   use equations_definition, only: equation1, equation1_BC_Top, equation1_BC_Bot
-   use equations_definition_test, only: equation1_test, equation1_BC_Top_test, equation1_BC_Bot_test
+   use equations_definition
+   use equations_definition_test
    use maths_constants, only: sub_diag, sup_diag, nband
+   use reader, only : Time_switch
 
 !!! L and RHS form the equation
 contains
@@ -78,7 +79,6 @@ contains
            End do
          !$omp End Parallel Do
 
-
       !!! Equation TEST
       Case (0)
 
@@ -98,7 +98,6 @@ contains
          Write (6, *) 'Equation Error: which_equation in equations.f90 should be 1'
 
       End Select
-
    
     !! Apply the correct scallings
       !$omp Parallel Do
@@ -109,13 +108,36 @@ contains
 
     !!! Derivative runner moves the coefficients into a banded matrix L
       Call derivative_runner(n, A, B, C, L)
-    !! set the fina output for RHS
+    !! set the final output for RHS
       RHS = D
 
       deallocate (Dt, Ct, Bt, At, D, C, B, A)
 
       Return
    End Subroutine build_the_matrix
+
+   !!
+   ! @brief      {Sets the initial condition for the temporal march}
+   !
+   ! @param      n     dimension of computational spatial domain 
+   ! @param      cdom  computational spatial domain 
+   ! 
+   ! @return      soln  solution
+   !!
+   Subroutine initial_condition(n,cdom,soln)
+   integer,intent(in) :: n
+   real(dp), dimension(:), allocatable, intent(in) :: cdom   
+   real(dp), dimension(:,:), allocatable, intent(inout) :: soln
+   integer :: i
+
+   !$omp Parallel Do
+      Do i = 1,n
+       Call equation1_initial_condition(cdom(i), soln(i,1)) 
+      End Do
+    !$omp End Parallel Do
+
+   End Subroutine initial_condition
+
 
 End Module equations
 
