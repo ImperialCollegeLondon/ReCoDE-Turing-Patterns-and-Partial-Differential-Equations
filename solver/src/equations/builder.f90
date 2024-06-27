@@ -2,8 +2,7 @@
 !!
 Module equations_builder
    use type_kinds, only: dp
-   use maths_constants, only: D1, D2, sub_diag, sup_diag, nband
-   use linear_algebra, only : band_the_matrix
+   use maths_constants, only: D1, D2
 
 contains
 
@@ -63,7 +62,7 @@ contains
       real(dp), dimension(:, :), allocatable :: eD0, eD1, eD2
 
 !!! this builds the entire derivative L in banded form
-      allocate (eD0(1:nband, 1:n), eD1(1:nband, 1:n), eD2(1:nband, 1:n))
+      allocate (eD0(1:n, 1:n), eD1(1:n, 1:n), eD2(1:n, 1:n))
 
       ed0 = 0.d0; ed1 = 0.d0; ed2 = 0.d0
 
@@ -93,22 +92,15 @@ contains
       real(dp), dimension(:), allocatable, intent(in) :: C
       integer, intent(in) :: n
       integer :: ii
-      real(dp), dimension(:, :), allocatable :: Dtemp
 
 !!! this sets up the zeroth order derivative
 
       Deriv = 0.d0
 
-!! Dtemp is a temporary operator that will be turned into banded form
-!! The matrix Deriv could be populated directly.
-      allocate (Dtemp(1:n, 1:n)); Dtemp = 0.d0
-
       Do ii = 1, n
-         Dtemp(ii, ii) = C(ii)
+         Deriv(ii, ii) = C(ii)
       End Do
 
-      Call band_the_matrix(n, Dtemp, sub_diag, sup_diag, nband, Deriv)
-      deallocate (Dtemp)
    End Subroutine zero
 
 !!
@@ -126,19 +118,16 @@ contains
       real(dp), dimension(:), allocatable, intent(in) :: B
       integer, intent(in) :: n
       integer :: i, j
-      real(dp), dimension(:, :), allocatable :: Dtemp
 
 !!! this sets up the first order derivative
 
       Deriv = 0.d0
 
-      allocate (Dtemp(1:n, 1:n)); Dtemp = 0.d0
-
-      Dtemp(1, 1:6) = D1(1, 1:6)*B(1)
-      Dtemp(2, 1:6) = D1(2, 1:6)*B(2)
+      Deriv(1, 1:6) = D1(1, 1:6)*B(1)
+      Deriv(2, 1:6) = D1(2, 1:6)*B(2)
 
 !!! Here we wish to parallelize the following: specifically the j loop. However it is difficult to Do with array notation as
-!   j is an index in both arrays of Dtemp. Therefore we make use of OpenMP library
+!   j is an index in both arrays of Deriv. Therefore we make use of OpenMP library
 !   $omp Parallel Do: Tells the compiler to parallelize the loop.
 !   private(i): Declares i as a private variable, meaning each thread gets its own copy of i to avoid race conditions.
 !   note we have included the omp_lib library
@@ -147,16 +136,13 @@ contains
       !$omp Parallel Do Private(i)
          Do j = 3, n - 2
             Do i = -2, 2
-               Dtemp(j, j + i) = D1(3, 4 + i)*B(j)
+               Deriv(j, j + i) = D1(3, 4 + i)*B(j)
             End Do
          End Do
       !$omp End Parallel Do
 
-      Dtemp(n - 1, n - 5:n) = D1(4, 1:6)*B(n - 1)
-      Dtemp(n, n - 5:n) = D1(5, 1:6)*B(n)
-
-      Call band_the_matrix(n, Dtemp, sub_diag, sup_diag, nband, Deriv)
-      deallocate (Dtemp)
+      Deriv(n - 1, n - 5:n) = D1(4, 1:6)*B(n - 1)
+      Deriv(n, n - 5:n) = D1(5, 1:6)*B(n)
 
    End Subroutine first
 
@@ -175,31 +161,26 @@ contains
       real(dp), dimension(:), allocatable, intent(in) :: A
       integer, intent(in) :: n
       integer :: i, j
-      real(dp), dimension(:, :), allocatable :: Dtemp
 
 !!! this sets up the second order derivative
 
       Deriv = 0.d0
 
-      allocate (Dtemp(1:n, 1:n)); Dtemp = 0.d0
-
-      Dtemp(1, 1:6) = D2(1, 1:6)*A(1)
-      Dtemp(2, 1:6) = D2(2, 1:6)*A(2)
+      Deriv(1, 1:6) = D2(1, 1:6)*A(1)
+      Deriv(2, 1:6) = D2(2, 1:6)*A(2)
 
       ! Parallelize the outer loop
       !$omp Parallel Do Private(i)
          Do j = 3, n - 2
             Do i = -2, 2
-               Dtemp(j, j + i) = D2(3, 4 + i)*A(j)
+               Deriv(j, j + i) = D2(3, 4 + i)*A(j)
             End Do
          End Do
       !$omp End Parallel Do
 
-      Dtemp(n - 1, n - 5:n) = D2(4, 1:6)*A(n - 1)
-      Dtemp(n, n - 5:n) = D2(5, 1:6)*A(n)
+      Deriv(n - 1, n - 5:n) = D2(4, 1:6)*A(n - 1)
+      Deriv(n, n - 5:n) = D2(5, 1:6)*A(n)
 
-      Call band_the_matrix(n, Dtemp, sub_diag, sup_diag, nband, Deriv)
-      deallocate (Dtemp)
 
    End Subroutine second
 

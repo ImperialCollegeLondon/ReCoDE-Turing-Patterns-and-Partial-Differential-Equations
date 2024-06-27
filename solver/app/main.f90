@@ -25,7 +25,7 @@ Program main
    Call read_me  ! opens settings.input and reads and sets settings
    Call diff_initialisation  ! sets the finite difference coefficients
    Call initial_domain_settings !builds the domain and computational domains
-
+   Call reset_domain_paramters
 
    Select Case (Time_switch)
    Case (0)

@@ -5,6 +5,8 @@
 !  Physical grid goes from left to right (read in from reader)
 !  }
 !!
+! Overall parameters
+! idim       overall dimension
 !
 ! xdomain parameters
 !____________________________________________________
@@ -32,6 +34,9 @@
 Module domain
    use type_kinds, only: dp
    use omp_lib
+
+!!!! overall
+   integer :: idim !! overall dimension size (neqn * number of domains)
 
 !!! x domain
    integer :: nx

@@ -1,7 +1,7 @@
 close all
 clear all
 
-X = readmatrix('IVBP.dat');
+X = readmatrix('IVBP_2.dat');
 w = width(X(1,:))
 h = height(X(:,1))
 
@@ -24,5 +24,6 @@ for k = 1:10:length(t)
     %title(sprintf('t = %0.1f', t(k)));
     %ylim([-1.5, 1.5]);
     pause(0.1);
-    clear('f')
+    %clear('1')
+    %hold off
 end

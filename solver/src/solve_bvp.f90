@@ -3,12 +3,12 @@
 !!
 Module solve_bvp
    use type_kinds
-   use reader, only: Time_switch, Non_Linear_switch
+   use reader, only: Time_switch, Non_Linear_switch, Eqn_number
    use domain
    use linear_algebra
-   use equations, only: build_the_matrix
+   use equations, only: equation_runner
    use maths_constants, only: DiffOrder, nband, sub_diag, sup_diag
-   use Newtons_method, only : non_linear_iteration
+   use Newtons_method, only: non_linear_iteration
 
 contains
 
@@ -33,11 +33,13 @@ contains
       !!! next step is to build the discretised operators
       !!! equation is in the form L * X = RHS
 
-      Call build_the_matrix(nx, dxc, dxcsq, xcdom, xmetric1, xmetric1sq, xmetric2, 1, L, RHS)
+      !Call build_the_matrix(nx, dxc, dxcsq, xcdom, xmetric1, xmetric1sq, xmetric2, 1, L, RHS)
+
+      Call equation_runner(L, RHS)
 
       !! Solve the equation
 
-      Call solver_banded_double_precision(nx, nband, sub_diag, sup_diag, L, RHS, U)
+      Call solver_banded_double_precision(idim, nband, sub_diag, sup_diag, L, RHS, U)
 
       !! If non-linear BVP then go to non-linear solver
 
@@ -48,7 +50,7 @@ contains
          Call non_linear_iteration(L, RHS, U, iteration)
       Case Default
          Write (6, *)
-         Write (6, *) 'Non linear BVP'
+         Write (6, *) 'Linear BVP'
       End Select
 
       deallocate (L, RHS)
@@ -58,10 +60,20 @@ contains
 
       Write (6, '(5(A20,x))') 'Physical domain', 'Comp Domain', 'Numerical Soln'!, 'Exact Soln', 'error'
       Write (10, '(5(A20,x))') 'Physical domain', 'Comp Domain', 'Numerical Soln'!, 'Exact Soln', 'error'
-      Do i = 1, nx
-         Write (6, '(4(f20.14,1x),e20.10)') xdom(i), xcdom(i), U(i)!, ex**xdom(i), abs(x(i)-ex**xdom(i))
-         Write (10, '(4(f20.14,1x),e20.10)') xdom(i), xcdom(i), U(i)!, ex**xdom(i), abs(x(i)-ex**xdom(i))
-      End Do
+
+      Select Case (Eqn_number)
+      Case (1)
+         Do i = 1, nx
+            Write (6, '(4(f20.14,1x),e20.10)') xdom(i), xcdom(i), U(i)!, ex**xdom(i), abs(x(i)-ex**xdom(i))
+            Write (10, '(4(f20.14,1x),e20.10)') xdom(i), xcdom(i), U(i)!, ex**xdom(i), abs(x(i)-ex**xdom(i))
+         End Do
+      Case (2)
+         Do i = 1, nx
+            Write (6, '(4(f20.14,1x),e20.10)') xdom(i), xcdom(i), U(2*i - 1), U(2*i)!,!!, ex**xdom(i), abs(x(i)-ex**xdom(i))
+            Write (10, '(4(f20.14,1x),e20.10)') xdom(i), xcdom(i), U(2*i - 1), U(2*i)!!, ex**xdom(i), abs(x(i)-ex**xdom(i))
+         End Do
+      End Select
+
       Close (10)
       Write (6, *)
       deallocate (U)
@@ -69,8 +81,6 @@ contains
       Return
 
    End Subroutine solve_runner
-
-
 
 End Module solve_bvp
 

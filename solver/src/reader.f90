@@ -5,6 +5,7 @@ Module reader
    logical :: file_exists
    integer :: Time_switch
    integer :: Non_Linear_switch
+   integer :: Eqn_Number
    real(dp) :: Newton_Error
 
 contains
@@ -42,8 +43,19 @@ contains
       Read (1, *) ! general settings
       Read (1, *) DiffOrder
       Read (1, *) Newton_Error
+      Read (1, *) Eqn_Number
 
       Close (1)
+
+      Select Case (Eqn_Number)
+      Case (1)
+         Write (6, *) 'One Equations'
+      Case (2)
+         Write (6, *) 'Two Equations'
+      Case default
+         Write (6, *) 'Eqn_Number can be 1 or 2!!! Stopping Program'
+         Stop
+      End Select
 
       Select Case (Time_switch)
       Case (1)
