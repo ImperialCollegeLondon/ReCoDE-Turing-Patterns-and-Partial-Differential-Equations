@@ -33,12 +33,10 @@ contains
       !!! next step is to build the discretised operators
       !!! equation is in the form L * X = RHS
 
-      !Call build_the_matrix(nx, dxc, dxcsq, xcdom, xmetric1, xmetric1sq, xmetric2, 1, L, RHS)
-
+      !! Set the equation
       Call equation_runner(L, RHS)
 
       !! Solve the equation
-
       Call solver_banded_double_precision(idim, nband, sub_diag, sup_diag, L, RHS, U)
 
       !! If non-linear BVP then go to non-linear solver

@@ -1,11 +1,12 @@
 Settings ________________
 1           !!! Time_switch (time marching if 1)
 1           !!! Non_Linear_switch (non linear if 1)
+2           !!! Eqn_number
 
 !!! xdomain settings_____
-500 					!!! nx - size of x domain
+300 					!!! nx - size of x domain
 0,1 				!!! xl, xr - start and end points of x domain
-0,1      		!!! x strech on or off, grid strech parameter
+1,0.3      		!!! x strech on or off, grid strech parameter
 
 !!! temportal marching settings_____
 5000          !!! nt - size of x domain
@@ -14,14 +15,5 @@ Settings ________________
 !!! general settings_____
 4   				!!! DiffOrder - order of finite differences scheme
 1.d-6       !!! Newton_Error
-2           !!! Eqn_number
+200         !!! Max_iter - max Newton iterations
 
-
-
-If Time_switch = 0 then we solve an ODE of the form
-
-          A u_xx + B u_x + C u = D 
-
-If Time_switch = 1 then we solve an ODE of the form
-
-          A u_xx + B u_x + C u = D u_t

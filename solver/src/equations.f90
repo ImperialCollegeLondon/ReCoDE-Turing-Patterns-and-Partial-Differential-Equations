@@ -266,43 +266,53 @@ contains
 
    End Subroutine initial_condition
 
-
    !!
    ! @brief      {Sets up the non-linear components of the differential equation}
    !
    ! @param      n     dimension of the domain (not idim - nx)
    ! @param      cdom  computational domain
-   ! 
+   !
    ! @return     U     Solution at previous state (split into two in cases)
-   ! @return     F     Non linear term
-   ! @return     Fu    u derivative of non-linear term
-   ! @return     Fv    v derivative of non-linear term
+   ! @return     F     Non linear term (Vector)
+   ! @return     Fu    u derivative of non-linear term (matrix)
+   ! @return     Fv    v derivative of non-linear term (matrix)
    !
    !!
-   Subroutine non_linear_setup(n,cdom, U, F, Fu, Fv)
+   Subroutine non_linear_setup(n, cdom, U, F, Fu, Fv)
+      use domain, only: idim
       integer, intent(in) :: n
       real(dp), dimension(:), allocatable, intent(in) :: cdom, U
-      real(dp), dimension(:),allocatable, intent(inout) ::  F, Fu, Fv
+      real(dp), dimension(:), allocatable, intent(inout) ::  F
+      real(dp), dimension(:, :), allocatable, intent(inout) ::  Fu, Fv
+      real(dp), dimension(:, :), allocatable ::  Fu_temp, Fv_temp
       integer :: i
+      real(dp) :: blank
+
+      allocate (Fu_temp(idim, idim), Fv_temp(idim, idim))
+      Fu_temp = 0.d0; Fv_temp = 0.d0
 
       Select Case (Eqn_number)
 
       Case (1)
          !$omp Parallel Do
          Do i = 2, n - 1
-            Call equation1_non_linear(cdom(i), U(i), 0.d0, F(i), Fu(i), Fv(i))
+            Call equation1_non_linear(cdom(i), U(i), 0.d0, F(i), Fu_temp(i, i), blank)
          End do
          !$omp End Parallel Do
 
       Case (2)
          !$omp Parallel Do
          Do i = 2, n - 1
-            Call equation1_non_linear(cdom(i), U(2*i-1), U(2*i), F(2*i-1), Fu(2*i-1), Fv(2*i-1))
-            Call equation2_non_linear(cdom(i), U(2*i-1), U(2*i), F(2*i), Fu(2*i), Fv(2*i))
+            Call equation1_non_linear(cdom(i), U(2*i - 1), U(2*i), F(2*i - 1), Fu_temp(2*i - 1, 2*i - 1), Fv_temp(2*i - 1, 2*i))
+            Call equation2_non_linear(cdom(i), U(2*i - 1), U(2*i), F(2*i), Fu_temp(2*i, 2*i - 1), Fv_temp(2*i, 2*i))
          End do
          !$omp End Parallel Do
       End Select
 
+      Call band_the_matrix(idim, Fu_temp, sub_diag, sup_diag, nband, Fu)
+      Call band_the_matrix(idim, Fv_temp, sub_diag, sup_diag, nband, Fv)
+
+      deallocate (Fu_temp, Fv_temp)
    End Subroutine non_linear_setup
 
 End Module equations

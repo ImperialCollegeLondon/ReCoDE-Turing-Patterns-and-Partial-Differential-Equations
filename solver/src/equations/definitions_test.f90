@@ -1,4 +1,4 @@
-!!{This module sets up the test equations to solve - equation equation has three subroutines. 
+!!{This module sets up the test equations to solve - equation equation has three subroutines.
 !  Equation, BC_Bot and BC_Top - representing the equation and both boundaries respectively}
 !!
 Module equations_definition_test
@@ -11,14 +11,14 @@ contains
 ! @brief      Sets up the first equation in the form A u_xx + B u_x + C u = D
 !
 ! @param       x     physical domain input - can have variable coefficients with x
-! 
+!
 ! @return      A     second order derivative coefficient
 ! @return      B     first order derivative coefficient
 ! @return      C     zeroth order derivative coefficient
-! @return      D     RHS/inhomogenous term 
+! @return      D     RHS/inhomogenous term
 !
 !!
-Subroutine equation1_test(x, A, B, C, D)
+   Subroutine equation1_test(x, A, B, C, D)
       real(dp), intent(in) :: x ! xpoisiton in the domain
       real(dp), intent(out) :: A, B, C, D
 
@@ -33,11 +33,11 @@ Subroutine equation1_test(x, A, B, C, D)
 ! @brief      Sets up the bottom/lefthand boundary in the first equation in the form A u_xx + B u_x + C u = D
 !
 ! @param       x     physical domain input - can have variable coefficients with x
-! 
+!
 ! @return      A     second order derivative coefficient
 ! @return      B     first order derivative coefficient
 ! @return      C     zeroth order derivative coefficient
-! @return      D     RHS/inhomogenous term 
+! @return      D     RHS/inhomogenous term
 !
 !!
    Subroutine equation1_BC_Bot_test(x, A, B, C, D)
@@ -55,11 +55,11 @@ Subroutine equation1_test(x, A, B, C, D)
 ! @brief      Sets up the top/righthand boundary in the first equation in the form A u_xx + B u_x + C u = D
 !
 ! @param       x     physical domain input - can have variable coefficients with x
-! 
+!
 ! @return      A     second order derivative coefficient
 ! @return      B     first order derivative coefficient
 ! @return      C     zeroth order derivative coefficient
-! @return      D     RHS/inhomogenous term 
+! @return      D     RHS/inhomogenous term
 !
 !!
    Subroutine equation1_BC_Top_test(x, A, B, C, D)

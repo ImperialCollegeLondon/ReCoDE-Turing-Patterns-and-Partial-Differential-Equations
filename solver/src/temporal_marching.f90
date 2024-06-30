@@ -25,7 +25,9 @@ contains
 
       Write (6, *) 'size of x Domain::: ', nx, dxc
       Write (6, *) 'size of total Domain::: ', idim
+      Write (6, *)
       Write (6, *) 'size of t Domain::: ', nt, dt
+      Write (6, *)
       Write (6, *) 'order of the finite differences', DiffOrder
       Write (6, *) '... Building matrix'
       Write (6, *)
@@ -33,15 +35,19 @@ contains
 
       allocate (Soln(1:idim, 1:nt))
 
+
+      !! Set the initial conditions
       Call initial_condition(nx, xdom, Soln)
 
+      !! March
       Call implicit_march
 
+      !! Printing Case
       Select Case (Eqn_number)
 
       Case (1)
 
-         Open (10, file='IVBP.dat')
+         Open (10, file='IVBP_1.dat')
          Write (10, '(20000(f20.14,1x))') 0.d0, (tDom(j), j=1, nt)
 
          Do i = 1, nx
@@ -134,7 +140,8 @@ contains
          temp(idim - Eqn_number:idim) = RHS(idim - Eqn_number:idim)
 
       !! set the interior points
-         temp(1+Eqn_number:idim - Eqn_number) = RHS(1+Eqn_number:idim - Eqn_number)*Soln(1+Eqn_number:idim - Eqn_number, j - 1)
+         temp(1 + Eqn_number:idim - Eqn_number) = &
+                   &RHS(1 + Eqn_number:idim - Eqn_number)*Soln(1 + Eqn_number:idim - Eqn_number, j - 1)
 
          !!! solve the system
          Call solver_banded_Double_precision(idim, nband, sub_diag, sup_diag, L_March, temp, U)

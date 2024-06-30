@@ -134,11 +134,11 @@ contains
 
       ! Parallelize the outer loop
       !$omp Parallel Do Private(i)
-         Do j = 3, n - 2
-            Do i = -2, 2
-               Deriv(j, j + i) = D1(3, 4 + i)*B(j)
-            End Do
+      Do j = 3, n - 2
+         Do i = -2, 2
+            Deriv(j, j + i) = D1(3, 4 + i)*B(j)
          End Do
+      End Do
       !$omp End Parallel Do
 
       Deriv(n - 1, n - 5:n) = D1(4, 1:6)*B(n - 1)
@@ -171,16 +171,15 @@ contains
 
       ! Parallelize the outer loop
       !$omp Parallel Do Private(i)
-         Do j = 3, n - 2
-            Do i = -2, 2
-               Deriv(j, j + i) = D2(3, 4 + i)*A(j)
-            End Do
+      Do j = 3, n - 2
+         Do i = -2, 2
+            Deriv(j, j + i) = D2(3, 4 + i)*A(j)
          End Do
+      End Do
       !$omp End Parallel Do
 
       Deriv(n - 1, n - 5:n) = D2(4, 1:6)*A(n - 1)
       Deriv(n, n - 5:n) = D2(5, 1:6)*A(n)
-
 
    End Subroutine second
 

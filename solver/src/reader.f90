@@ -6,6 +6,7 @@ Module reader
    integer :: Time_switch
    integer :: Non_Linear_switch
    integer :: Eqn_Number
+   integer :: Max_iter
    real(dp) :: Newton_Error
 
 contains
@@ -30,6 +31,7 @@ contains
       Read (1, *) !first line is title
       Read (1, *) Time_switch
       Read (1, *) Non_Linear_switch
+      Read (1, *) Eqn_Number
       Read (1, *)
       Read (1, *) ! x settings
       Read (1, *) nx
@@ -43,7 +45,7 @@ contains
       Read (1, *) ! general settings
       Read (1, *) DiffOrder
       Read (1, *) Newton_Error
-      Read (1, *) Eqn_Number
+      Read (1, *) Max_iter
 
       Close (1)
 
