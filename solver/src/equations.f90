@@ -236,13 +236,13 @@ contains
    ! @brief      {Sets the initial condition for the temporal march}
    !
    ! @param      n     dimension of computational spatial domain
-   ! @param      cdom  computational spatial domain
+   ! @param      dom  computational spatial domain
    !
    ! @return      soln  solution
    !!
-   Subroutine initial_condition(n, cdom, soln)
+   Subroutine initial_condition(n, dom, soln)
       integer, intent(in) :: n
-      real(dp), dimension(:), allocatable, intent(in) :: cdom
+      real(dp), dimension(:), allocatable, intent(in) :: dom
       real(dp), dimension(:, :), allocatable, intent(inout) :: soln
       integer :: i
 
@@ -251,15 +251,15 @@ contains
       Case (1)
          !$omp Parallel Do
          Do i = 1, n
-            Call equation1_initial_condition(cdom(i), soln(i, 1))
+            Call equation1_initial_condition(dom(i), soln(i, 1))
          End Do
          !$omp End Parallel Do
 
       Case (2)
          !$omp Parallel Do
          Do i = 1, n
-            Call equation1_initial_condition(cdom(i), soln(2*i - 1, 1))
-            Call equation2_initial_condition(cdom(i), soln(2*i, 1))
+            Call equation1_initial_condition(dom(i), soln(2*i - 1, 1))
+            Call equation2_initial_condition(dom(i), soln(2*i, 1))
          End Do
          !$omp End Parallel Do
       End Select

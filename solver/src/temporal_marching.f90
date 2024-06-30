@@ -33,7 +33,7 @@ contains
 
       allocate (Soln(1:idim, 1:nt))
 
-      Call initial_condition(nx, xcdom, Soln)
+      Call initial_condition(nx, xdom, Soln)
 
       Call implicit_march
 
