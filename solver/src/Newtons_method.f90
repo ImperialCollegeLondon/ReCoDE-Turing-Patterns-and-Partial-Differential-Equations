@@ -2,7 +2,7 @@
 !!
 Module Newtons_method
    use type_kinds
-   use reader, only: Time_switch, Non_Linear_switch, Newton_Error, Eqn_number, Max_iter
+   use reader, only: Time_switch, Non_Linear_switch, Newton_Error, Eqn_number, Max_iter, Domain_number
    use domain
    use linear_algebra
    use maths_constants, only: DiffOrder, nband, sub_diag, sup_diag
@@ -23,7 +23,7 @@ contains
 ! @return     iteration  Number of iterations taken for convergence
 !!
    Subroutine non_linear_iteration(L, RHS, U, iteration)
-      use equations, only: non_linear_setup
+      use equations, only: non_linear_setup, non_linear_setup2D
 
       external :: DGBMV ! external banded matrix multiplication from Blas
 
@@ -42,7 +42,9 @@ contains
 
       iteration = 0
 
+
       Do iteration = 0, max_iter
+        
 
          allocate (X(1:idim))
          allocate (F(1:idim))!, Fu(1:idim),Fv(1:idim))
@@ -54,14 +56,20 @@ contains
 
       !! Set the non-linear terms at the previous value
       !! F is a vector, Fu and Fv are banded matrices
-         Call non_linear_setup(nx, xcdom, X, F, Fu, Fv)
+         Select Case(Domain_number)
+         Case(1)
+            Call non_linear_setup(nx, xcdom, X, F, Fu, Fv)
+         Case(2)
+            Call non_linear_setup2D(nx, ny, xcdom,ycdom,idim,idim_xy,Eqn_number,nband,sub_diag, U, F, Fu, Fv)
+         End Select
+
 
       !! If temporal marching, the non-linear terms need to multipled by -dt
          Select Case (Time_switch)
          Case (1)
-            F = -F*dt
-            Fu = -Fu*dt
-            Fv = -Fv*dt
+            F = 0.d0!-F*dt
+            Fu = 0.d0!-Fu*dt
+            Fv = 0.d0!-Fv*dt
          Case (0)
          End Select
 
@@ -70,18 +78,36 @@ contains
       !! Banded matrix multplication
       !! First we find L * u (the solution at the previous iteration)
          Call DGBMV('N', idim, idim, sub_diag, sup_diag, 1.d0, L, nband, X, 1, 0.d0, N_RHS, 1)
-     
+
+        ! Do i = 1,idim
+        ! Write(6,*) 'N_RHS', n_rhs(i)
+        ! End do
+        ! stop
+
       !! Then we want the RHS and non-linear terms
+
 
          N_RHS = RHS - N_RHS - F
          N_LHS = Fu + Fv + L
 
+         If (iteration.gt.2) then
+         do i = 1,idim
+         Write(6,*) N_RHS(i), X(i), RHS(i), RHS(i)+ N_RHS(i) + F(i), F(i)
+         end do
+         stop
+         end if
+
+
       !!! Solve for the newtown iteration error
          Call solver_banded_double_precision(idim, nband, sub_diag, sup_diag, N_LHS, N_RHS, X)
 
+
+
+
+
       !! calculate the error
          error = norm2(X)
-
+      !  Write (6,*) 'iteration', iteration, error
       !! Add on the correction to the vector
          U = U + X
 
@@ -97,6 +123,7 @@ contains
       Write (6, *) 'Newton iteratin for non-linear BVP passed',Max_iter
       Write (6, *) 'current error::', error
       Write (6, *) 'Stopping'
+      Stop
 
       deallocate (N_LHS, N_RHS, X, F, Fu)
       Stop

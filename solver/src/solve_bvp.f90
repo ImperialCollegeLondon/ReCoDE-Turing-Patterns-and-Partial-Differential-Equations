@@ -19,8 +19,9 @@ contains
 !!
    Subroutine solve_runner
 
-      integer :: i, j, iteration
+      integer :: i, j, k, iteration
       real(dp), dimension(:), allocatable :: U
+      real(dp), dimension(:,:,:), allocatable :: U_2d
       real(dp), dimension(:, :), allocatable :: L !! banded form matrix
       real(dp), dimension(:), allocatable :: RHS !! right hand side of equation
 
@@ -54,12 +55,19 @@ contains
       deallocate (L, RHS)
       !! Print the results
 
-      Open (10, file='BVP.dat')
 
-      Write (6, '(5(A20,x))') 'Physical domain', 'Comp Domain', 'Numerical Soln'!, 'Exact Soln', 'error'
-      Write (10, '(5(A20,x))') 'Physical domain', 'Comp Domain', 'Numerical Soln'!, 'Exact Soln', 'error'
+
+
+
+      If (Domain_number==1) then
+
+            Open (10, file='BVP.dat')
+
+            Write (6, '(5(A20,x))') 'Physical domain', 'Comp Domain', 'Numerical Soln'!, 'Exact Soln', 'error'
+            Write (10, '(5(A20,x))') 'Physical domain', 'Comp Domain', 'Numerical Soln'!, 'Exact Soln', 'error'
 
       Select Case (Eqn_number)
+
       Case (1)
          Do i = 1, nx
             Write (6, '(4(f20.14,1x),e20.10)') xdom(i), xcdom(i), U(i)!, ex**xdom(i), abs(x(i)-ex**xdom(i))
@@ -71,6 +79,64 @@ contains
             Write (10, '(4(f20.14,1x),e20.10)') xdom(i), xcdom(i), U(2*i - 1), U(2*i)!!, ex**xdom(i), abs(x(i)-ex**xdom(i))
          End Do
       End Select
+
+      Else if(Domain_number==2)then
+
+
+
+      Select Case (Eqn_number)
+
+      Case (1)
+
+
+            Open (10, file='BVP1.dat')
+            Open (11, file='BVPx.dat')
+            Open (12, file='BVPy.dat')
+
+      allocate(U_2d(1:nx,1:ny,1))
+        ! Convert the 1D solution vector into a 2D solution matrix
+        do j = 1, ny
+          do i = 1, nx
+            k = (j-1)*nx + i
+            U_2d(i, j, 1) = U(k)
+          end do
+        end do
+
+         Do i = 1, nx
+            Write (11, '(10000(f20.14,1x),e20.10)') (xdom(i),j=1,ny)
+            Write (10, '(10000(f20.14,1x),e20.10)') (U_2d(i,j,1),j=1,ny)
+            Write (12, '(10000(f20.14,1x),e20.10)') (ydom(j),j=1,ny)
+         End Do
+
+
+         Case (2)
+         Open (9, file='BVP1.dat')
+         Open (10, file='BVP2.dat')
+         Open (11, file='BVPx.dat')
+         Open (12, file='BVPy.dat')
+
+      allocate(U_2d(1:nx,1:ny,2))
+        ! Convert the 1D solution vector into a 2D solution matrix
+        do j = 1, ny
+          do i = 1, nx
+            k = (j-1)*nx + i
+            U_2d(i, j, 1) = U(2*k-1)
+            U_2d(i, j, 2) = U(2*k)
+          end do
+        end do
+
+         Do i = 1, nx
+            Write (11, '(10000(f20.14,1x),e20.10)') (xdom(i),j=1,ny)
+            Write (9, '(10000(f20.14,1x),e20.10)') (U_2d(i,j,1),j=1,ny)
+            Write (10, '(10000(f20.14,1x),e20.10)') (U_2d(i,j,2),j=1,ny)
+            Write (12, '(10000(f20.14,1x),e20.10)') (ydom(j),j=1,ny)
+         End Do
+      End Select
+      End if
+
+      
+
+
 
       Close (10)
       Write (6, *)

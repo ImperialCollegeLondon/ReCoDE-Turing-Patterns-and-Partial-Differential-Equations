@@ -2,11 +2,13 @@
 !{ Builds/computes the domains of the problem -
 !  each domain has a computational domain and physical domain and corresponding metric terms
 !  Computatioanl grid goes from 0 to 1
-!  Physical grid goes from left to right (read in from reader)
-!  }
+!  Physical grid goes from left to right (read in from reader)}
 !!
 ! Overall parameters
-! idim       overall dimension
+! idim               overall dimension (idim_xy * Eqn_number))
+! idim_xy            overall x-y dimension 
+! 
+! Domain_number      Number of spatial domains
 !
 ! xdomain parameters
 !____________________________________________________
@@ -23,6 +25,20 @@
 ! x_grid_strech_on  turns on (TRUE) or off (FALSE) grid stretch function
 ! xhalf             puts half the points intbetween left boundary and xhalf
 !
+! ydomain parameters
+!____________________________________________________
+! ny                number of points in y domain
+! ydom              physical y domain (vector)
+! ycdom             computational x domain
+! yl                y left boundary
+! yr                y right boundary
+! dyc               scalar computational distance
+! dycsq             scalar computational distance square
+! ymetric1          dy/dc vector
+! ymetric1sq        dy/dc vector squared
+! ymetric2          dy^2/dc^2 vector
+! y_grid_strech_on  turns on (TRUE) or off (FALSE) grid stretch function
+! yhalf             puts half the points intbetween left boundary and yhalf
 !
 ! time domain parameters
 !____________________________________________________
@@ -34,30 +50,45 @@
 Module domain
    use type_kinds, only: dp
    use omp_lib
+   use reader, only: nx, xl, xr, xhalf, x_grid_strech_on,&
+            & ny, yl, yr, yhalf, y_grid_strech_on,&
+            & nt, tl, tr, Domain_number
 
 !!!! overall
    integer :: idim !! overall dimension size (neqn * number of domains)
+!   integer :: Domain_number  !! Number of spatial domains
+
+   integer :: idim_xy      !  overall xy dimension
 
 !!! x domain
-   integer :: nx
+!   integer :: nx
    real(dp), dimension(:), allocatable :: xdom, xcdom
-   real(dp) :: xl, xr
+!   real(dp) :: xl, xr
    real(dp) :: dxc, dxcsq
    real(dp), dimension(:), allocatable :: xmetric1, xmetric1sq, xmetric2
-   logical :: x_grid_strech_on
-   real(dp) :: xhalf
+!   logical :: x_grid_strech_on
+!   real(dp) :: xhalf
+
+!!! y domain
+!   integer :: ny
+   real(dp), dimension(:), allocatable :: ydom, ycdom
+!   real(dp) :: yl, yr
+   real(dp) :: dyc, dycsq
+   real(dp), dimension(:), allocatable :: ymetric1, ymetric1sq, ymetric2
+!   logical :: y_grid_strech_on
+!   real(dp) :: yhalf
 
 !!! time domain
-   integer :: nt
+!   integer :: nt
    real(dp), dimension(:), allocatable :: tdom
-   real(dp) :: tl, tr, dt
+!   real(dp) :: tl, tr
+   real(dp) :: dt
 
 contains
 
 !!
 ! @brief      { This builds the physical and computational domains given
-!               above in the module
-!               }
+!               above in the module}
 !!
    Subroutine initial_domain_settings
 
@@ -67,11 +98,72 @@ contains
       ! sets up x and xc domains and metrics
       Call set_up_domain(nx, xl, xr, dxc, xdom, xcdom, x_grid_strech_on,&
               &xhalf, xmetric1, xmetric1sq, xmetric2)
-
       dxcsq = dxc*dxc
+
+
+
+
+      Select Case (Domain_number)
+
+      Case(1)
+         ! sets up x and xc domains and metrics
+            Call set_up_domain(nx, xl, xr, dxc, xdom, xcdom, x_grid_strech_on,&
+              &xhalf, xmetric1, xmetric1sq, xmetric2)
+            dxcsq = dxc*dxc
+
+      Case(2)
+            ! sets up x and xc domains and metrics
+      Call set_up_domain(nx, xl, xr, dxc, xdom, xcdom, x_grid_strech_on,&
+              &xhalf, xmetric1, xmetric1sq, xmetric2)
+      dxcsq = dxc*dxc
+
+         ! sets up y and yc domains and metrics
+         Call set_up_domain(ny, yl, yr, dyc, ydom, ycdom, y_grid_strech_on,&
+                 &yhalf, ymetric1, ymetric1sq, ymetric2)
+         dycsq = dyc*dyc
+
+      End Select
 
       ! will add in y-domain in future
    End Subroutine initial_domain_settings
+
+
+
+!!
+! @brief      Given that the size of our matrix depends on how many equations/how many physical domains we have
+!             This subroutine rescales these values so they are now correct
+!             The equations we solve will now be sizes idim * nband
+!
+! @return     idim      total size of the system (neqn*(sum of each domain))
+! @return     sub_diag  gets gets multiplied by neqn
+! @return     sup_diag  gets gets multiplied by neqn
+! @return     nband     the new total bandwidth
+!!
+   Subroutine reset_domain_paramters
+    use maths_constants, only: sub_diag, sup_diag, nband
+    use reader, only: Time_switch, Eqn_number
+
+      Select Case (Domain_number)
+      Case (1)
+         ny = 1
+         idim = nx*Eqn_number
+         idim_xy = idim
+         sub_diag = sub_diag*Eqn_number
+         sup_diag = sub_diag 
+         nband = sub_diag + sup_diag + 1
+      Case (2)
+
+      !!! Rescale
+      idim_xy = nx * ny
+      idim = idim_xy*Eqn_number
+      sub_diag = (sub_diag * ny)*Eqn_number
+      sup_diag = sub_diag 
+      nband = sub_diag + sup_diag + 1
+      Write(6,*) idim, sub_diag, nband
+      End Select
+
+   End Subroutine reset_domain_paramters
+
 
    !!
    ! @brief      {Set up time domain}
@@ -101,8 +193,7 @@ contains
 !!
 ! @brief      { Set up domain builds a physical domain whihch is mapped to a
 !               computational domain via grid streching.
-!               The computational domain will have evenly space grid points
-!               }
+!               The computational domain will have evenly space grid points}
 !
 ! @param      n             How many points in domain
 ! @param      left          The left boundary
@@ -176,8 +267,7 @@ contains
 !!
 ! @brief      { builds the linear mapping function which maps the physical domain
 !               (from left to right) to the computational domain [0,1] with evenly spaced
-!               points
-!               }
+!               points}
 !
 ! @param      c        computatioanal domain
 ! @param      left     The left boundary
@@ -214,8 +304,7 @@ contains
 !          \lambda is computational distance between 0 and 1
 !          \eta is the physical distance between 0 and 1
 !          h is the clustering point: half the grid points are placed between 0 and h
-!          (h must be between 0 and 1 and not 1/2)
-!          }
+!          (h must be between 0 and 1 and not 1/2)}
 !
 ! @param      n          Size of the domain
 ! @param      on_off     Turns on the grid streching If true
@@ -258,8 +347,7 @@ contains
    End Subroutine mapping_strech
 
 !!
-! @brief      {Computes the metrics of the coordinate mapping
-!              }
+! @brief      {Computes the metrics of the coordinate mapping}
 !
 ! @param      n             Size of the domain
 ! @param      x             Physical coodinate (vector)
@@ -295,8 +383,7 @@ contains
 
 !!
 ! @brief      {This function computes the first difference of the function func
-!              It uses the constants D1,D2 which contain the relevent finite difference coefficients
-!              }
+!              It uses the constants D1,D2 which contain the relevent finite difference coefficients}
 !
 ! @param      n      size of domain
 ! @param      func   function to difference
@@ -337,8 +424,7 @@ contains
 
 !!
 ! @brief      {This function computes the first difference of the function func
-!              It uses the constants D1,D2 which contain the relevent finite difference coefficients
-!              }
+!              It uses the constants D1,D2 which contain the relevent finite difference coefficients}
 !
 ! @param      n      size of domain
 ! @param      func   function to difference
