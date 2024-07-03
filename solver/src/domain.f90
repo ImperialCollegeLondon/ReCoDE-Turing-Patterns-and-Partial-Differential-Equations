@@ -6,8 +6,8 @@
 !!
 ! Overall parameters
 ! idim               overall dimension (idim_xy * Eqn_number))
-! idim_xy            overall x-y dimension 
-! 
+! idim_xy            overall x-y dimension
+!
 ! Domain_number      Number of spatial domains
 !
 ! xdomain parameters
@@ -100,22 +100,19 @@ contains
               &xhalf, xmetric1, xmetric1sq, xmetric2)
       dxcsq = dxc*dxc
 
-
-
-
       Select Case (Domain_number)
 
-      Case(1)
+      Case (1)
          ! sets up x and xc domains and metrics
-            Call set_up_domain(nx, xl, xr, dxc, xdom, xcdom, x_grid_strech_on,&
-              &xhalf, xmetric1, xmetric1sq, xmetric2)
-            dxcsq = dxc*dxc
+         Call set_up_domain(nx, xl, xr, dxc, xdom, xcdom, x_grid_strech_on,&
+           &xhalf, xmetric1, xmetric1sq, xmetric2)
+         dxcsq = dxc*dxc
 
-      Case(2)
-            ! sets up x and xc domains and metrics
-      Call set_up_domain(nx, xl, xr, dxc, xdom, xcdom, x_grid_strech_on,&
-              &xhalf, xmetric1, xmetric1sq, xmetric2)
-      dxcsq = dxc*dxc
+      Case (2)
+         ! sets up x and xc domains and metrics
+         Call set_up_domain(nx, xl, xr, dxc, xdom, xcdom, x_grid_strech_on,&
+                 &xhalf, xmetric1, xmetric1sq, xmetric2)
+         dxcsq = dxc*dxc
 
          ! sets up y and yc domains and metrics
          Call set_up_domain(ny, yl, yr, dyc, ydom, ycdom, y_grid_strech_on,&
@@ -126,8 +123,6 @@ contains
 
       ! will add in y-domain in future
    End Subroutine initial_domain_settings
-
-
 
 !!
 ! @brief      Given that the size of our matrix depends on how many equations/how many physical domains we have
@@ -140,29 +135,28 @@ contains
 ! @return     nband     the new total bandwidth
 !!
    Subroutine reset_domain_paramters
-    use maths_constants, only: sub_diag, sup_diag, nband
-    use reader, only: Time_switch, Eqn_number
+      use maths_constants, only: sub_diag, sup_diag, nband
+      use reader, only: Time_switch, Eqn_number
 
       Select Case (Domain_number)
       Case (1)
          ny = 1
-         idim = nx * Eqn_number
+         idim = nx*Eqn_number
          idim_xy = idim
          sub_diag = sub_diag*Eqn_number
-         sup_diag = sub_diag 
+         sup_diag = sub_diag
          nband = sub_diag + sup_diag + 1
       Case (2)
 
       !!! Rescale
-      idim_xy = nx * ny
-      idim = idim_xy*Eqn_number
-      sub_diag = (sub_diag * ny)*Eqn_number
-      sup_diag = sub_diag 
-      nband = sub_diag + sup_diag + 1
+         idim_xy = nx*ny
+         idim = idim_xy*Eqn_number
+         sub_diag = (sub_diag*ny)*Eqn_number
+         sup_diag = sub_diag
+         nband = sub_diag + sup_diag + 1
       End Select
 
    End Subroutine reset_domain_paramters
-
 
    !!
    ! @brief      {Set up time domain}

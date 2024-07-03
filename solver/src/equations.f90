@@ -16,48 +16,42 @@ contains
 
    Subroutine equation_runner(L, RHS)
       use domain
-      use Kronecker, only : KronProd, KronProdMod
+      use Kronecker, only: KronProd, KronProdMod
       real(dp), dimension(:, :), allocatable, intent(out) :: L !! banded form matrix
       real(dp), dimension(:), allocatable, intent(out) :: RHS !! right hand side of equation
-      real(dp), dimension(:,:,:), allocatable :: L1x, L1y 
-      real(dp), dimension(:,:), allocatable :: RHS_temp, L2x, L2y, Ix,Iy,Rx1,Ry1,rx2,ry2
-      real(dp), dimension(:, :), allocatable :: Ltemp1,Ltemp2,Ltemp,rtemp1,rtemp2
+      real(dp), dimension(:, :, :), allocatable :: L1x, L1y
+      real(dp), dimension(:, :), allocatable :: RHS_temp, L2x, L2y, Ix, Iy, Rx1, Ry1, rx2, ry2
+      real(dp), dimension(:, :), allocatable :: Ltemp1, Ltemp2, Ltemp, rtemp1, rtemp2
       real(dp), dimension(:), allocatable :: RHSx1, RHSy1, RHSx2, RHSy2
-      integer :: i,j,i1,i2,j1,j2
-
+      integer :: i, j, i1, i2, j1, j2
 
       Select Case (Domain_number)
-      Case(1)
+      Case (1)
 
-      Call equation_setup(Ltemp, RHS, nx, idim, nband, sub_diag, dxc, dxcsq, xdom, xcdom,&
-                   &xmetric1, xmetric1sq, xmetric2)
+         Call equation_setup(Ltemp, RHS, nx, idim, nband, sub_diag, dxc, dxcsq, xdom, xcdom,&
+                      &xmetric1, xmetric1sq, xmetric2)
 
-      Case(2)
+      Case (2)
 
-      Call equation_setup2D(Ltemp, RHS, nx, ny, idim_xy, idim, Eqn_number,&
-                & dxc, dxcsq, xdom, xcdom,xmetric1, xmetric1sq, xmetric2,&
-                & dyc, dycsq, ydom, ycdom,ymetric1, ymetric1sq, ymetric2)
+         Call equation_setup2D(Ltemp, RHS, nx, ny, idim_xy, idim, Eqn_number,&
+                   & dxc, dxcsq, xdom, xcdom, xmetric1, xmetric1sq, xmetric2,&
+                   & dyc, dycsq, ydom, ycdom, ymetric1, ymetric1sq, ymetric2)
       End Select
 
-      open(10,file='f.dat')
-      do i = 1,idim
-        Write(10,'(100000(f9.3,1x))') Ltemp(i,:)
+      open (10, file='f.dat')
+      do i = 1, idim
+         Write (10, '(100000(f9.3,1x))') Ltemp(i, :)
       end do
-      close(10)
+      close (10)
 
-
-      open(10,file='r.dat')
-      do i = 1,idim
-        Write(10,'(100000(f9.3,1x))') RHS(i)
+      open (10, file='r.dat')
+      do i = 1, idim
+         Write (10, '(100000(f9.3,1x))') RHS(i)
       end do
-      close(10)
+      close (10)
 
-
-      Call band_the_matrix(idim, Ltemp, sub_diag, sup_diag, nband, L)      
-      deallocate(Ltemp)
-
-
-
+      Call band_the_matrix(idim, Ltemp, sub_diag, sup_diag, nband, L)
+      deallocate (Ltemp)
 
       Return
    End Subroutine equation_runner
@@ -76,14 +70,12 @@ contains
       real(dp), dimension(:, :), allocatable, intent(out) :: L !! banded form matrix
       real(dp), dimension(:), allocatable, intent(out) :: RHS !! right hand side of equation
       integer, intent(in) :: n, dim, band, diag
-      real(dp), intent(in) :: dc,dcsq
-      real(dp), dimension(:),allocatable,intent(in) :: dom, cdom, metric1, metric1sq, metric2
+      real(dp), intent(in) :: dc, dcsq
+      real(dp), dimension(:), allocatable, intent(in) :: dom, cdom, metric1, metric1sq, metric2
 
       real(dp), dimension(:, :), allocatable :: L1, L2, Ltemp !! banded form matrix
       real(dp), dimension(:), allocatable :: R1, R2 !! right hand side of equation
       integer :: i, j, i1, i2, j1, j2
-
-
 
       !!! L is the banded matrix, RHS is a vector
       allocate (L(1:band, 1:dim), RHS(dim))
@@ -109,16 +101,16 @@ contains
         !! Wonder how to parallize this?
 
          Do i = 1, n
-           Do j = 1, n
-              i1 = 2*i - 1
-              i2 = 2*i - 0
-              j1 = 2*j - 1
-              j2 = 2*j - 0
-              Ltemp(i1, j1) = L1(i, j)
-              Ltemp(i2, j2) = L2(i, j)
-           End Do
-           RHS(i1) = R1(i)
-           RHS(i2) = R2(i)
+            Do j = 1, n
+               i1 = 2*i - 1
+               i2 = 2*i - 0
+               j1 = 2*j - 1
+               j2 = 2*j - 0
+               Ltemp(i1, j1) = L1(i, j)
+               Ltemp(i2, j2) = L2(i, j)
+            End Do
+            RHS(i1) = R1(i)
+            RHS(i2) = R2(i)
          End Do
 
          deallocate (L1, R1, L2, R2)
@@ -249,10 +241,6 @@ contains
       Return
    End Subroutine build_the_matrix
 
-
- 
-
-
    !!
    ! @brief      {Sets the initial condition for the temporal march}
    !
@@ -266,8 +254,6 @@ contains
       real(dp), dimension(:), allocatable, intent(in) :: dom
       real(dp), dimension(:, :), allocatable, intent(inout) :: soln
       integer :: i
-
-
 
       Select Case (Eqn_number)
 
@@ -339,8 +325,6 @@ contains
 
       deallocate (Fu_temp, Fv_temp)
    End Subroutine non_linear_setup
-
-
 
 End Module equations
 

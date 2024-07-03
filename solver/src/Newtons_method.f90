@@ -13,7 +13,7 @@ contains
 ! @brief      {Non-linear extension to BVP and IVP - use Newton Iteration
 !              PDE can be written as: Lu  + F(u) = RHS, F has non-linear terms
 !
-!              Will discuss in greater detail how this works 
+!              Will discuss in greater detail how this works
 !
 ! @param      L          Linear opeartor (nband * idim)
 ! @param      RHS        RHS of the equation
@@ -30,7 +30,7 @@ contains
       real(dp), dimension(:), allocatable, intent(inout) :: U !! Soln
       real(dp), dimension(:, :), allocatable, intent(in) :: L !! banded form matrix
       real(dp), dimension(:), allocatable, intent(in)  :: RHS !! right hand side of equation
-      integer, intent(out) :: iteration 
+      integer, intent(out) :: iteration
 
       real(dp), dimension(:, :), allocatable :: N_LHS !! Left hand side of equation
       real(dp), dimension(:), allocatable :: N_RHS !! Right hand side of equation
@@ -41,7 +41,6 @@ contains
       real(dp) :: error, blank
 
       iteration = 0
-
 
       Do iteration = 0, max_iter
 
@@ -55,12 +54,12 @@ contains
 
       !! Set the non-linear terms at the previous value
       !! F is a vector, Fu and Fv are banded matrices
-         Select Case(Domain_number)
-         Case(1)
+         Select Case (Domain_number)
+         Case (1)
             Call non_linear_setup(nx, xcdom, X, F, Fu, Fv)
-         Case(2)
+         Case (2)
             !Write(6,*) 'here'
-            Call non_linear_setup2D(nx, ny, xcdom,ycdom,idim,idim_xy,Eqn_number,nband,sub_diag, U, F, Fu, Fv)
+            Call non_linear_setup2D(nx, ny, xcdom, ycdom, idim, idim_xy, Eqn_number, nband, sub_diag, U, F, Fu, Fv)
          End Select
 
 !        Write(6,*) Domain_number
@@ -76,36 +75,34 @@ contains
          End Select
 
       !! Set up RHS of Newton Iteration
-      !
+         !
       !! Banded matrix multplication
       !! First we find L * u (the solution at the previous iteration)
          Call DGBMV('N', idim, idim, sub_diag, sup_diag, 1.d0, L, nband, X, 1, 0.d0, N_RHS, 1)
 
-        ! Do i = 1,idim
-        ! Write(6,*) 'N_RHS', n_rhs(i)
-        ! End do
-        ! stop
+         ! Do i = 1,idim
+         ! Write(6,*) 'N_RHS', n_rhs(i)
+         ! End do
+         ! stop
 
       !! Then we want the RHS and non-linear terms
-
 
          N_RHS = RHS - N_RHS - F
          N_LHS = Fu + Fv + L
 
-         If (iteration.gt.2) then
-         do i = 1,idim
-         Write(6,*) N_RHS(i), X(i), RHS(i), RHS(i)+ N_RHS(i) + F(i), F(i)
+         If (iteration .gt. 2) then
+         do i = 1, idim
+            Write (6, *) N_RHS(i), X(i), RHS(i), RHS(i) + N_RHS(i) + F(i), F(i)
          end do
          stop
          end if
-
 
       !!! Solve for the newtown iteration error
          Call solver_banded_double_precision(idim, nband, sub_diag, sup_diag, N_LHS, N_RHS, X)
 
       !! calculate the error
          error = norm2(X)
-      !  Write (6,*) 'iteration', iteration, error
+         !  Write (6,*) 'iteration', iteration, error
       !! Add on the correction to the vector
          U = U + X
 
@@ -113,12 +110,12 @@ contains
 
          ! if error is sufficiently small
          If (error .LT. Newton_Error) Then
-           Return 
+            Return
          Else
          End if
       End do
 
-      Write (6, *) 'Newton iteratin for non-linear BVP passed',Max_iter
+      Write (6, *) 'Newton iteratin for non-linear BVP passed', Max_iter
       Write (6, *) 'current error::', error
       Write (6, *) 'Stopping'
       Stop

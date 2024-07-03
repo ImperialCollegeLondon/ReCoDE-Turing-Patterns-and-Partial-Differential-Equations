@@ -9,7 +9,6 @@ Module reader
    integer :: Max_iter
    real(dp) :: Newton_Error
 
-
    ! Domain Terms
    integer :: nx, ny, nt, Domain_number
    real(dp) :: xl, xr, xhalf, yl, yr, yhalf, tl, tr
@@ -102,7 +101,6 @@ contains
          Write (6, *)
          !Stop
       End Select
-
 
       Select Case (y_grid_strech_on_integer)
       Case (1)
