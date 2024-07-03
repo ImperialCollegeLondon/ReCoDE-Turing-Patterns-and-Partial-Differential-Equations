@@ -241,6 +241,8 @@ contains
             temp(1:differ) = RHS(1:differ)
             temp(((ny - 1)*nx)*Eqn_number:idim) = RHS(((ny - 1)*nx)*Eqn_number:idim)
 
+
+         !!! Here it's quite complicated to set the correct boundary conditions to temp 
             If (Eqn_number == 1) then
 
                !$omp Parallel Do
@@ -252,6 +254,7 @@ contains
 
             Else if (Eqn_number == 2) then
 
+            !! This can probably be simplifed however it's a little complicated. Easy implementations over speed!
                !$omp Parallel Do
                Do k = 1, ny - 1
                   temp(1 + differ*k) = RHS(1 + differ*k)
@@ -274,6 +277,7 @@ contains
             Call non_linear_iteration(L_March, temp, U, iteration)
          End Select
 
+         ! Set the solution
          Soln(:, j) = U(:)
          
          If (mod(j,100)==0) Then
