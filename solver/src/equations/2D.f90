@@ -18,14 +18,12 @@ Subroutine equation_setup2D(L, RHS, nx, ny, idim_xy, idim, Eqn_number,&
 
       real(dp), dimension(:,:,:), allocatable :: Ix,Iy
       real(dp), dimension(:,:,:), allocatable :: l1x, l1y
-      real(dp), dimension(:,:), allocatable :: R1
+      real(dp), dimension(:,:), allocatable :: R1,L1
       real(dp), dimension(:,:,:), allocatable :: l2x, l2y
-      real(dp), dimension(:,:), allocatable ::  R2
+      real(dp), dimension(:,:), allocatable ::  R2,L2
       real(dp),dimension(:),allocatable :: Rtemp1, Rtemp2
       real(dp),dimension(:,:,:),allocatable :: ltemp1, ltemp2
 
-      real(dp),dimension(3,3) :: hhh
-      real(dp),dimension(9) :: lll
 
       integer :: i, j, k, i1,i2, j1, j2, differ
 
@@ -114,17 +112,42 @@ Subroutine equation_setup2D(L, RHS, nx, ny, idim_xy, idim, Eqn_number,&
         End do
 
         !Rtemp1 = KronProd(Iy,R1) 
-        RHS = reshape(R1, (/idim_xy/))
+        Rtemp1 = reshape(R1, (/idim_xy/))
+        Rtemp2 = reshape(R2, (/idim_xy/))
 
 
-        Do i = 1,idim
-        Do j = 1,idim
-          L(i,j) = Sum(Ltemp1(i,j,:))
+        allocate(L1(idim_xy,idim_xy),L2(idim_xy,idim_xy))
+        Do i = 1,idim_xy
+        Do j = 1,idim_xy
+          L1(i,j) = Sum(Ltemp1(i,j,:))
+          L2(i,j) = Sum(Ltemp2(i,j,:))
         End do
         End Do
 
-        deallocate(ltemp1, l1x,l1y, R1)
- 
+
+      !  Set the Ltemp and RHS
+
+        Do i = 1,idim_xy
+          RHS(2*i-1) = Rtemp1(i)
+          RHS(2*i) = Rtemp2(i)
+        End do
+
+        Do i = 1, idim_xy
+        Do j = 1, idim_xy
+              i1 = 2*i - 1
+              i2 = 2*i - 0
+              j1 = 2*j - 1
+              j2 = 2*j - 0
+
+              L(i1, j1) = L1(i, j)
+              L(i2, j2) = L2(i, j)
+
+        End Do 
+        END DO
+
+        deallocate(Rtemp1,ltemp1, l1x,l1y, R1, L1)
+        deallocate(Rtemp2,ltemp2, l2x,l2y, R2, L2)
+
       End Select
 
       deallocate(Ix, Iy)

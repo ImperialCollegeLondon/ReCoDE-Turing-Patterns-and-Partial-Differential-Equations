@@ -25,7 +25,7 @@ hold off
 
 
 f=figure(2);
-surf(x,y,C)
+surf(x,y,Sol2)
 hold on
 
 shading interp

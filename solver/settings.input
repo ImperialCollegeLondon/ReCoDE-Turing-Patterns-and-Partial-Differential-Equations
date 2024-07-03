@@ -1,7 +1,7 @@
 Settings ________________
 0           !!! Time_switch (time marching if 1)
 0           !!! Non_Linear_switch (non linear if 1)
-1           !!! Eqn_number
+2           !!! Eqn_number
 2           !!! Domain_number
 
 !!! xdomain settings_____

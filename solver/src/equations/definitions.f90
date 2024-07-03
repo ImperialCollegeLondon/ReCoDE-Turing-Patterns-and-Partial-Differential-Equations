@@ -204,7 +204,7 @@ contains
       By = 0.d0
       
       C = 0.d0
-      D = 1.d0
+      D = 2.d0*(x**2.d0+y**2.d0)
 
    End Subroutine equation2_linear
 
@@ -246,12 +246,12 @@ contains
       real(dp), intent(out) :: Ax, Bx, Ay, By, C, D
 
       Ax = 0.d0
-      Bx = 1.d0
+      Bx = 0.d0
 
       Ay = 0.d0
       By = 0.d0
       
-      C = 0.d0
+      C = 1.d0
       D = 0.d0
 
    End Subroutine equation2_BC_X_Bot
@@ -272,13 +272,13 @@ contains
       real(dp), intent(out) :: Ax, Bx, Ay, By, C, D
 
       Ax = 0.d0
-      Bx = 1.d0
+      Bx = 0.d0
 
       Ay = 0.d0
       By = 0.d0
       
-      C = 0.d0
-      D = 0.d0
+      C = 1.d0
+      D = y**2.d0
 
    End Subroutine equation2_BC_X_Top
 
@@ -302,9 +302,9 @@ contains
       Bx = 0.d0
 
       Ay = 0.d0
-      By = 1.d0
+      By = 0.d0
 
-      C = 0.d0
+      C = 1.d0
       D = 0.d0
    End Subroutine equation2_BC_Y_Bot
 
@@ -327,10 +327,10 @@ contains
       Bx = 0.d0
 
       Ay = 0.d0
-      By = 1.d0
+      By = 0.d0
 
-      C = 0.d0
-      D = 0.d0
+      C = 1.d0
+      D = x**2.d0
 
    End Subroutine equation2_BC_Y_Top
 
