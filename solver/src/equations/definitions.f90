@@ -224,8 +224,8 @@ contains
       real(dp), intent(in) :: x, y, u, v
       real(dp), intent(out) :: F, Fu, Fv
 
-      F = 0.5d0*u! u - u**2.d0 !- 1.2d0*v*u/(0.2d0 + u)
-      Fu = 0.5d0!1.d0 - 2.d0*u !- 1.2d0*(v/(0.2d0 + u) - v*u/((0.2d0 + u)**2.d0))
+      F = u - u**2.d0 !- 1.2d0*v*u/(0.2d0 + u)
+      Fu =  1.d0 - 2.d0*u !- 1.2d0*(v/(0.2d0 + u) - v*u/((0.2d0 + u)**2.d0))
       Fv = 0.d0! -1.2d0*u/(0.2d0 + u)
 
    End Subroutine equation2_non_linear
@@ -246,12 +246,12 @@ contains
       real(dp), intent(out) :: Ax, Bx, Ay, By, C, D
 
       Ax = 0.d0
-      Bx = 0.d0
+      Bx = 1.d0
 
       Ay = 0.d0
       By = 0.d0
       
-      C = 1.d0
+      C = 0.d0
       D = 0.d0
 
    End Subroutine equation2_BC_X_Bot
@@ -272,13 +272,13 @@ contains
       real(dp), intent(out) :: Ax, Bx, Ay, By, C, D
 
       Ax = 0.d0
-      Bx = 0.d0
+      Bx = 1.d0
 
       Ay = 0.d0
       By = 0.d0
       
-      C = 1.d0
-      D = y**2.d0
+      C = 0.d0
+      D = 0.d0
 
    End Subroutine equation2_BC_X_Top
 
@@ -302,9 +302,9 @@ contains
       Bx = 0.d0
 
       Ay = 0.d0
-      By = 0.d0
+      By = 1.d0
 
-      C = 1.d0
+      C = 0.d0
       D = 0.d0
    End Subroutine equation2_BC_Y_Bot
 
@@ -327,10 +327,10 @@ contains
       Bx = 0.d0
 
       Ay = 0.d0
-      By = 0.d0
+      By = 1.d0
 
-      C = 1.d0
-      D = x**2.d0
+      C = 0.d0
+      D = 0.d0
 
    End Subroutine equation2_BC_Y_Top
 
@@ -349,7 +349,7 @@ contains
 
            !IC = sin(2.d0*pi*x)
        ! IC = sin(pi*x) + sin(pi*y)
-       IC = cos(2.d0*pi*x)**2.d0
+       IC = cos(2.d0*pi*x*y)**2.d0
       !IC = 5.d0*x*y
 
 

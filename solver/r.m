@@ -36,5 +36,19 @@ for k = 1:skip:nt
     clear('1')
     hold off
 
+    f=figure(2);
+    f.Position = [500 0 500 500]
+    pcolor(x,y,Sol2(1+(k-1)*nx:nx+(k-1)*nx,1:ny))
+    %pcolor(x,y,u(x,y))
+    hold on
+    colorbar
+    shading interp
+    caxis([0 1])
+    ylim([0 xr]);
+    xlim([0 yr])
+    pause(0.2);
+    clear('1')
+    hold off
+
     
 end
