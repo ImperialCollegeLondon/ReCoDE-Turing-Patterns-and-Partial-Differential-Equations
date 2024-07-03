@@ -17,12 +17,12 @@ contains
 !
 ! @param       x     physical domain input - can have variable coefficients with x
 !
-! @return      A     second order derivative coefficient
-! @return      B     first order derivative coefficient
+! @return      Ax     second order x derivative coefficient
+! @return      Bx     first order x derivative coefficient
+! @return      Ay     second order y derivative coefficient
+! @return      By     first order y derivative coefficient
 ! @return      C     zeroth order derivative coefficient
 ! @return      D     RHS/inhomogenous term
-!
-!
 !
 !!
    Subroutine equation1_linear(x, y, Ax, Bx, Ay, By, C, D)
@@ -30,14 +30,14 @@ contains
       real(dp), intent(out) :: Ax, Bx, Ay, By, C, D
       real(dp) :: epsi
 
-      epsi = 0.001
+      epsi = 0.1
 
-      Ax = 1.d0
+      Ax = epsi
       Bx = 0.d0
 
-      Ay = 1.d0
+      Ay = epsi
       By = 0.d0
-
+      
       C = 0.d0
       D = 1.d0
 
@@ -59,20 +59,23 @@ contains
       real(dp), intent(in) :: x, y, u, v
       real(dp), intent(out) :: F, Fu, Fv
 !!! F is a function of u - Fu is F'(u)
-!!!
+!!!   Non linear terms do not effect boundaries
 
-      F = u - u**2.d0 !- 1.2d0*v*u/(0.2d0 + u)
-      Fu = 1.d0 - 2.d0*u !- 1.2d0*(v/(0.2d0 + u) - v*u/((0.2d0 + u)**2.d0))
-      Fv = 0.d0! -1.2d0*u/(0.2d0 + u)
+      F = u - u**2.d0 - 1.2d0*v*u/(0.2d0 + u)
+      Fu =  1.d0 - 2.d0*u - 1.2d0*(v/(0.2d0 + u) - v*u/((0.2d0 + u)**2.d0))
+      Fv = -1.2d0*u/(0.2d0 + u)
    End Subroutine equation1_non_linear
 
 !!
-! @brief      Sets up the bottom/lefthand boundary in the first equation in the form A u_xx + B u_x + C u = D
+! @brief      Sets up the bottom/lefthand boundary in the first equation in the form A u_xx + B u_x + C u = D or D u_t
+!             When y = xl
 !
 ! @param       x     physical domain input - can have variable coefficients with x
 !
-! @return      A     second order derivative coefficient
-! @return      B     first order derivative coefficient
+! @return      Ax     second order x derivative coefficient
+! @return      Bx     first order x derivative coefficient
+! @return      Ay     second order y derivative coefficient
+! @return      By     first order y derivative coefficient
 ! @return      C     zeroth order derivative coefficient
 ! @return      D     RHS/inhomogenous term
 !
@@ -86,7 +89,7 @@ contains
 
       Ay = 0.d0
       By = 0.d0
-
+      
       C = 0.d0
       D = 0.d0
 
@@ -97,8 +100,10 @@ contains
 !
 ! @param       x     physical domain input - can have variable coefficients with x
 !
-! @return      A     second order derivative coefficient
-! @return      B     first order derivative coefficient
+! @return      Ax     second order x derivative coefficient
+! @return      Bx     first order x derivative coefficient
+! @return      Ay     second order y derivative coefficient
+! @return      By     first order y derivative coefficient
 ! @return      C     zeroth order derivative coefficient
 ! @return      D     RHS/inhomogenous term
 !
@@ -107,18 +112,20 @@ contains
       real(dp), intent(in) :: x, y ! xpoisiton in the domain
       real(dp), intent(out) :: Ax, Bx, Ay, By, C, D
 
+
       Ax = 0.d0
       Bx = 1.d0
 
       Ay = 0.d0
       By = 0.d0
-
+      
       C = 0.d0
       D = 0.d0
 
    End Subroutine equation1_BC_X_Top
 
-   Subroutine equation1_BC_Y_Bot(x, y, Ax, Bx, Ay, By, C, D)
+
+      Subroutine equation1_BC_Y_Bot(x, y, Ax, Bx, Ay, By, C, D)
       !!! Note that the boundary conditions at the corners are governed by BC_Y
       real(dp), intent(in) :: x, y ! xpoisiton in the domain
       real(dp), intent(out) :: Ax, Bx, Ay, By, C, D
@@ -128,7 +135,7 @@ contains
 
       Ay = 0.d0
       By = 1.d0
-
+      
       C = 0.d0
       D = 0.d0
 
@@ -139,8 +146,10 @@ contains
 !
 ! @param       x     physical domain input - can have variable coefficients with x
 !
-! @return      A     second order derivative coefficient
-! @return      B     first order derivative coefficient
+! @return      Ax     second order x derivative coefficient
+! @return      Bx     first order x derivative coefficient
+! @return      Ay     second order y derivative coefficient
+! @return      By     first order y derivative coefficient
 ! @return      C     zeroth order derivative coefficient
 ! @return      D     RHS/inhomogenous term
 !
@@ -155,7 +164,7 @@ contains
 
       Ay = 0.d0
       By = 1.d0
-
+      
       C = 0.d0
       D = 0.d0
 
@@ -165,6 +174,7 @@ contains
 ! @brief      Sets up the the initial conidiotn in the form u = F
 !
 ! @param       x     physical domain input - can have variable coefficients with x
+! @param       x     physical domain input - can have variable coefficients with x
 !
 ! @return      IC     Initial condition
 !
@@ -173,10 +183,11 @@ contains
       real(dp), intent(in) :: x, y ! xpoisiton in the domain
       real(dp), intent(out) :: IC
 
-      !IC = sin(2.d0*pi*x)
-      ! IC = sin(pi*x) + sin(pi*y)
-      IC = cos(2.d0*pi*y*x)**2.d0
+           !IC = sin(2.d0*pi*x)
+       ! IC = sin(pi*x) + sin(pi*y)
+      ! IC = cos(2.d0*pi*x*y)**2.d0
       !IC = 5.d0*x*y
+      IC = (cos(2.d0*x*y*pi))**2.d0*ex**(-(x-0.5)**2.d0-(y-0.5)**2.d0)
 
    End Subroutine equation1_initial_condition
 
@@ -185,8 +196,10 @@ contains
 !
 ! @param       x     physical domain input - can have variable coefficients with x
 !
-! @return      A     second order derivative coefficient
-! @return      B     first order derivative coefficient
+! @return      Ax     second order x derivative coefficient
+! @return      Bx     first order x derivative coefficient
+! @return      Ay     second order y derivative coefficient
+! @return      By     first order y derivative coefficient
 ! @return      C     zeroth order derivative coefficient
 ! @return      D     RHS/inhomogenous term
 !
@@ -200,7 +213,7 @@ contains
 
       Ay = 1.d0
       By = 0.d0
-
+      
       C = 0.d0
       D = 1.d0
 
@@ -218,23 +231,24 @@ contains
 ! @return      Fv    v - Derivative of Non-linear output (Fv is a function of u and v)
 !
 !!
-   Subroutine equation2_non_linear(x, y, u, v, F, Fu, Fv)
+ Subroutine equation2_non_linear(x, y, u, v, F, Fu, Fv)
       real(dp), intent(in) :: x, y, u, v
       real(dp), intent(out) :: F, Fu, Fv
 
-      F = u - u**2.d0 !- 1.2d0*v*u/(0.2d0 + u)
-      Fu = 1.d0 - 2.d0*u !- 1.2d0*(v/(0.2d0 + u) - v*u/((0.2d0 + u)**2.d0))
-      Fv = 0.d0! -1.2d0*u/(0.2d0 + u)
+      F = 1.2d0*v*(u/(0.2d0 + u) + 0.d0)
+      Fu = 1.2d0*v/(0.2d0 + u) - v*u/((0.2d0 + u)**2.d0)
+      Fv = 1.2d0*(u/(0.2d0 + u) + 0.d0)
 
    End Subroutine equation2_non_linear
-
 !!
 ! @brief      Sets up the bottom/lefthand boundary in the second equation in the form A v_xx + B v_x + C v = D
 !
 ! @param       x     physical domain input - can have variable coefficients with x
 !
-! @return      A     second order derivative coefficient
-! @return      B     first order derivative coefficient
+! @return      Ax     second order x derivative coefficient
+! @return      Bx     first order x derivative coefficient
+! @return      Ay     second order y derivative coefficient
+! @return      By     first order y derivative coefficient
 ! @return      C     zeroth order derivative coefficient
 ! @return      D     RHS/inhomogenous term
 !
@@ -248,7 +262,7 @@ contains
 
       Ay = 0.d0
       By = 0.d0
-
+      
       C = 0.d0
       D = 0.d0
 
@@ -259,8 +273,10 @@ contains
 !
 ! @param       x     physical domain input - can have variable coefficients with x
 !
-! @return      A     second order derivative coefficient
-! @return      B     first order derivative coefficient
+! @return      Ax     second order x derivative coefficient
+! @return      Bx     first order x derivative coefficient
+! @return      Ay     second order y derivative coefficient
+! @return      By     first order y derivative coefficient
 ! @return      C     zeroth order derivative coefficient
 ! @return      D     RHS/inhomogenous term
 !
@@ -274,19 +290,22 @@ contains
 
       Ay = 0.d0
       By = 0.d0
-
+      
       C = 0.d0
       D = 0.d0
 
    End Subroutine equation2_BC_X_Top
+
 
 !!
 ! @brief      Sets up the bottom/lefthand boundary in the second equation in the form A v_xx + B v_x + C v = D
 !
 ! @param       x     physical domain input - can have variable coefficients with x
 !
-! @return      A     second order derivative coefficient
-! @return      B     first order derivative coefficient
+! @return      Ax     second order x derivative coefficient
+! @return      Bx     first order x derivative coefficient
+! @return      Ay     second order y derivative coefficient
+! @return      By     first order y derivative coefficient
 ! @return      C     zeroth order derivative coefficient
 ! @return      D     RHS/inhomogenous term
 !
@@ -310,8 +329,10 @@ contains
 !
 ! @param       x     physical domain input - can have variable coefficients with x
 !
-! @return      A     second order derivative coefficient
-! @return      B     first order derivative coefficient
+! @return      Ax     second order x derivative coefficient
+! @return      Bx     first order x derivative coefficient
+! @return      Ay     second order y derivative coefficient
+! @return      By     first order y derivative coefficient
 ! @return      C     zeroth order derivative coefficient
 ! @return      D     RHS/inhomogenous term
 !
@@ -335,6 +356,7 @@ contains
 ! @brief      Sets up the the initial conidiotn in the form u = F
 !
 ! @param       x     physical domain input - can have variable coefficients with x
+! @param       y     physical domain input - can have variable coefficients with y
 !
 ! @return      IC     Initial condition
 !
@@ -343,10 +365,13 @@ contains
       real(dp), intent(in) :: x, y ! xpoisiton in the domain
       real(dp), intent(out) :: IC
 
-      !IC = sin(2.d0*pi*x)
-      ! IC = sin(pi*x) + sin(pi*y)
-      IC = cos(2.d0*pi*x*y)**2.d0
-      !IC = 5.d0*x*y
+
+      If ((x**2.d0+y**2.d0).le.0.5) Then
+         IC = abs(1.d0 - x - y)
+      End If
+      If (((x-1.d0)**2.d0+(y-1.d0)**2.d0).le.0.5) Then
+         IC = abs(1.d0 - x - y)/2.d0
+      End If
 
    End Subroutine equation2_initial_condition
 

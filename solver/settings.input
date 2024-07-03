@@ -5,14 +5,14 @@ Settings ________________
 2           !!! Domain_number
 
 !!! xdomain settings_____
-20 					!!! nx - size of x domain
-0,2				  !!! xl, xr - start and end points of x domain
-0,0.3      		!!! x strech on or off, grid strech parameter
+25 					!!! nx - size of x domain
+0,1				  !!! xl, xr - start and end points of x domain
+1,0.3      		!!! x strech on or off, grid strech parameter
 
 !!! ydomain settings_____
-20          !!! ny - size of y domain
-0,2          !!! yl, yr - start and end points of y domain
-0,0.3         !!! y strech on or off, grid strech parameter
+25          !!! ny - size of y domain
+0,1          !!! yl, yr - start and end points of y domain
+1,0.3         !!! y strech on or off, grid strech parameter
 
 !!! temportal marching settings_____
 2000         !!! nt - size of x domain

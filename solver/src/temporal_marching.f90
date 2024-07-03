@@ -3,7 +3,7 @@
 Module temporal_marching
    use omp_lib
    use type_kinds
-   use reader, only: Time_switch, Non_Linear_switch, Eqn_number
+   use reader, only: Time_switch, Non_Linear_switch, Eqn_number, Newton_Error
    use domain
    use equations, only: equation_runner, initial_condition, initial_condition2D
    use maths_constants, only: DiffOrder, nband, sub_diag, sup_diag
@@ -24,15 +24,26 @@ contains
       integer :: i, j, jk, k
       real(dp), dimension(:, :, :), allocatable :: U_2d
 
+      Write (6, *)
       Write (6, *) 'size of x Domain::: ', nx, dxc
+     
+      Select Case(Domain_number)
+      Case(2)
+         Write (6, *) 'size of y Domain::: ', ny, dyc
+      End Select
+    
       Write (6, *) 'size of total Domain::: ', idim
       Write (6, *)
       Write (6, *) 'size of t Domain::: ', nt, dt
       Write (6, *)
       Write (6, *) 'order of the finite differences', DiffOrder
-      Write (6, *) '... Building matrix'
-      Write (6, *)
-      Write (6, *) 'Starting march...'
+     
+      Select Case(Non_Linear_switch)
+      Case(1)
+         Write (6, *) 'Non-linear iteration at error',Newton_Error
+      End Select
+      
+      Write (6, *) '... Building equation'
 
       allocate (Soln(1:idim, 1:nt))
 
@@ -45,12 +56,12 @@ contains
          Call initial_condition2D(nx, ny, xdom, ydom, idim, idim_xy, Eqn_number, Soln)
       End Select
 
-      !! March
+      !! March in time
 
       Call implicit_march
 
       If (Domain_number == 1) then
-      !! Printing Case
+      !! Printing solution
          Select Case (Eqn_number)
 
          Case (1)
@@ -187,6 +198,10 @@ contains
       !! Obtain the original operator L
       Call equation_runner(L, RHS)
 
+      Write (6, *) 'Equation Built...'
+      Write (6, *) 'Starting march...'
+      Write (6, *)
+
       !! Builds the operator
       !!! Interior points - L and L_March are in banded form - row sub_diag+1 is where the diagonals live
 
@@ -196,20 +211,8 @@ contains
       Call band_the_matrix(idim, L_march_unbanded, sub_diag, sup_diag, nband, L_March)
       Deallocate (L_march_unbanded)
 
+      !! Set the marching operator - differs from L !!!!
       L_March = L_March - dt*L
-
-      !! Set the boundaries - to the equation Lu = RHS
-      !! Boundaries are rows 1 and N in non-banded form
-      !! These loops find those rows in banded form
-      !! This needs much more explaining/simplifying?
-      !!$omp Parallel Do
-      !Do i = 0, Eqn_number - 1
-      !Do j = 1, sub_diag, Eqn_number
-      !   L_March(sub_diag + 2 - j, j + i) = L(sub_diag + 2 - j, j + i)
-      !   L_March(sub_diag + j, idim + 1 - j - i) = L(sub_diag + j, idim + 1 - j - i)
-      !End Do
-      !End do
-      !!$omp End Parallel Do
 
       !!!! March the operator
       !!! Begin the march in time
@@ -240,37 +243,42 @@ contains
 
             If (Eqn_number == 1) then
 
+               !$omp Parallel Do
                Do k = 1, ny - 1
                   temp(1 + k*nx) = RHS(1 + k*nx)
                   temp((nx) + k*nx) = RHS((nx) + k*nx)
-               End do
+               End Do
+               !$omp End Parallel Do
 
             Else if (Eqn_number == 2) then
+
+               !$omp Parallel Do
                Do k = 1, ny - 1
                   temp(1 + differ*k) = RHS(1 + differ*k)
                   temp(2 + differ*k) = RHS(2 + differ*k)
                   temp(2*nx - 1 + k*differ) = RHS(2*nx - 1 + k*differ)
                   temp(2*nx + k*differ) = RHS(2*nx + k*differ)
-               End do
-            End if
+               End Do
+               !$omp End Parallel Do
+
+            End If
 
          End Select
 
          !!! solve the system
          Call solver_banded_Double_precision(idim, nband, sub_diag, sup_diag, L_March, temp, U)
 
+         !!! Non-linear solve
          Select Case (Non_Linear_switch)
          Case (1)
             Call non_linear_iteration(L_March, temp, U, iteration)
-         Case Default
          End Select
 
          Soln(:, j) = U(:)
-         Write (6, *) 'Position done::', j
-
-         !Do i = 1,idim
-         !   Write(6,*) i, U(i)
-         !End do
+         
+         If (mod(j,100)==0) Then
+            Write (6, *) 'Position done::', j,'/',nt
+         End if
       End Do
 
       deallocate (temp, U, L_March)

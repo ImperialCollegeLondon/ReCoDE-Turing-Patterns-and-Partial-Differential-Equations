@@ -176,9 +176,9 @@ contains
       End Do
       !$omp End Parallel Do
 
-      If (tdom(nt) == tr) then
+      If (abs(tdom(nt) - tr).lt.1.d-7) then
       Else
-         Write (6, *) 'Error 1 in time_domain'
+         Write (6, *) 'Error 1 in time_domain', tdom(nt), tr
       End if
 
    End Subroutine time_domain

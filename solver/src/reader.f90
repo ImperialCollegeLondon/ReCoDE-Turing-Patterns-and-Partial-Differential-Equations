@@ -93,13 +93,13 @@ contains
       End Select
 
       Select Case (nx)
-      Case (1:6)
+      Case (1:5)
          Write (6, *)
          Write (6, *) 'Error in settings.input.... stopping program'
          Write (6, *)
-         Write (6, *) 'nx must be greater than 6'
+         Write (6, *) 'nx must be greater than 5'
          Write (6, *)
-         !Stop
+         Stop
       End Select
 
       Select Case (y_grid_strech_on_integer)
@@ -115,13 +115,13 @@ contains
       End Select
 
       Select Case (ny)
-      Case (1:6)
+      Case (1:5)
          Write (6, *)
          Write (6, *) 'Error in settings.input.... stopping program'
          Write (6, *)
-         Write (6, *) 'ny must be greater than 6'
+         Write (6, *) 'ny must be greater than 5'
          Write (6, *)
-         !Stop
+         Stop
       End Select
 
       Select Case (difforder)

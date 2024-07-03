@@ -8,7 +8,7 @@ Sol2 = readmatrix('IBVP2.dat');
 nx = height(x(:,1))
 ny = width(y(1,:))
 nt = 2000
-skip = 10
+skip = 1
 
 xr = max(x(:,1))
 yr = max(y(1,:))
@@ -32,8 +32,6 @@ for k = 1:skip:nt
     caxis([0 1])
     ylim([0 xr]);
     xlim([0 yr])
-    pause(0.2);
-    clear('1')
     hold off
 
     f=figure(2);
@@ -46,8 +44,26 @@ for k = 1:skip:nt
     caxis([0 1])
     ylim([0 xr]);
     xlim([0 yr])
+    hold off
+
+    f=figure(3);
+    f.Position = [1000 0 500 500]
+    surf(x,y,Sol1(1+(k-1)*nx:nx+(k-1)*nx,1:ny),'FaceColor','k','FaceAlpha',0.3)
+    hold on
+    surf(x,y,Sol2(1+(k-1)*nx:nx+(k-1)*nx,1:ny),'FaceColor','r','FaceAlpha',0.3)
+    %pcolor(x,y,u(x,y))
+    caxis([0 1])
+    ylim([0 xr]);
+    xlim([0 yr])
+    zlim([0 1])
+    hold off
+
+
+
     pause(0.2);
     clear('1')
+    clear('2')
+    clear('3')
     hold off
 
     
