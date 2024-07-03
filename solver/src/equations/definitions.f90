@@ -39,7 +39,7 @@ contains
       By = 0.d0
       
       C = 0.d0
-      D = 2.d0*(x**2.d0+y**2.d0)
+      D = 1.d0
 
    End Subroutine equation1_linear
 
@@ -82,12 +82,12 @@ contains
       real(dp), intent(out) :: Ax, Bx, Ay, By, C, D
 
       Ax = 0.d0
-      Bx = 0.d0
+      Bx = 1.d0
 
       Ay = 0.d0
       By = 0.d0
       
-      C = 1.d0
+      C = 0.d0
       D = 0.d0
 
    End Subroutine equation1_BC_X_Bot
@@ -109,13 +109,13 @@ contains
 
 
       Ax = 0.d0
-      Bx = 0.d0
+      Bx = 1.d0
 
       Ay = 0.d0
       By = 0.d0
       
-      C = 1.d0
-      D = y**2.d0
+      C = 0.d0
+      D = 0.d0
 
    End Subroutine equation1_BC_X_Top
 
@@ -129,9 +129,9 @@ contains
       Bx = 0.d0
 
       Ay = 0.d0
-      By = 0.d0
+      By = 1.d0
       
-      C = 1.d0
+      C = 0.d0
       D = 0.d0
 
    End Subroutine equation1_BC_Y_Bot
@@ -156,10 +156,10 @@ contains
       Bx = 0.d0
 
       Ay = 0.d0
-      By = 0.d0
+      By = 1.d0
       
-      C = 1.d0
-      D = x**2.d0
+      C = 0.d0
+      D = 0.d0
 
    End Subroutine equation1_BC_Y_Top
 
@@ -177,7 +177,7 @@ contains
 
       !IC = sin(2.d0*pi*x)
        ! IC = sin(pi*x) + sin(pi*y)
-       IC = cos(2.d0*pi*x)**2.d0
+       IC = cos(2.d0*pi*y*x)**2.d0
       !IC = 5.d0*x*y
 
    End Subroutine equation1_initial_condition
@@ -204,7 +204,7 @@ contains
       By = 0.d0
       
       C = 0.d0
-      D = 2.d0*(x**2.d0+y**2.d0)
+      D = 1.d0
 
    End Subroutine equation2_linear
 

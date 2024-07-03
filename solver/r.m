@@ -8,7 +8,7 @@ Sol2 = readmatrix('IBVP2.dat');
 nx = height(x(:,1))
 ny = width(y(1,:))
 nt = 2000
-skip = 1
+skip = 10
 
 xr = max(x(:,1))
 yr = max(y(1,:))
