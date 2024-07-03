@@ -35,11 +35,11 @@ contains
       Ax = 1.d0
       Bx = 0.d0
 
-      Ay = 0.d0
+      Ay = 1.d0
       By = 0.d0
       
       C = 0.d0
-      D = 2.d0!*(x**2.d0)
+      D = 2.d0*(x**2.d0+y**2.d0)
 
    End Subroutine equation1_linear
 
@@ -90,7 +90,6 @@ contains
       C = 1.d0
       D = 0.d0
 
-
    End Subroutine equation1_BC_X_Bot
 
 !!
@@ -116,7 +115,7 @@ contains
       By = 0.d0
       
       C = 1.d0
-      D = 1.d0
+      D = y**2.d0
 
    End Subroutine equation1_BC_X_Top
 
@@ -133,7 +132,7 @@ contains
       By = 0.d0
       
       C = 1.d0
-      D = x**2.d0
+      D = 0.d0
 
    End Subroutine equation1_BC_Y_Bot
 

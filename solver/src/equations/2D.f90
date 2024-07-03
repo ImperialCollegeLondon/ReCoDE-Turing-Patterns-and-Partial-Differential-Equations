@@ -18,15 +18,16 @@ Subroutine equation_setup2D(L, RHS, nx, ny, idim_xy, idim, Eqn_number,&
 
       real(dp), dimension(:,:,:), allocatable :: Ix,Iy
       real(dp), dimension(:,:,:), allocatable :: l1x, l1y
-      real(dp), dimension(:,:), allocatable :: Ltemp1, R1
+      real(dp), dimension(:,:), allocatable :: R1
       real(dp), dimension(:,:,:), allocatable :: l2x, l2y
-      real(dp), dimension(:,:), allocatable :: Ltemp2, R2
+      real(dp), dimension(:,:), allocatable ::  R2
       real(dp),dimension(:),allocatable :: Rtemp1, Rtemp2
+      real(dp),dimension(:,:,:),allocatable :: ltemp1, ltemp2
 
       real(dp),dimension(3,3) :: hhh
       real(dp),dimension(9) :: lll
 
-      integer :: i, j, k, i1,i2, j1, j2
+      integer :: i, j, k, i1,i2, j1, j2, differ
 
       allocate(RHS(idim),L(idim,idim))
       allocate(Ix(nx,nx,nx),Iy (ny,ny,ny))
@@ -48,7 +49,7 @@ Subroutine equation_setup2D(L, RHS, nx, ny, idim_xy, idim, Eqn_number,&
 
       !!! note in this case idim_xy = idim
 
-      allocate(Ltemp1(idim_xy,idim_xy))
+      allocate(Ltemp1(idim_xy,idim_xy,ny+nx))
       Ltemp1 = 0.d0
 
       Call build_the_matrix2D(nx, dxc, dxcsq, xcdom, xmetric1, xmetric1sq, xmetric2, &
@@ -56,115 +57,74 @@ Subroutine equation_setup2D(L, RHS, nx, ny, idim_xy, idim, Eqn_number,&
                               &1, L1x, L1y, R1)
 
 
-
         !! Build Ltemp1 operator and Rtemp1 with the Kronecker product
         Do j = 2,ny-1
-          Ltemp1 = Ltemp1 + KronProd(Iy(:,:,j),l1x(:,:,j)) 
+          Ltemp1(:,:,j) = KronProd(Iy(:,:,j),l1x(:,:,j)) 
         End do
 
         Do j = 1,nx
-           Ltemp1 = Ltemp1 + KronProd(l1y(:,:,j),Ix(:,:,j))
+           Ltemp1(:,:,j+ny) =  KronProd(l1y(:,:,j),Ix(:,:,j))
         End do
 
-
-        Open(10, file='1.dat')
-        Do i = 1,nx
-          Write(10,'(100000(f9.3,1x))') l1x(i,:,1)
-          !Write(10,*) l1x(i,:,2)
-          !Write(10,*) l1x(i,:,3)
-          !Write(10,*) l1x(i,:,4)
-          !Write(10,*) l1x(i,:,5)
-          !Write(10,*) l1x(i,:,6)
+        Do i = 1,ny-2
+          Ltemp1(nx*i+1,:,ny+1) = 0.d0
+          Ltemp1(nx*i+nx,:,ny+nx) = 0.d0
         End do
-        close(10)
-
-      Open(10, file='23.dat')
-        Do i = 1,ny
-          Write(10,*) l1y(i,:,1)
-          Write(10,*) l1y(i,:,2)
-          Write(10,*) l1y(i,:,3)
-          Write(10,*) l1y(i,:,4)
-          Write(10,*) l1y(i,:,5)
-          Write(10,*) l1y(i,:,6)
-        End do
-        close(10)
-      
-
-
-        Open(10, file='3.dat')
-        Do i = 1,idim
-          Write(10,'(100000(f9.3,1x))') ltemp1(i,:)
-        End do
-        close(10)
-
 
         !Rtemp1 = KronProd(Iy,R1) 
         RHS = reshape(R1, (/idim_xy/))
 
-        L = Ltemp1
+
+        Do i = 1,idim
+        Do j = 1,idim
+          L(i,j) = Sum(Ltemp1(i,j,:))
+        End do
+        End Do
 
         deallocate(ltemp1, l1x,l1y, R1)
 
-
-        Open(10, file='2.dat')
-        Do i = 1,idim
-          Write(10,*) RHS(i)
-        End do
-        close(10)
-
       Case(2)
-   !!! note in this case idim_xy = idim
 
-      allocate(Ltemp1(idim_xy,idim_xy),Rtemp1(idim_xy))
-      allocate(Ltemp2(idim_xy,idim_xy),Rtemp2(idim_xy))
-      Ltemp1 = 0.d0; Rtemp1 = 0.d0; Ltemp2 = 0.d0; Rtemp2 = 0.d0
+      allocate(Ltemp1(idim_xy,idim_xy,ny+nx),Ltemp2(idim_xy,idim_xy,ny+nx))
+      Ltemp1 = 0.d0; Ltemp2 = 0.d0
 
       Call build_the_matrix2D(nx, dxc, dxcsq, xcdom, xmetric1, xmetric1sq, xmetric2, &
                               &ny, dyc, dycsq, ycdom, ymetric1, ymetric1sq, ymetric2, &
                               &1, L1x, L1y, R1)
+
       Call build_the_matrix2D(nx, dxc, dxcsq, xcdom, xmetric1, xmetric1sq, xmetric2, &
                               &ny, dyc, dycsq, ycdom, ymetric1, ymetric1sq, ymetric2, &
                               &2, L2x, L2y, R2)
 
 
         !! Build Ltemp1 operator and Rtemp1 with the Kronecker product
-        Do j = 1,ny
-          Ltemp1 = Ltemp1 + KronProd(Iy(:,:,j),l1x(:,:,j)) 
-          Ltemp2 = Ltemp2 + KronProd(Iy(:,:,j),l2x(:,:,j)) 
+        Do j = 2,ny-1
+          Ltemp1(:,:,j) = KronProd(Iy(:,:,j),l1x(:,:,j)) 
+          Ltemp2(:,:,j) = KronProd(Iy(:,:,j),l2x(:,:,j)) 
         End do
 
         Do j = 1,nx
-          Ltemp1 = Ltemp1 + KronProd(l1y(:,:,j),Ix(:,:,j))
-          Ltemp2 = Ltemp2 + KronProd(l2y(:,:,j),Ix(:,:,j)) 
+           Ltemp1(:,:,j+ny) =  KronProd(l1y(:,:,j),Ix(:,:,j))
+           Ltemp2(:,:,j+ny) =  KronProd(l2y(:,:,j),Ix(:,:,j))
         End do
 
-        Rtemp1 = reshape(R1, (/idim_xy/))
-        Rtemp2 = reshape(R2, (/idim_xy/)) 
-
-
-      !  Set the Ltemp and RHS
-
-        Do i = 1,idim_xy
-          RHS(2*i-1) = Rtemp1(i)
-          RHS(2*i) = Rtemp2(i)
+        Do i = 1,ny-2
+          Ltemp1(nx*i+1,:,ny+1) = 0.d0; Ltemp1(nx*i+nx,:,ny+nx) = 0.d0
+          Ltemp2(nx*i+1,:,ny+1) = 0.d0; Ltemp2(nx*i+nx,:,ny+nx) = 0.d0
         End do
 
-        Do i = 1, idim_xy
-        Do j = 1, idim_xy
-              i1 = 2*i - 1
-              i2 = 2*i - 0
-              j1 = 2*j - 1
-              j2 = 2*j - 0
+        !Rtemp1 = KronProd(Iy,R1) 
+        RHS = reshape(R1, (/idim_xy/))
 
-              L(i1, j1) = Ltemp1(i, j)
-              L(i2, j2) = Ltemp2(i, j)
 
-        End Do 
-        END DO
+        Do i = 1,idim
+        Do j = 1,idim
+          L(i,j) = Sum(Ltemp1(i,j,:))
+        End do
+        End Do
 
-        deallocate(Rtemp1,ltemp1, l1x,l1y, R1)
-        deallocate(Rtemp2,ltemp2, l2x,l2y, R2)
-
+        deallocate(ltemp1, l1x,l1y, R1)
+ 
       End Select
 
       deallocate(Ix, Iy)
