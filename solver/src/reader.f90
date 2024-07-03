@@ -100,7 +100,7 @@ contains
          Write (6, *)
          Write (6, *) 'nx must be greater than 6'
          Write (6, *)
-         Stop
+         !Stop
       End Select
 
 
@@ -123,7 +123,7 @@ contains
          Write (6, *)
          Write (6, *) 'ny must be greater than 6'
          Write (6, *)
-         Stop
+         !Stop
       End Select
 
       Select Case (difforder)

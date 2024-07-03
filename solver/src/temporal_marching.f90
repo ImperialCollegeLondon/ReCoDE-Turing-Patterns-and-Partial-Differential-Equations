@@ -50,7 +50,6 @@ contains
 
       !! March
 
-
       Call implicit_march
 
       
@@ -61,7 +60,7 @@ contains
 
       Case (1)
 
-         Open (10, file='IVBP1.dat')
+         Open (10, file='IVBP1D.dat')
          Write (10, '(20000(f20.14,1x))') 0.d0, (tDom(j), j=1, nt)
 
          Do i = 1, nx
@@ -192,7 +191,7 @@ contains
 
 !!!! Build the opeator
       allocate (temp(1:idim), U(idim))
-      allocate (L_March(nband, 1:idim),L_march_unbanded(1;idim,1:idim))
+      allocate (L_March(nband, 1:idim),L_march_unbanded(1:idim,1:idim))
 
       !! Obtain the original operator L
       Call equation_runner(L, RHS)
@@ -206,8 +205,22 @@ contains
       Call band_the_matrix(idim, L_march_unbanded, sub_diag, sup_diag, nband, L_March)   
       Deallocate(L_march_unbanded)      
 
-
       L_March = L_March - dt*L
+
+
+
+      !! Set the boundaries - to the equation Lu = RHS
+      !! Boundaries are rows 1 and N in non-banded form
+      !! These loops find those rows in banded form
+      !! This needs much more explaining/simplifying?
+      !!$omp Parallel Do
+      !Do i = 0, Eqn_number - 1
+      !Do j = 1, sub_diag, Eqn_number
+      !   L_March(sub_diag + 2 - j, j + i) = L(sub_diag + 2 - j, j + i)
+      !   L_March(sub_diag + j, idim + 1 - j - i) = L(sub_diag + j, idim + 1 - j - i)
+      !End Do
+      !End do
+      !!$omp End Parallel Do
 
 
 
@@ -273,7 +286,11 @@ contains
          End Select
 
          Soln(:, j) = U(:)
-         Write (6, *) 'Position done::', j, U(20)
+         Write (6, *) 'Position done::', j
+
+         !Do i = 1,idim
+         !   Write(6,*) i, U(i)
+         !End do 
       End Do
 
       deallocate (temp, U, L_March)

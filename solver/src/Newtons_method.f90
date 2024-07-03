@@ -44,7 +44,6 @@ contains
 
 
       Do iteration = 0, max_iter
-        
 
          allocate (X(1:idim))
          allocate (F(1:idim))!, Fu(1:idim),Fv(1:idim))
@@ -60,16 +59,19 @@ contains
          Case(1)
             Call non_linear_setup(nx, xcdom, X, F, Fu, Fv)
          Case(2)
+            !Write(6,*) 'here'
             Call non_linear_setup2D(nx, ny, xcdom,ycdom,idim,idim_xy,Eqn_number,nband,sub_diag, U, F, Fu, Fv)
          End Select
 
+!        Write(6,*) Domain_number
+!         stop
 
       !! If temporal marching, the non-linear terms need to multipled by -dt
          Select Case (Time_switch)
          Case (1)
-            F = 0.d0!-F*dt
-            Fu = 0.d0!-Fu*dt
-            Fv = 0.d0!-Fv*dt
+            F = -F*dt
+            Fu = -Fu*dt
+            Fv = -Fv*dt
          Case (0)
          End Select
 
@@ -100,10 +102,6 @@ contains
 
       !!! Solve for the newtown iteration error
          Call solver_banded_double_precision(idim, nband, sub_diag, sup_diag, N_LHS, N_RHS, X)
-
-
-
-
 
       !! calculate the error
          error = norm2(X)

@@ -35,11 +35,11 @@ contains
       Ax = 1.d0
       Bx = 0.d0
 
-      Ay = 1.d0
+      Ay = 0.d0
       By = 0.d0
       
-      C = 1.d0
-      D = 1.d0
+      C = 0.d0
+      D = 2.d0!*(x**2.d0)
 
    End Subroutine equation1_linear
 
@@ -61,8 +61,8 @@ contains
 !!! F is a function of u - Fu is F'(u)
 !!!
 
-      F = 0.d0! u - u**2.d0 !- 1.2d0*v*u/(0.2d0 + u)
-      Fu = 0.d0!1.d0 - 2.d0*u !- 1.2d0*(v/(0.2d0 + u) - v*u/((0.2d0 + u)**2.d0))
+      F = u - u**2.d0 !- 1.2d0*v*u/(0.2d0 + u)
+      Fu =  1.d0 - 2.d0*u !- 1.2d0*(v/(0.2d0 + u) - v*u/((0.2d0 + u)**2.d0))
       Fv = 0.d0! -1.2d0*u/(0.2d0 + u)
    End Subroutine equation1_non_linear
 
@@ -82,15 +82,13 @@ contains
       real(dp), intent(out) :: Ax, Bx, Ay, By, C, D
 
       Ax = 0.d0
-      Bx = 1.d0
+      Bx = 0.d0
 
       Ay = 0.d0
       By = 0.d0
       
-      C = 0.d0
+      C = 1.d0
       D = 0.d0
-
-
 
 
    End Subroutine equation1_BC_X_Bot
@@ -112,13 +110,13 @@ contains
 
 
       Ax = 0.d0
-      Bx = 1.d0
+      Bx = 0.d0
 
       Ay = 0.d0
       By = 0.d0
       
-      C = 0.d0
-      D = 0.d0
+      C = 1.d0
+      D = 1.d0
 
    End Subroutine equation1_BC_X_Top
 
@@ -132,10 +130,10 @@ contains
       Bx = 0.d0
 
       Ay = 0.d0
-      By = 1.d0
+      By = 0.d0
       
-      C = 0.d0
-      D = 0.d0
+      C = 1.d0
+      D = x**2.d0
 
    End Subroutine equation1_BC_Y_Bot
 
@@ -159,10 +157,10 @@ contains
       Bx = 0.d0
 
       Ay = 0.d0
-      By = 1.d0
+      By = 0.d0
       
-      C = 0.d0
-      D = 0.d0
+      C = 1.d0
+      D = x**2.d0
 
    End Subroutine equation1_BC_Y_Top
 

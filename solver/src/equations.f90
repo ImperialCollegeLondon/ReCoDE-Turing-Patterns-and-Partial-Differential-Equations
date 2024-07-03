@@ -46,6 +46,13 @@ contains
       close(10)
 
 
+      open(10,file='r.dat')
+      do i = 1,idim
+        Write(10,'(100000(f9.3,1x))') RHS(i)
+      end do
+      close(10)
+
+
       Call band_the_matrix(idim, Ltemp, sub_diag, sup_diag, nband, L)      
       deallocate(Ltemp)
 

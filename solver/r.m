@@ -7,7 +7,7 @@ Sol1 = readmatrix('IBVP1.dat');
 Sol2 = readmatrix('IBVP2.dat');
 nx = height(x(:,1))
 ny = width(y(1,:))
-nt = 1000
+nt = 2000
 skip = 1
 
 xr = max(x(:,1))
@@ -29,7 +29,7 @@ for k = 1:skip:nt
     hold on
     colorbar
     shading interp
-    caxis([0 2])
+    caxis([0 1])
     ylim([0 xr]);
     xlim([0 yr])
     pause(0.2);

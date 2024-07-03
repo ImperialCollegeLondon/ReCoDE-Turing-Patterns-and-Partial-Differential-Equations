@@ -23,6 +23,9 @@ Subroutine equation_setup2D(L, RHS, nx, ny, idim_xy, idim, Eqn_number,&
       real(dp), dimension(:,:), allocatable :: Ltemp2, R2
       real(dp),dimension(:),allocatable :: Rtemp1, Rtemp2
 
+      real(dp),dimension(3,3) :: hhh
+      real(dp),dimension(9) :: lll
+
       integer :: i, j, k, i1,i2, j1, j2
 
       allocate(RHS(idim),L(idim,idim))
@@ -55,13 +58,45 @@ Subroutine equation_setup2D(L, RHS, nx, ny, idim_xy, idim, Eqn_number,&
 
 
         !! Build Ltemp1 operator and Rtemp1 with the Kronecker product
-        Do j = 1,ny
+        Do j = 2,ny-1
           Ltemp1 = Ltemp1 + KronProd(Iy(:,:,j),l1x(:,:,j)) 
         End do
 
         Do j = 1,nx
-          Ltemp1 = Ltemp1 + KronProd(l1y(:,:,j),Ix(:,:,j)) 
+           Ltemp1 = Ltemp1 + KronProd(l1y(:,:,j),Ix(:,:,j))
         End do
+
+
+        Open(10, file='1.dat')
+        Do i = 1,nx
+          Write(10,'(100000(f9.3,1x))') l1x(i,:,1)
+          !Write(10,*) l1x(i,:,2)
+          !Write(10,*) l1x(i,:,3)
+          !Write(10,*) l1x(i,:,4)
+          !Write(10,*) l1x(i,:,5)
+          !Write(10,*) l1x(i,:,6)
+        End do
+        close(10)
+
+      Open(10, file='23.dat')
+        Do i = 1,ny
+          Write(10,*) l1y(i,:,1)
+          Write(10,*) l1y(i,:,2)
+          Write(10,*) l1y(i,:,3)
+          Write(10,*) l1y(i,:,4)
+          Write(10,*) l1y(i,:,5)
+          Write(10,*) l1y(i,:,6)
+        End do
+        close(10)
+      
+
+
+        Open(10, file='3.dat')
+        Do i = 1,idim
+          Write(10,'(100000(f9.3,1x))') ltemp1(i,:)
+        End do
+        close(10)
+
 
         !Rtemp1 = KronProd(Iy,R1) 
         RHS = reshape(R1, (/idim_xy/))
@@ -69,6 +104,13 @@ Subroutine equation_setup2D(L, RHS, nx, ny, idim_xy, idim, Eqn_number,&
         L = Ltemp1
 
         deallocate(ltemp1, l1x,l1y, R1)
+
+
+        Open(10, file='2.dat')
+        Do i = 1,idim
+          Write(10,*) RHS(i)
+        End do
+        close(10)
 
       Case(2)
    !!! note in this case idim_xy = idim
@@ -256,7 +298,7 @@ Subroutine equation_setup2D(L, RHS, nx, ny, idim_xy, idim, Eqn_number,&
 
          !$omp Parallel Do
          Do i = 2, n_y - 1
-            Call equation1_linear(cdom_x(jj), cdom_y(i), blank, blank,  At(i), Bt(i), blank, Dt(i))
+            Call equation1_linear(cdom_x(jj), cdom_y(i), blank, blank,  At(i), Bt(i), Ct(i), Dt(i))
          End do
          !$omp End Parallel Do
         
@@ -269,7 +311,7 @@ Subroutine equation_setup2D(L, RHS, nx, ny, idim_xy, idim, Eqn_number,&
 
          !$omp Parallel Do
          Do i = 2, n_y - 1
-            Call equation2_linear(cdom_x(jj), cdom_y(i), blank, blank,  At(i), Bt(i), blank, Dt(i))
+            Call equation2_linear(cdom_x(jj), cdom_y(i), blank, blank,  At(i), Bt(i), Ct(i), Dt(i))
          End do
          !$omp End Parallel Do
       End Select   
@@ -278,7 +320,7 @@ Subroutine equation_setup2D(L, RHS, nx, ny, idim_xy, idim, Eqn_number,&
     !! Apply the correct scallings
       !$omp Parallel Do
       Do i = 1, n_y
-         Call scales(A(i), B(i), C(i), D(i), At(i), Bt(i), 0.d0, Dt(i), ch_y, chsq_y, metric1_y(i), metric1sq_y(i), metric2_y(i))
+         Call scales(A(i), B(i), C(i), D(i), At(i), Bt(i), Ct(i), Dt(i), ch_y, chsq_y, metric1_y(i), metric1sq_y(i), metric2_y(i))
       End Do
       !$omp End Parallel Do
 
@@ -289,6 +331,9 @@ Subroutine equation_setup2D(L, RHS, nx, ny, idim_xy, idim, Eqn_number,&
     
     !! set the final output for RHS
       
+    !  Do i = 1,n_y
+    !  Write(6,*) jj, i, Ct(i), C(i),cdom_x(jj)
+    !  end do
 
       !!! Note that the boundary conditions at the corners are governed by BC_Y 
       RHS(jj, 1) = D(1)

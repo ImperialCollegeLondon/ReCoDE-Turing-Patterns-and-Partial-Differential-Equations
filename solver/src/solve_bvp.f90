@@ -70,7 +70,7 @@ contains
 
       Case (1)
          Do i = 1, nx
-            Write (6, '(4(f20.14,1x),e20.10)') xdom(i), xcdom(i), U(i)!, ex**xdom(i), abs(x(i)-ex**xdom(i))
+            Write (6, '(4(f20.14,1x),e20.10)') xdom(i), xcdom(i), U(i),xdom(i)**2.d0!, ex**xdom(i), abs(x(i)-ex**xdom(i))
             Write (10, '(4(f20.14,1x),e20.10)') xdom(i), xcdom(i), U(i)!, ex**xdom(i), abs(x(i)-ex**xdom(i))
          End Do
       Case (2)

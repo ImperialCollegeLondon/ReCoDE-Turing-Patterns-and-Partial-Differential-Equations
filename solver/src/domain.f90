@@ -146,7 +146,7 @@ contains
       Select Case (Domain_number)
       Case (1)
          ny = 1
-         idim = nx*Eqn_number
+         idim = nx * Eqn_number
          idim_xy = idim
          sub_diag = sub_diag*Eqn_number
          sup_diag = sub_diag 
@@ -159,7 +159,6 @@ contains
       sub_diag = (sub_diag * ny)*Eqn_number
       sup_diag = sub_diag 
       nband = sub_diag + sup_diag + 1
-      Write(6,*) idim, sub_diag, nband
       End Select
 
    End Subroutine reset_domain_paramters
