@@ -19,7 +19,7 @@ Settings ________________
 0.d0,2.d0        !!! tl, tr - start and end points of time domain
 
 !!! general settings_____
-2   				!!! DiffOrder - order of finite differences scheme
-1.d-5       !!! Newton_Error
+4   				!!! DiffOrder - order of finite differences scheme
+1.d-6       !!! Newton_Error
 2000         !!! Max_iter - max Newton iterations
 
