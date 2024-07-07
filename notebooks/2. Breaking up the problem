@@ -1,0 +1,15 @@
+# 2 - Breaking up the problem
+
+When building a solver it is often useful to not build one precisely for a particular problem but instead a whole class of problems. 
+This allows us to not only solve multiple equations, but build the solver out of simpler steps.
+For example:
+  - In one spatial dimension $x$, consider the boundary value problem (BVP) with solution $u(x)$: 
+        $$A(x) \frac{\partial^2 u}{\partial x^2}+A(x) \frac{\partial^2 u}{\partial x^2}+C(x) u  = D(x) $$
+    Where $A(x), B(x), C(x)$ and $D(x)$ are functions. Supplemented with Dirichlet or Neumann bounary conditions, this equation is pretty simple to solve (again described in [this](https://github.com/ImperialCollegeLondon/ReCoDE_Diffusion_Code/blob/main/docs/1-numerics.md) examplar).
+  - Then we consider the small paramter $\epsilon$:
+        $$\epsilon A(x) \frac{\partial^2 u}{\partial x^2}+A(x) \frac{\partial^2 u}{\partial x^2}+C(x) u  = D(x).$$
+    This will be discussed in section.... !!!!! 
+  - We then add in the non-linearities, by including the non-linear function $F$:
+       $$\epsilon A(x) \frac{\partial^2 u}{\partial x^2}+A(x) \frac{\partial^2 u}{\partial x^2}+C(x) u + F(u) = D(x). $$
+    This is solved via Newton-Iteration, discussed in section... !!!
+    
