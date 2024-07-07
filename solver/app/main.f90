@@ -27,11 +27,11 @@ Program main
 
    Select Case (Time_switch)
    Case (0)
-      Write (6, *) 'Ellipitc Solver'
+      Write (6, *) 'Boundary Value Problem Solver'
       Call solve_runner
       Stop
    Case (1)
-      Write (6, *) 'Parabolic Solver'
+      Write (6, *) 'Temporal Initial Boundary Value Solver'
       Call march_runner
       Stop
    End Select

@@ -37,13 +37,15 @@ contains
       Write (6, *) 'size of t Domain::: ', nt, dt
       Write (6, *)
       Write (6, *) 'order of the finite differences', DiffOrder
+      Write (6, *)
      
       Select Case(Non_Linear_switch)
       Case(1)
          Write (6, *) 'Non-linear iteration at error',Newton_Error
+         Write (6, *)
       End Select
       
-      Write (6, *) '... Building equation'
+      Write (6, *) 'Building equation... '
 
       allocate (Soln(1:idim, 1:nt))
 
@@ -198,8 +200,7 @@ contains
       !! Obtain the original operator L
       Call equation_runner(L, RHS)
 
-      Write (6, *) 'Equation Built...'
-      Write (6, *) 'Starting march...'
+      Write (6, *) 'Eqnuation Built... Starting march...'
       Write (6, *)
 
       !! Builds the operator

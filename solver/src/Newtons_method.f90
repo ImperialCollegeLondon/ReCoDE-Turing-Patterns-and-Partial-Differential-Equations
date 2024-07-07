@@ -62,9 +62,6 @@ contains
             Call non_linear_setup2D(nx, ny, xcdom, ycdom, idim, idim_xy, Eqn_number, nband, sub_diag, U, F, Fu, Fv)
          End Select
 
-!        Write(6,*) Domain_number
-!         stop
-
       !! If temporal marching, the non-linear terms need to multipled by -dt
          Select Case (Time_switch)
          Case (1)
@@ -75,7 +72,7 @@ contains
          End Select
 
       !! Set up RHS of Newton Iteration
-         !
+      !
       !! Banded matrix multplication
       !! First we find L * u (the solution at the previous iteration)
          Call DGBMV('N', idim, idim, sub_diag, sup_diag, 1.d0, L, nband, X, 1, 0.d0, N_RHS, 1)
@@ -90,13 +87,6 @@ contains
          N_RHS = RHS - N_RHS - F
          N_LHS = Fu + Fv + L
 
-         If (iteration .gt. 2) then
-         do i = 1, idim
-            Write (6, *) N_RHS(i), X(i), RHS(i), RHS(i) + N_RHS(i) + F(i), F(i)
-         end do
-         stop
-         end if
-
       !!! Solve for the newtown iteration error
          Call solver_banded_double_precision(idim, nband, sub_diag, sup_diag, N_LHS, N_RHS, X)
 
@@ -108,20 +98,24 @@ contains
 
          deallocate (N_LHS, N_RHS, X, F, Fu, Fv)
 
+         !Write(6,*) error, iteration, max_iter, Newton_Error
+
          ! if error is sufficiently small
          If (error .LT. Newton_Error) Then
             Return
          Else
          End if
+
+         ! If iteration fails
+         If (iteration == Max_iter) then
+            !Do i = 1, idim
+            !   Write (6, *) N_RHS(i), X(i), RHS(i), RHS(i) + N_RHS(i) + F(i), F(i)
+            !End do
+            Write (6, *) 'Newton iteratin reached maximum::', Max_iter
+            Write (6, *) 'Last error', error
+            Stop
+         End if
       End do
-
-      Write (6, *) 'Newton iteratin for non-linear BVP passed', Max_iter
-      Write (6, *) 'current error::', error
-      Write (6, *) 'Stopping'
-      Stop
-
-      deallocate (N_LHS, N_RHS, X, F, Fu)
-      Stop
    End Subroutine non_linear_iteration
 
 End Module Newtons_method
