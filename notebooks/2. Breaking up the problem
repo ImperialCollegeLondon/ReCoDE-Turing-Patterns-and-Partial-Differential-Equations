@@ -1,4 +1,4 @@
-# 3 - Breaking up the problem
+# 2 - Breaking up the problem
 
 When building a solver it is often useful to not build one precisely for a particular problem but instead a whole class of problems. 
 This allows us to not only solve multiple equations, but build the solver out of simpler steps.
