@@ -68,8 +68,8 @@ contains
       real(dp), dimension(:), allocatable :: R1, R2 !! right hand side of equation
       integer :: i, j, i1, i2, j1, j2
 
-      !!! L is the banded matrix, RHS is a vector
-      allocate (L(1:band, 1:dim), RHS(dim))
+      !!! L is the non banded matrix, RHS is a vector
+      allocate (L(1:dim, 1:dim), RHS(dim))
 
       Select Case (Eqn_number)
 
@@ -160,13 +160,13 @@ contains
       Case (1)
 
          !!! Boundaries
-         Call equation1_BC_X_Bot(cdom(1), 0.d0, At(1), Bt(1), blank, blank, Ct(1), Dt(1))
-         Call equation1_BC_X_Top(cdom(n), 0.d0, At(n), Bt(n), blank, blank, Ct(n), Dt(n))
+         Call equation1_BC_X_Bot(cdom(1), 1.d0, At(1), Bt(1), blank, blank, Ct(1), Dt(1))
+         Call equation1_BC_X_Top(cdom(n), 1.d0, At(n), Bt(n), blank, blank, Ct(n), Dt(n))
          !!! Interior
 
          !$omp Parallel Do
          Do i = 2, n - 1
-            Call equation1_linear(cdom(i), 0.d0, At(i), Bt(i), blank, blank, Ct(i), Dt(i))
+            Call equation1_linear(cdom(i), 1.d0, At(i), Bt(i), blank, blank, Ct(i), Dt(i))
          End Do
          !$omp End Parallel Do
 
@@ -174,13 +174,13 @@ contains
       Case (2)
 
          !!! Boundaries
-         Call equation2_BC_X_Bot(cdom(1), 0.d0, At(1), Bt(1), blank, blank, Ct(1), Dt(1))
-         Call equation2_BC_X_Top(cdom(n), 0.d0, At(n), Bt(n), blank, blank, Ct(n), Dt(n))
+         Call equation2_BC_X_Bot(cdom(1), 1.d0, At(1), Bt(1), blank, blank, Ct(1), Dt(1))
+         Call equation2_BC_X_Top(cdom(n), 1.d0, At(n), Bt(n), blank, blank, Ct(n), Dt(n))
          !!! Interior
 
          !$omp Parallel Do
          Do i = 2, n - 1
-            Call equation2_linear(cdom(i), 0.d0, At(i), Bt(i), blank, blank, Ct(i), Dt(i))
+            Call equation2_linear(cdom(i), 1.d0, At(i), Bt(i), blank, blank, Ct(i), Dt(i))
          End Do
          !$omp End Parallel Do
 
@@ -241,15 +241,15 @@ contains
       Case (1)
          !$omp Parallel Do
          Do i = 1, n
-            Call equation1_initial_condition(dom(i), 0.d0, soln(i, 1))
+            Call equation1_initial_condition(dom(i), 1.d0, soln(i, 1))
          End Do
          !$omp End Parallel Do
 
       Case (2)
          !$omp Parallel Do
          Do i = 1, n
-            Call equation1_initial_condition(dom(i), 0.d0, soln(2*i - 1, 1))
-            Call equation2_initial_condition(dom(i), 0.d0, soln(2*i, 1))
+            Call equation1_initial_condition(dom(i), 1.d0, soln(2*i - 1, 1))
+            Call equation2_initial_condition(dom(i), 1.d0, soln(2*i, 1))
          End Do
          !$omp End Parallel Do
       End Select
@@ -287,16 +287,16 @@ contains
       Case (1)
          !$omp Parallel Do
          Do i = 2, n - 1
-            Call equation1_non_linear(cdom(i), 0.d0, U(i), 0.d0, F(i), Fu_temp(i, i), blank)
+            Call equation1_non_linear(cdom(i), 1.d0, U(i), 0.d0, F(i), Fu_temp(i, i), blank)
          End Do
          !$omp End Parallel Do
 
       Case (2)
          !$omp Parallel Do
          Do i = 2, n - 1
-            Call equation1_non_linear(cdom(i), 0.d0, U(2*i - 1), U(2*i), F(2*i - 1), Fu_temp(2*i - 1, 2*i - 1), &
+            Call equation1_non_linear(cdom(i), 1.d0, U(2*i - 1), U(2*i), F(2*i - 1), Fu_temp(2*i - 1, 2*i - 1), &
                                                                                           &Fv_temp(2*i - 1, 2*i))
-            Call equation2_non_linear(cdom(i), 0.d0, U(2*i - 1), U(2*i), F(2*i), Fu_temp(2*i, 2*i - 1), &
+            Call equation2_non_linear(cdom(i), 1.d0, U(2*i - 1), U(2*i), F(2*i), Fu_temp(2*i, 2*i - 1), &
                                                                                           &Fv_temp(2*i, 2*i))
          End Do
          !$omp End Parallel Do

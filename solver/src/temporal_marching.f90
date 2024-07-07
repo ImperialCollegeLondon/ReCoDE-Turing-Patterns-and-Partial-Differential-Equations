@@ -66,7 +66,7 @@ contains
 
          Case (1)
 
-            Open (10, file='IVBP1D.dat')
+            Open (10, file='IVBP_1eqn_1D.dat')
             Write (10, '(20000(f20.14,1x))') 0.d0, (tDom(j), j=1, nt)
 
             Do i = 1, nx
@@ -78,8 +78,8 @@ contains
 
          Case (2)
 
-            Open (10, file='IVBP1.dat')
-            Open (11, file='IVBP2.dat')
+            Open (10, file='IVBP1_2eqn_1D.dat')
+            Open (11, file='IVBP2_2eqn_1D.dat')
             Write (10, '(200000(f20.14,1x))') 0.d0, (tDom(j), j=1, nt)
             Write (11, '(200000(f20.14,1x))') 0.d0, (tDom(j), j=1, nt)
 
@@ -99,9 +99,9 @@ contains
          Select Case (Eqn_number)
 
          Case (1)
-            Open (10, file='IBVP1.dat')
-            Open (11, file='IBVPx.dat')
-            Open (12, file='IBVPy.dat')
+            Open (10, file='IBVP_1eqn_2D.dat')
+            Open (11, file='IBVPx_1eqn_2D.dat')
+            Open (12, file='IBVPy_1eqn_2D.dat')
 
             allocate (U_2d(1:nx, 1:ny, 1))
 
@@ -127,10 +127,10 @@ contains
             end do
 
          Case (2)
-            Open (9, file='IBVP1.dat')
-            Open (10, file='IBVP2.dat')
-            Open (11, file='IBVPx.dat')
-            Open (12, file='IBVPy.dat')
+            Open (9, file='IBVP1_2eqn_2D.dat')
+            Open (10, file='IBVP2_2eqn_2D.dat')
+            Open (11, file='IBVPx_2eqn_2D.dat')
+            Open (12, file='IBVPy_2eqn_2D.dat')
 
             allocate (U_2d(1:nx, 1:ny, 2))
 

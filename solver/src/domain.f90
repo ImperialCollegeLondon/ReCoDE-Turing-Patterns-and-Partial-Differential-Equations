@@ -91,6 +91,7 @@ contains
 !               above in the module}
 !!
    Subroutine initial_domain_settings
+   integer :: i
 
       !Set up time domain
       Call time_domain
@@ -120,6 +121,7 @@ contains
          dycsq = dyc*dyc
 
       End Select
+
 
       ! will add in y-domain in future
    End Subroutine initial_domain_settings
@@ -168,6 +170,7 @@ contains
       allocate (tdom(1:nt))
       tdom(1) = tl
 
+      ! difference in time
       dt = (tr - tl)/(nt - 1.d0)
 
       !$omp Parallel Do

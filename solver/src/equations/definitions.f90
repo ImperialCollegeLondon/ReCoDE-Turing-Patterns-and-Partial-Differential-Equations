@@ -30,7 +30,7 @@ contains
       real(dp), intent(out) :: Ax, Bx, Ay, By, C, D
       real(dp) :: epsi
 
-      epsi = 0.1
+      epsi = 0.01d0
 
       Ax = epsi
       Bx = 0.d0
@@ -61,9 +61,13 @@ contains
 !!! F is a function of u - Fu is F'(u)
 !!!   Non linear terms do not effect boundaries
 
-      F = u - u**2.d0 - 1.2d0*v*u/(0.2d0 + u)
-      Fu =  1.d0 - 2.d0*u - 1.2d0*(v/(0.2d0 + u) - v*u/((0.2d0 + u)**2.d0))
-      Fv = -1.2d0*u/(0.2d0 + u)
+      !F = u - u**2.d0 - 1.2d0*v*u/(0.2d0 + u)
+      !Fu =  1.d0 - 2.d0*u - 1.2d0*(v/(0.2d0 + u) - v*u/((0.2d0 + u)**2.d0))
+      !Fv = -1.2d0*u/(0.2d0 + u)
+      !
+      F = (u**2.d0)*v - u
+      Fu = 2.d0*u*v - 1.d0
+      Fv = u**2.d0
    End Subroutine equation1_non_linear
 
 !!
@@ -171,7 +175,7 @@ contains
    End Subroutine equation1_BC_Y_Top
 
 !!
-! @brief      Sets up the the initial conidiotn in the form u = F
+! @brief      Sets up the the initial conidiotn in the form u = F. Note in 1D y = 1
 !
 ! @param       x     physical domain input - can have variable coefficients with x
 ! @param       x     physical domain input - can have variable coefficients with x
@@ -182,12 +186,20 @@ contains
    Subroutine equation1_initial_condition(x, y, IC)
       real(dp), intent(in) :: x, y ! xpoisiton in the domain
       real(dp), intent(out) :: IC
+      real(dp) :: r
 
            !IC = sin(2.d0*pi*x)
        ! IC = sin(pi*x) + sin(pi*y)
       ! IC = cos(2.d0*pi*x*y)**2.d0
       !IC = 5.d0*x*y
-      IC = (cos(2.d0*x*y*pi))**2.d0*ex**(-(x-0.5)**2.d0-(y-0.5)**2.d0)
+      !IC = (cos(2.d0*x*y*pi))**2.d0*ex**(-(x-0.5)**2.d0-(y-0.5)**2.d0)
+      
+      Call random_seed()
+      Call random_number(r)
+      IC = 1.d0+0.01*(2.d0*r-1.d0)
+      !If (x.gt.0.5d0) then
+       !  IC = 1.d0 + 0.001*cos(6.d0*x*pi)
+      !End If
 
    End Subroutine equation1_initial_condition
 
@@ -234,10 +246,16 @@ contains
  Subroutine equation2_non_linear(x, y, u, v, F, Fu, Fv)
       real(dp), intent(in) :: x, y, u, v
       real(dp), intent(out) :: F, Fu, Fv
+      real(dp) :: mu
 
-      F = 1.2d0*v*(u/(0.2d0 + u) + 0.d0)
-      Fu = 1.2d0*v/(0.2d0 + u) - v*u/((0.2d0 + u)**2.d0)
-      Fv = 1.2d0*(u/(0.2d0 + u) + 0.d0)
+      !F = 1.2d0*v*(u/(0.2d0 + u) + 0.d0)
+      !Fu = 1.2d0*v/(0.2d0 + u) - v*u/((0.2d0 + u)**2.d0)
+      !Fv = 1.2d0*(u/(0.2d0 + u) + 0.d0)
+      
+      mu = 2.d0
+      F = mu*((1.d0 - u*u*v))
+      Fu = mu*(-2.d0*u*v)
+      Fv = mu*(-u*u)
 
    End Subroutine equation2_non_linear
 !!
@@ -353,7 +371,7 @@ contains
    End Subroutine equation2_BC_Y_Top
 
 !!
-! @brief      Sets up the the initial conidiotn in the form u = F
+! @brief      Sets up the the initial conidiotn in the form u = F. Note in 1D y = 1
 !
 ! @param       x     physical domain input - can have variable coefficients with x
 ! @param       y     physical domain input - can have variable coefficients with y
@@ -364,14 +382,10 @@ contains
    Subroutine equation2_initial_condition(x, y, IC)
       real(dp), intent(in) :: x, y ! xpoisiton in the domain
       real(dp), intent(out) :: IC
+      real(dp) :: r
 
-
-      If ((x**2.d0+y**2.d0).le.0.5) Then
-         IC = abs(1.d0 - x - y)
-      End If
-      If (((x-1.d0)**2.d0+(y-1.d0)**2.d0).le.0.5) Then
-         IC = abs(1.d0 - x - y)/2.d0
-      End If
+      !Call random_number(r)
+      IC = 1.d0 !+ 0.01d0*r
 
    End Subroutine equation2_initial_condition
 
