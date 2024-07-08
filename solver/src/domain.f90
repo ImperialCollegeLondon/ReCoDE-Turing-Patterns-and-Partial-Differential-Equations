@@ -49,7 +49,6 @@
 !!
 Module domain
    use type_kinds, only: dp
-   use omp_lib
    use reader, only: nx, xl, xr, xhalf, x_grid_strech_on,&
             & ny, yl, yr, yhalf, y_grid_strech_on,&
             & nt, tl, tr, Domain_number
@@ -173,11 +172,9 @@ contains
       ! difference in time
       dt = (tr - tl)/(nt - 1.d0)
 
-      !$omp Parallel Do
       Do i = 2, nt
          tdom(i) = tl + (i - 1)*dt
       End Do
-      !$omp End Parallel Do
 
       If (abs(tdom(nt) - tr).lt.1.d-7) then
       Else
@@ -235,11 +232,9 @@ contains
       c(1) = 0
 
       ! build the computational domain (evenly spaced by d)
-      !$omp Parallel Do
       Do i = 2, n
          c(i) = (i - 1)*d
       End Do
-      !$omp End Parallel Do
 
       ! build the physical domain
 

@@ -4,7 +4,6 @@
 !!
 Module linear_algebra
    use type_kinds, only: dp
-   use omp_lib
    implicit none
    external :: dgbsvx ! lapack double precision linear solve
 
@@ -45,13 +44,11 @@ contains
 
       allocate (AB(nband, n))
 
-      !$omp Parallel Do
       Do j = 1, n
       Do i = max(1, j - sup_diag), min(n, j + sub_diag)
          AB(sup_diag + 1 + i - j, j) = A(i, j)
       End Do
       End Do
-      !$omp End Parallel Do
 
       Return
    End Subroutine band_the_matrix
@@ -218,7 +215,6 @@ contains
       C = 0
 
       !!! note sure if this can be parallesied with omp?
-      !!$omp Parallel Do
       Do i = 1, size(A, 1)
          Do j = 1, size(A, 2)
             n = (i - 1)*size(B, 1) + 1
@@ -228,7 +224,6 @@ contains
             C(n:m, p:q) = A(i, j)*B
          End Do
       End Do
-      !!$omp End Parallel Do
 
    End Function KronProd
 

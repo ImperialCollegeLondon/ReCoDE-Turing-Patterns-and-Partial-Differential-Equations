@@ -6,7 +6,6 @@ Module Equation_2D
    use Kronecker, only: KronProd
    use equations_builder
    use equations_definition
-   use omp_lib
 contains
 
    !!
@@ -63,17 +62,13 @@ contains
 
    
       ! Build identitiy tensor where the diagonal is taken in three dimensions
-      !$omp Parallel Do
       Do i = 1, nx
          Ix(i, i, i) = 1.d0
       End Do
-      !$omp End Parallel Do
 
-      !$omp Parallel Do
       Do i = 1, ny
          Iy(i, i, i) = 1.d0
       End Do
-      !$omp End Parallel Do
 
 
       ! How many equations?
@@ -93,34 +88,33 @@ contains
 
         !! Use the Kroncker product to build operator
         !! first index 2 to ny - 1 to account for y BCs
-         !$omp Parallel Do
+         !!$omp Parallel Do
          Do j = 2, ny - 1
             Ltemp1(:, :, j) = KronProd(Iy(:, :, j), L1x(:, :, j))
          End Do
-         !$omp End Parallel Do
+         !!$omp End Parallel Do
 
+         !!$omp Parallel Do
          Do j = 1, nx
             Ltemp1(:, :, j + ny) = KronProd(L1y(:, :, j), Ix(:, :, j))
          End Do
-         !$omp End Parallel Do
+         !!$omp End Parallel Do
 
          !! Turn off some y terms to account for x BCs
-         !$omp Parallel Do
+
          Do i = 1, ny - 2
             Ltemp1(nx*i + 1, :, ny + 1) = 0.d0
             Ltemp1(nx*i + nx, :, ny + nx) = 0.d0
          End Do
-         !$omp End Parallel Do
 
 
          ! Add up each of the contributions
-         !$omp Parallel Do
+
          Do i = 1, idim_xy
          Do j = 1, idim_xy
             L1(i, j) = Sum(Ltemp1(i, j, :))
          End Do
          End Do
-         !$omp End Parallel Do
 
 
          !! Reshape the RHS into a vector size idim_xy
@@ -146,28 +140,27 @@ contains
                                  &2, L2x, L2y, R2)
 
         !! Build Ltemp1 operator and Rtemp1 with the Kronecker product
-         !$omp Parallel Do
+         !!$omp Parallel Do
          Do j = 2, ny - 1
             Ltemp1(:, :, j) = KronProd(Iy(:, :, j), L1x(:, :, j))
             Ltemp2(:, :, j) = KronProd(Iy(:, :, j), L2x(:, :, j))
          End Do
-         !$omp End Parallel Do
+         !!$omp End Parallel Do
 
          !! Build Ltemp2 operator and Rtemp1 with the Kronecker product
-         !$omp Parallel Do
+         !!$omp Parallel Do
          Do j = 1, nx
             Ltemp1(:, :, j + ny) = KronProd(L1y(:, :, j), Ix(:, :, j))
             Ltemp2(:, :, j + ny) = KronProd(L2y(:, :, j), Ix(:, :, j))
          End Do
-         !$omp End Parallel Do
+         !!$omp End Parallel Do
 
          !! Boundary conditions
-         !$omp Parallel Do
+
          Do i = 1, ny - 2
             Ltemp1(nx*i + 1, :, ny + 1) = 0.d0; Ltemp1(nx*i + nx, :, ny + nx) = 0.d0
             Ltemp2(nx*i + 1, :, ny + 1) = 0.d0; Ltemp2(nx*i + nx, :, ny + nx) = 0.d0
          End Do
-         !$omp End Parallel Do
 
          !Reshape RHS
          Rtemp1 = reshape(R1, (/idim_xy/))
@@ -176,17 +169,16 @@ contains
          allocate (L1(idim_xy, idim_xy), L2(idim_xy, idim_xy))
          
          !Sum the operators
-         !$omp Parallel Do
+
          Do i = 1, idim_xy
          Do j = 1, idim_xy
             L1(i, j) = Sum(Ltemp1(i, j, :))
             L2(i, j) = Sum(Ltemp2(i, j, :))
          End Do
          End Do
-         !$omp End Parallel Do
 
          !  Set the Ltemp and RHS - two equations
-         !$omp Parallel Do
+
          Do i = 1, idim_xy
             RHS(2*i - 1) = Rtemp1(i)
             RHS(2*i) = Rtemp2(i)
@@ -201,7 +193,6 @@ contains
 
             End Do
          End Do
-         !$omp End Parallel Do
 
          deallocate (Rtemp1, ltemp1, L1x, L1y, R1, L1)
          deallocate (Rtemp2, ltemp2, L2x, L2y, R2, L2)
@@ -292,11 +283,10 @@ contains
             Call equation1_BC_X_Top(cDom_x(n_x), cDom_y(jj), At(n_x), Bt(n_x), blank1, blank2, Ct(n_x), Dt(n_x))
         
          !!! Interior
-            !$omp Parallel Do
+   
             Do i = 2, n_x - 1
                Call equation1_linear(cDom_x(i), cDom_y(jj), At(i), Bt(i), blank1, blank2, Ct(i), Dt(i))
             End Do
-            !$omp End Parallel Do
          Case (2)
          
          !!! Boundaries
@@ -304,20 +294,18 @@ contains
             Call equation2_BC_X_Top(cDom_x(n_x), cDom_y(jj), At(n_x), Bt(n_x), blank1, blank2, Ct(n_x), Dt(n_x))
          
          !!! Interior
-            !$omp Parallel Do
+   
             Do i = 2, n_x - 1
                Call equation2_linear(cDom_x(i), cDom_y(jj), At(i), Bt(i), blank1, blank2, Ct(i), Dt(i))
             End Do
-            !$omp End Parallel Do
          End Select
 
     !! Apply the correct scallings
-         !$omp Parallel Do
+
          Do i = 1, n_x
             Call scales(A(i), B(i), C(i), D(i), At(i), Bt(i), Ct(i), Dt(i), &
                       &ch_x, chsq_x, metric1_x(i), metric1sq_x(i), metric2_x(i))
          End Do
-         !$omp End Parallel Do
 
     !!! Derivative runner moves the coefficients into a unbanded matrix 
          Call derivative_runner(n_x, A, B, C, Lxtemp)
@@ -346,11 +334,10 @@ contains
             Call equation1_BC_Y_Top(cDom_x(jj), cDom_y(n_y), blank1, blank2, At(n_y), Bt(n_y), Ct(n_y), Dt(n_y))
          
          !!! Interior
-            !$omp Parallel Do
+   
             Do i = 2, n_y - 1
                Call equation1_linear(cDom_x(jj), cDom_y(i), blank1, blank2, At(i), Bt(i), Ct(i), Dt(i))
             End Do
-            !$omp End Parallel Do
 
          Case (2)
 
@@ -359,20 +346,18 @@ contains
             Call equation2_BC_Y_Top(cDom_x(jj), cDom_y(n_y), blank1, blank2, At(n_y), Bt(n_y), Ct(n_y), Dt(n_y))
          
          !!! Interior
-            !$omp Parallel Do
+   
             Do i = 2, n_y - 1
                Call equation2_linear(cDom_x(jj), cDom_y(i), blank1, blank2, At(i), Bt(i), Ct(i), Dt(i))
             End Do
-            !$omp End Parallel Do
          End Select
 
     !! Apply the correct scallings
-         !$omp Parallel Do
+
          Do i = 1, n_y
             Call scales(A(i), B(i), C(i), D(i), At(i), Bt(i), Ct(i), Dt(i), &
                &ch_y, chsq_y, metric1_y(i), metric1sq_y(i), metric2_y(i))
          End Do
-         !$omp End Parallel Do
 
     !!! Derivative runner moves the coefficients into a banded matrix
          Call derivative_runner(n_y, A, B, C, Lytemp)
@@ -418,13 +403,12 @@ contains
          allocate (temp1(nx, ny))
 
          !!! temp1 is a nx * ny matrix - we fill it and then flatten it with reshape
-         !$omp Parallel Do
+
          Do i = 1, nx
          Do j = 1, ny
             Call equation1_initial_condition(xDom(i), yDom(j), temp1(i, j))
          End Do
          End Do
-         !$omp End Parallel Do
 
          !! set the solution as the flattened value
          soln(:, 1) = Reshape(temp1, (/idim_xy/))
@@ -436,25 +420,23 @@ contains
          allocate (temp2(nx, ny), Rtemp2(idim_xy))
 
          !! Call both initial conditions
-         !$omp Parallel Do
+
          Do i = 1, nx
          Do j = 1, ny
             Call equation1_initial_condition(xDom(i), yDom(j), temp1(i, j))
             Call equation2_initial_condition(xDom(i), yDom(j), temp2(i, j))
          End Do
          End Do
-         !$omp End Parallel Do
 
          !! Re shape and set
          Rtemp1 = Reshape(temp1, (/idim_xy/))
          Rtemp2 = Reshape(temp2, (/idim_xy/))
 
-         !$omp Parallel Do
+
          Do i = 1, idim_xy
             soln(2*i - 1, 1) = Rtemp1(i)
             soln(2*i, 1) = Rtemp2(i)
          End Do
-         !$omp End Parallel Do
 
          deallocate (Rtemp1, temp1)
          deallocate (Rtemp2, temp2)
@@ -501,7 +483,7 @@ contains
       Select Case (Eqn_number)
 
       Case (1)
-         !$omp Parallel Do
+
 
          Do i = 2, nx - 1
          Do j = 2, ny - 1
@@ -511,11 +493,10 @@ contains
          End Do
          End Do
 
-         !$omp End Parallel Do
 
       Case (2)
          ! When there are two equations need to split up each term
-         !$omp Parallel Do
+
          Do i = 2, nx - 1
          Do j = 2, ny - 1
             k = (j - 1)*nx + i
@@ -525,7 +506,6 @@ contains
                                                                                           &Fv_temp(2*k, 2*k))
          End Do
          End Do
-         !$omp End Parallel Do
       End Select
 
       !! band the matrices

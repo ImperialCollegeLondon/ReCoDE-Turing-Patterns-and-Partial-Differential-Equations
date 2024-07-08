@@ -82,9 +82,9 @@ contains
 
          Case (1)
 
-            Open (10, file='BVP1.dat')
-            Open (11, file='BVPx.dat')
-            Open (12, file='BVPy.dat')
+            Open (10, file='BVP_2D.dat')
+            Open (11, file='BVP_2Dx.dat')
+            Open (12, file='BVPy_2D.dat')
 
             allocate (U_2d(1:nx, 1:ny, 1))
             ! Convert the 1D solution vector into a 2D solution matrix

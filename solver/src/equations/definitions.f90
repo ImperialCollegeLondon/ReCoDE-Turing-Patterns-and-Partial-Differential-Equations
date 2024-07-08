@@ -2,8 +2,8 @@
 !  Equation, BC_Bot and BC_Top - representing the equation and both boundaries respectively
 !
 !  Sets equations
-!  A u_xx + B u_x + C u + F(u) = D or D u_t
-!
+!  Ax1 u_xx + Bx1 u_x + Ay1 u_yy + By1 u_y + C1 u + F1(u, v) = D1 or D1 u_t
+!  Ax2 v_xx + Bx2 v_x + Ay2 v_yy + By2 v_y + C1 v + F2(u, v) = D2 or D2 v_t
 !
 !!
 Module equations_definition
@@ -13,9 +13,11 @@ Module equations_definition
 contains
 
 !!
-! @brief      Sets up the first equation in the form A u_xx + B u_x + C u = D or D u_t
+! @brief      Sets up the first equation in the form 
+!              Ax u_xx + Bx u_x + Ay u_yy + By u_y + C u = D or D u_t
 !
 ! @param       x     physical domain input - can have variable coefficients with x
+! @param       y     physical domain input - can have variable coefficients with y
 !
 ! @return      Ax     second order x derivative coefficient
 ! @return      Bx     first order x derivative coefficient
@@ -44,9 +46,11 @@ contains
    End Subroutine equation1_linear
 
 !!
-! @brief      Sets up the nonlinear terms F in the equation A u_xx + B u_x + C u + F(u) = D or D u_t
+! @brief      Sets up the nonlinear terms F in the equation 
+!             Ax u_xx + Bx u_x + Ay u_yy + By u_y + C u + F(u,v) = D or D u_t
 !
 ! @param       x     physical domain input - can have variable coefficients with x
+! @param       y     physical domain input - can have variable coefficients with y
 ! @param       u     non-linear variable
 ! @param       v     non-linear variable
 !
@@ -71,10 +75,13 @@ contains
    End Subroutine equation1_non_linear
 
 !!
-! @brief      Sets up the bottom/lefthand boundary in the first equation in the form A u_xx + B u_x + C u = D or D u_t
-!             When y = xl
+! @brief      Sets up the bottom/lefthand boundary in the first equation in the form 
+!             Ax u_xx + Bx u_x + Ay u_yy + By u_y + C u = D or D u_t
+!             
+!             When x = xl
 !
 ! @param       x     physical domain input - can have variable coefficients with x
+! @param       y     physical domain input - can have variable coefficients with y
 !
 ! @return      Ax     second order x derivative coefficient
 ! @return      Bx     first order x derivative coefficient
@@ -100,9 +107,13 @@ contains
    End Subroutine equation1_BC_X_Bot
 
 !!
-! @brief      Sets up the top/righthand boundary in the first equation in the form A u_xx + B u_x + C u = D
+! @brief      Sets up the top/righthand boundary in the first equation in the form 
+!             Ax u_xx + Bx u_x + Ay u_yy + By u_y + C u = D or D u_t
+!             
+!             when x = xr
 !
 ! @param       x     physical domain input - can have variable coefficients with x
+! @param       y     physical domain input - can have variable coefficients with y
 !
 ! @return      Ax     second order x derivative coefficient
 ! @return      Bx     first order x derivative coefficient
@@ -128,7 +139,23 @@ contains
 
    End Subroutine equation1_BC_X_Top
 
-
+!!
+! @brief      Sets up the top/righthand boundary in the first equation in the form 
+!             Ax u_xx + Bx u_x + Ay u_yy + By u_y + C u = D or D u_t
+!             
+!             when y = yl
+!
+! @param       x     physical domain input - can have variable coefficients with x
+! @param       y     physical domain input - can have variable coefficients with y
+!
+! @return      Ax     second order x derivative coefficient
+! @return      Bx     first order x derivative coefficient
+! @return      Ay     second order y derivative coefficient
+! @return      By     first order y derivative coefficient
+! @return      C     zeroth order derivative coefficient
+! @return      D     RHS/inhomogenous term
+!
+!!
       Subroutine equation1_BC_Y_Bot(x, y, Ax, Bx, Ay, By, C, D)
       !!! Note that the boundary conditions at the corners are governed by BC_Y
       real(dp), intent(in) :: x, y ! xpoisiton in the domain
@@ -146,9 +173,13 @@ contains
    End Subroutine equation1_BC_Y_Bot
 
 !!
-! @brief      Sets up the top/righthand boundary in the first equation in the form A u_xx + B u_x + C u = D
+! @brief      Sets up the top/righthand boundary in the first equation in the form 
+!             Ax u_xx + Bx u_x + Ay u_yy + By u_y + C u = D or D u_t
+!             
+!             when y = yr
 !
 ! @param       x     physical domain input - can have variable coefficients with x
+! @param       y     physical domain input - can have variable coefficients with y
 !
 ! @return      Ax     second order x derivative coefficient
 ! @return      Bx     first order x derivative coefficient
@@ -157,6 +188,7 @@ contains
 ! @return      C     zeroth order derivative coefficient
 ! @return      D     RHS/inhomogenous term
 !
+!!
 !!
    Subroutine equation1_BC_Y_Top(x, y, Ax, Bx, Ay, By, C, D)
    !!! Note that the boundary conditions at the corners are governed by BC_Y
@@ -178,7 +210,7 @@ contains
 ! @brief      Sets up the the initial conidiotn in the form u = F. Note in 1D y = 1
 !
 ! @param       x     physical domain input - can have variable coefficients with x
-! @param       x     physical domain input - can have variable coefficients with x
+! @param       y     physical domain input - can have variable coefficients with y
 !
 ! @return      IC     Initial condition
 !
@@ -203,10 +235,13 @@ contains
 
    End Subroutine equation1_initial_condition
 
+
 !!
-! @brief      Sets up the second equation in the form A v_xx + B v_x + C v = D or D v_t
+! @brief      Sets up the second equation in the form 
+!              Ax v_xx + Bx v_x + Ay v_yy + By v_y + C v = D or D v_t
 !
 ! @param       x     physical domain input - can have variable coefficients with x
+! @param       y     physical domain input - can have variable coefficients with y
 !
 ! @return      Ax     second order x derivative coefficient
 ! @return      Bx     first order x derivative coefficient
@@ -232,9 +267,11 @@ contains
    End Subroutine equation2_linear
 
 !!
-! @brief      Sets up the nonlinear terms F in the equation A v_xx + B v_x + C v + F(u,v) = D or D v_t
+! @brief      Sets up the nonlinear terms F in the equation 
+!             Ax v_xx + Bx v_x + Ay v_yy + By v_y + C v + F(u,v) = D or D v_t
 !
 ! @param       x     physical domain input - can have variable coefficients with x
+! @param       y     physical domain input - can have variable coefficients with y
 ! @param       u     non-linear variable
 ! @param       v     non-linear variable
 !
@@ -252,16 +289,20 @@ contains
       !Fu = 1.2d0*v/(0.2d0 + u) - v*u/((0.2d0 + u)**2.d0)
       !Fv = 1.2d0*(u/(0.2d0 + u) + 0.d0)
       
-      mu = 2.d0
+      mu = 1.5d0
       F = mu*((1.d0 - u*u*v))
       Fu = mu*(-2.d0*u*v)
       Fv = mu*(-u*u)
 
    End Subroutine equation2_non_linear
 !!
-! @brief      Sets up the bottom/lefthand boundary in the second equation in the form A v_xx + B v_x + C v = D
+! @brief      Sets up the bottom/lefthand boundary in the second equation in the form 
+!             Ax v_xx + Bx v_x + Ay v_yy + By v_y + C v = D or D v_t
+!             
+!             x = xl
 !
 ! @param       x     physical domain input - can have variable coefficients with x
+! @param       y     physical domain input - can have variable coefficients with y
 !
 ! @return      Ax     second order x derivative coefficient
 ! @return      Bx     first order x derivative coefficient
@@ -287,9 +328,11 @@ contains
    End Subroutine equation2_BC_X_Bot
 
 !!
-! @brief      Sets up the top/righthand boundary in the second equation in the form A v_xx + B v_x + C v = D
+! @brief      Sets up the top/righthand boundary in the second equation in the form 
+!             Ax v_xx + Bx v_x + Ay v_yy + By v_y + C v = D or D v_t
 !
 ! @param       x     physical domain input - can have variable coefficients with x
+! @param       y     physical domain input - can have variable coefficients with y
 !
 ! @return      Ax     second order x derivative coefficient
 ! @return      Bx     first order x derivative coefficient
@@ -316,9 +359,11 @@ contains
 
 
 !!
-! @brief      Sets up the bottom/lefthand boundary in the second equation in the form A v_xx + B v_x + C v = D
+! @brief      Sets up the bottom/lefthand boundary in the second equation in the form
+!             Ax v_xx + Bx v_x + Ay v_yy + By v_y + C v = D or D v_t
 !
 ! @param       x     physical domain input - can have variable coefficients with x
+! @param       y     physical domain input - can have variable coefficients with y
 !
 ! @return      Ax     second order x derivative coefficient
 ! @return      Bx     first order x derivative coefficient
@@ -343,9 +388,11 @@ contains
    End Subroutine equation2_BC_Y_Bot
 
 !!
-! @brief      Sets up the top/righthand boundary in the second equation in the form A v_xx + B v_x + C v = D
+! @brief      Sets up the top/righthand boundary in the second equation in the form 
+!             Ax v_xx + Bx v_x + Ay v_yy + By v_y + C v = D or D v_t
 !
 ! @param       x     physical domain input - can have variable coefficients with x
+! @param       y     physical domain input - can have variable coefficients with y
 !
 ! @return      Ax     second order x derivative coefficient
 ! @return      Bx     first order x derivative coefficient
@@ -371,7 +418,7 @@ contains
    End Subroutine equation2_BC_Y_Top
 
 !!
-! @brief      Sets up the the initial conidiotn in the form u = F. Note in 1D y = 1
+! @brief      Sets up the the initial conidiotn in the form v = F. Note in 1D y = 1
 !
 ! @param       x     physical domain input - can have variable coefficients with x
 ! @param       y     physical domain input - can have variable coefficients with y

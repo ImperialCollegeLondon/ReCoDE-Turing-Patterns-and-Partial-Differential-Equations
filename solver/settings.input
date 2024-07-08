@@ -6,20 +6,20 @@ Settings ________________
 
 !!! xdomain settings_____
 35 					!!! nx - size of x domain
-0,5			  !!! xl, xr - start and end points of x domain
-1,2      		!!! x strech on or off, grid strech parameter
+0,1			  !!! xl, xr - start and end points of x domain
+0,2.25      		!!! x strech on or off, grid strech parameter
 
 !!! ydomain settings_____
 35          !!! ny - size of y domain
 0,5          !!! yl, yr - start and end points of y domain
-0,2         !!! y strech on or off, grid strech parameter
+0,2.25         !!! y strech on or off, grid strech parameter
 
 !!! temportal marching settings_____
-20000        !!! nt - size of x domain
-0.d0,100.d0  !!! tl, tr - start and end points of time domain
+1        !!! nt - size of x domain
+0.d0,100.d0        !!! tl, tr - start and end points of time domain
 
 !!! general settings_____
 4   				!!! DiffOrder - order of finite differences scheme
-1.d-7       !!! Newton_Error
+1.d-6       !!! Newton_Error
 2000         !!! Max_iter - max Newton iterations
 

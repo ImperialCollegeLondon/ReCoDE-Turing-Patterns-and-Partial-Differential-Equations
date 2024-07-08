@@ -1,10 +1,9 @@
-name = "PDE"
+name = "fibonacci"
 version = "0.1.0"
 license = "license"
-author = "Elliot Jmaes"
-maintainer = "ejb321@ic.ac.uk"
-copyright = "Copyright 2024, Elliot Jmaes"
-
+author = "Diego Alonso Álvarez"
+maintainer = "d.alonso-alvarez@imperial.ac.uk"
+copyright = "Copyright 2024, Diego Alonso Álvarez"
 
 [build]
 auto-executables = true
@@ -12,28 +11,14 @@ auto-tests = true
 auto-examples = true
 module-naming = false
 
-# adds lapack and blas packages
-link = ["blas", "lapack"]
-
 [install]
 library = false
 
 [fortran]
 implicit-typing = false
-implicit-external = true
+implicit-external = false
 source-form = "free"
-
-[dependencies]
-openmp="*"
-
-[[executable]]
-name = "PDE"
 
 [dev-dependencies]
 test-drive.git = "https://github.com/fortran-lang/test-drive"
 test-drive.tag = "v0.4.0"
-
-
-[library]
-source-dir="src"
-build-script="my_build_script"

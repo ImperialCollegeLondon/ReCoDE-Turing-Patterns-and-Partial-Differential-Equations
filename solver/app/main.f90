@@ -11,6 +11,9 @@ Program main
    use temporal_marching, only : march_runner
    implicit none
 
+   real :: cpu_start, cpu_end
+
+   call cpu_time(cpu_start)
 
    Write (6, *)
    Write (6, *) '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
@@ -29,12 +32,17 @@ Program main
    Case (0)
       Write (6, *) 'Boundary Value Problem Solver'
       Call solve_runner
-      Stop
+      !Stop
    Case (1)
       Write (6, *) 'Temporal Initial Boundary Value Solver'
       Call march_runner
-      Stop
+      !Stop
    End Select
+
+   call cpu_time(cpu_end)
+
+     Write (6, '(A, F8.3, A)') 'Took: ', cpu_end - cpu_start, 's'
+
 
 End Program main
 

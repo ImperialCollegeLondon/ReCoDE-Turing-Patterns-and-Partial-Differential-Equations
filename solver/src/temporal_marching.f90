@@ -1,7 +1,6 @@
 !!{Organises the temproal marching subroutines}
 !!
 Module temporal_marching
-   use omp_lib
    use type_kinds
    use reader, only: Time_switch, Non_Linear_switch, Eqn_number, Newton_Error
    use domain
@@ -69,10 +68,10 @@ contains
          Case (1)
 
             Open (10, file='IVBP_1eqn_1D.dat')
-            Write (10, '(20000(f20.14,1x))') 0.d0, (tDom(j), j=1, nt)
+            Write (10, '(2000000(f20.14,1x))') 0.d0, (tDom(j), j=1, nt)
 
             Do i = 1, nx
-               Write (10, '(20000(f20.14,1x))') xDom(i), (soln(i, j), j=1, nt)
+               Write (10, '(2000000(f20.14,1x))') xDom(i), (soln(i, j), j=1, nt)
             End Do
             Close (10)
             Write (6, *) 'March completed...'
@@ -82,12 +81,12 @@ contains
 
             Open (10, file='IVBP1_2eqn_1D.dat')
             Open (11, file='IVBP2_2eqn_1D.dat')
-            Write (10, '(200000(f20.14,1x))') 0.d0, (tDom(j), j=1, nt)
-            Write (11, '(200000(f20.14,1x))') 0.d0, (tDom(j), j=1, nt)
+            Write (10, '(20000000(f20.14,1x))') 0.d0, (tDom(j), j=1, nt)
+            Write (11, '(20000000(f20.14,1x))') 0.d0, (tDom(j), j=1, nt)
 
             Do i = 1, nx
-               Write (10, '(200000(f20.14,1x))') xDom(i), (soln(2*i - 1, j), j=1, nt)
-               Write (11, '(200000(f20.14,1x))') xDom(i), (soln(2*i, j), j=1, nt)
+               Write (10, '(20000000(f20.14,1x))') xDom(i), (soln(2*i - 1, j), j=1, nt)
+               Write (11, '(20000000(f20.14,1x))') xDom(i), (soln(2*i, j), j=1, nt)
             End Do
             Close (10)
             Close (11)
@@ -108,8 +107,8 @@ contains
             allocate (U_2d(1:nx, 1:ny, 1))
 
             Do i = 1, nx
-               Write (11, '(200000(f20.14,1x),e20.10)') (xdom(i), j=1, ny)
-               Write (12, '(200000(f20.14,1x),e20.10)') (ydom(j), j=1, ny)
+               Write (11, '(20000000(f20.14,1x),e20.10)') (xdom(i), j=1, ny)
+               Write (12, '(20000000(f20.14,1x),e20.10)') (ydom(j), j=1, ny)
             End Do
 
             Do jk = 1, nt
@@ -123,7 +122,7 @@ contains
                end do
 
                Do i = 1, nx
-                  Write (10, '(200000(f20.14,1x),e20.10)') (U_2d(i, j, 1), j=1, ny)
+                  Write (10, '(20000000(f20.14,1x),e20.10)') (U_2d(i, j, 1), j=1, ny)
                End Do
 
             end do
@@ -137,8 +136,8 @@ contains
             allocate (U_2d(1:nx, 1:ny, 2))
 
             Do i = 1, nx
-               Write (11, '(200000(f20.14,1x),e20.10)') (xdom(i), j=1, ny)
-               Write (12, '(200000(f20.14,1x),e20.10)') (ydom(j), j=1, ny)
+               Write (11, '(20000000(f20.14,1x),e20.10)') (xdom(i), j=1, ny)
+               Write (12, '(20000000(f20.14,1x),e20.10)') (ydom(j), j=1, ny)
             End Do
 
             Do jk = 1, nt
@@ -153,8 +152,8 @@ contains
                end do
 
                Do i = 1, nx
-                  Write (9, '(200000(f20.14,1x),e20.10)') (U_2d(i, j, 1), j=1, ny)
-                  Write (10, '(200000(f20.14,1x),e20.10)') (U_2d(i, j, 2), j=1, ny)
+                  Write (9, '(20000000(f20.14,1x),e20.10)') (U_2d(i, j, 1), j=1, ny)
+                  Write (10, '(20000000(f20.14,1x),e20.10)') (U_2d(i, j, 2), j=1, ny)
                End Do
 
             end do
@@ -246,24 +245,20 @@ contains
          !!! Here it's quite complicated to set the correct boundary conditions to temp 
             If (Eqn_number == 1) then
 
-               !$omp Parallel Do
                Do k = 1, ny - 1
                   temp(1 + k*nx) = RHS(1 + k*nx)
                   temp((nx) + k*nx) = RHS((nx) + k*nx)
                End Do
-               !$omp End Parallel Do
 
             Else if (Eqn_number == 2) then
 
             !! This can probably be simplifed however it's a little complicated. Easy implementations over speed!
-               !$omp Parallel Do
                Do k = 1, ny - 1
                   temp(1 + differ*k) = RHS(1 + differ*k)
                   temp(2 + differ*k) = RHS(2 + differ*k)
                   temp(2*nx - 1 + k*differ) = RHS(2*nx - 1 + k*differ)
                   temp(2*nx + k*differ) = RHS(2*nx + k*differ)
                End Do
-               !$omp End Parallel Do
 
             End If
 

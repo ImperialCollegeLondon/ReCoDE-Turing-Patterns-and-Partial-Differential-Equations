@@ -1,7 +1,6 @@
 !!{ This module sets up handles all the discretisation of the equations}
 !!
 Module equations
-   use omp_lib
    use type_kinds, only: dp
    use equations_builder
    use equations_definition
@@ -84,7 +83,6 @@ contains
          ! Here we fill Ltemp with the two linear equations L1 and L2
         !! Wonder how to parallize this?
 
-        !$omp Parallel Do
          Do i = 1, n
             Do j = 1, n
                i1 = 2*i - 1
@@ -97,7 +95,6 @@ contains
             RHS(i1) = R1(i)
             RHS(i2) = R2(i)
          End Do
-         !$omp End Parallel Do
 
          deallocate (L1, R1, L2, R2)
       End Select
@@ -164,11 +161,9 @@ contains
          Call equation1_BC_X_Top(cdom(n), 1.d0, At(n), Bt(n), blank, blank, Ct(n), Dt(n))
          !!! Interior
 
-         !$omp Parallel Do
          Do i = 2, n - 1
             Call equation1_linear(cdom(i), 1.d0, At(i), Bt(i), blank, blank, Ct(i), Dt(i))
          End Do
-         !$omp End Parallel Do
 
       !!! Equation 2
       Case (2)
@@ -178,11 +173,9 @@ contains
          Call equation2_BC_X_Top(cdom(n), 1.d0, At(n), Bt(n), blank, blank, Ct(n), Dt(n))
          !!! Interior
 
-         !$omp Parallel Do
          Do i = 2, n - 1
             Call equation2_linear(cdom(i), 1.d0, At(i), Bt(i), blank, blank, Ct(i), Dt(i))
          End Do
-         !$omp End Parallel Do
 
       !!! Equation TEST
       Case (0)
@@ -192,11 +185,9 @@ contains
          Call equation1_BC_Top_test(cdom(n), At(n), Bt(n), Ct(n), Dt(n))
          !!! Interior
 
-         !$omp Parallel Do
          Do i = 2, n - 1
             Call equation1_test(cdom(i), At(i), Bt(i), Ct(i), Dt(i))
          End Do
-         !$omp End Parallel Do
 
       Case Default
 
@@ -205,11 +196,9 @@ contains
       End Select
 
     !! Apply the correct scallings
-      !$omp Parallel Do
       Do i = 1, n
          Call scales(A(i), B(i), C(i), D(i), At(i), Bt(i), Ct(i), Dt(i), ch, chsq, metric1(i), metric1sq(i), metric2(i))
       End Do
-      !$omp End Parallel Do
 
     !!! Derivative runner moves the coefficients into a unbanded matrix L
       Call derivative_runner(n, A, B, C, L)
@@ -239,19 +228,15 @@ contains
       Select Case (Eqn_number)
 
       Case (1)
-         !$omp Parallel Do
          Do i = 1, n
             Call equation1_initial_condition(dom(i), 1.d0, soln(i, 1))
          End Do
-         !$omp End Parallel Do
 
       Case (2)
-         !$omp Parallel Do
          Do i = 1, n
             Call equation1_initial_condition(dom(i), 1.d0, soln(2*i - 1, 1))
             Call equation2_initial_condition(dom(i), 1.d0, soln(2*i, 1))
          End Do
-         !$omp End Parallel Do
       End Select
 
    End Subroutine initial_condition
@@ -285,21 +270,17 @@ contains
 
       !!! Calls the non_linear equation setter - doesn't include boundaryes
       Case (1)
-         !$omp Parallel Do
          Do i = 2, n - 1
             Call equation1_non_linear(cdom(i), 1.d0, U(i), 0.d0, F(i), Fu_temp(i, i), blank)
          End Do
-         !$omp End Parallel Do
 
       Case (2)
-         !$omp Parallel Do
          Do i = 2, n - 1
             Call equation1_non_linear(cdom(i), 1.d0, U(2*i - 1), U(2*i), F(2*i - 1), Fu_temp(2*i - 1, 2*i - 1), &
                                                                                           &Fv_temp(2*i - 1, 2*i))
             Call equation2_non_linear(cdom(i), 1.d0, U(2*i - 1), U(2*i), F(2*i), Fu_temp(2*i, 2*i - 1), &
                                                                                           &Fv_temp(2*i, 2*i))
          End Do
-         !$omp End Parallel Do
       End Select
 
       Call band_the_matrix(idim, Fu_temp, sub_diag, sup_diag, nband, Fu)

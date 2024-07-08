@@ -22,7 +22,6 @@ contains
 ! @brief      This subroutine sets up the matrices D1 and D2 (the first and second derivatives finite difference coefficinets)
 !!
    Subroutine diff_initialisation
-      use omp_lib
       integer :: i
 
       D1 = 0.d0; D2 = 0.d0
@@ -108,9 +107,7 @@ contains
       End Select
 
 !! We set the backward from the forward using symmetry
-!! We use OpenMp to paralelise as fortran doesn't support backward array commands like 6:1
 
-!$omp Parallel Do
       Do i = 1, 6
 !backward 2
          D1(4, i) = -D1(2, 7 - i)
@@ -119,7 +116,7 @@ contains
          D1(5, i) = -D1(1, 7 - i)
          D2(5, i) = D2(1, 7 - i)
       End Do
-!$omp End Parallel Do
+
 
    End Subroutine diff_initialisation
 

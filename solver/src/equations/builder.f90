@@ -113,7 +113,6 @@ contains
 ! @return     Deriv  The output (nband * n) matrix
 !!
    Subroutine first(n, Deriv, B)
-      use omp_lib
       real(dp), dimension(:, :), allocatable, intent(inout) :: Deriv
       real(dp), dimension(:), allocatable, intent(in) :: B
       integer, intent(in) :: n
@@ -126,20 +125,11 @@ contains
       Deriv(1, 1:6) = D1(1, 1:6)*B(1)
       Deriv(2, 1:6) = D1(2, 1:6)*B(2)
 
-!!! Here we wish to parallelize the following: specifically the j loop. However it is difficult to Do with array notation as
-!   j is an index in both arrays of Deriv. Therefore we make use of OpenMP library
-!   $omp Parallel Do: Tells the compiler to parallelize the loop.
-!   private(i): Declares i as a private variable, meaning each thread gets its own copy of i to avoid race conditions.
-!   note we have included the omp_lib library
-
-      ! Parallelize the outer loop
-      !$omp Parallel Do Private(i)
       Do j = 3, n - 2
          Do i = -2, 2
             Deriv(j, j + i) = D1(3, 4 + i)*B(j)
          End Do
       End Do
-      !$omp End Parallel Do
 
       Deriv(n - 1, n - 5:n) = D1(4, 1:6)*B(n - 1)
       Deriv(n, n - 5:n) = D1(5, 1:6)*B(n)
@@ -156,7 +146,6 @@ contains
 ! @return     Deriv  The output (nband * n) matrix
 !!
    Subroutine second(n, Deriv, A)
-      use omp_lib
       real(dp), dimension(:, :), allocatable, intent(inout) :: Deriv
       real(dp), dimension(:), allocatable, intent(in) :: A
       integer, intent(in) :: n
@@ -169,14 +158,11 @@ contains
       Deriv(1, 1:6) = D2(1, 1:6)*A(1)
       Deriv(2, 1:6) = D2(2, 1:6)*A(2)
 
-      ! Parallelize the outer loop
-      !$omp Parallel Do Private(i)
       Do j = 3, n - 2
          Do i = -2, 2
             Deriv(j, j + i) = D2(3, 4 + i)*A(j)
          End Do
       End Do
-      !$omp End Parallel Do
 
       Deriv(n - 1, n - 5:n) = D2(4, 1:6)*A(n - 1)
       Deriv(n, n - 5:n) = D2(5, 1:6)*A(n)
