@@ -8,7 +8,7 @@ Program main
    use equations
    use linear_algebra
    use solve_bvp, only : solve_runner
-   use temporal_marching, only : march_runner
+   use solve_ibvp, only : march_runner
    implicit none
 
    real :: cpu_start, cpu_end

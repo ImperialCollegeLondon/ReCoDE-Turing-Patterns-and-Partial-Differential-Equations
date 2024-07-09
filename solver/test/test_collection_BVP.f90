@@ -136,13 +136,13 @@ contains
    End Subroutine check_banded_matrix
 
       !!
-   ! @brief      checks the banded matrix multiplication module
+   ! @brief      checks the banded matrix multiplication subroutine
    !
    ! @return      error
    !!
    Subroutine check_banded_matrix_multiplication(error)
       use type_kinds, only: dp
-      use matrix_control, only: band_the_matrix
+      use linear_algerba, only: band_the_matrix
       use maths_constants, only: pi
 
       external :: DGBMV

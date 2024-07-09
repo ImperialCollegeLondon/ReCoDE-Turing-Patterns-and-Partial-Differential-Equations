@@ -1,6 +1,6 @@
 !!{Organises the temproal marching subroutines}
 !!
-Module temporal_marching
+Module solve_ibvp
    use type_kinds
    use reader, only: Time_switch, Non_Linear_switch, Eqn_number, Newton_Error
    use domain
@@ -43,8 +43,6 @@ contains
          Write (6, *) 'Non-linear iteration at error',Newton_Error
          Write (6, *)
       End Select
-      
-      Write (6, *) 'Building equation... '
 
       allocate (Soln(1:idim, 1:nt))
 
@@ -61,7 +59,10 @@ contains
 
       Call implicit_march
 
+
+      !!!! Print the solution
       If (Domain_number == 1) then
+
       !! Printing solution
          Select Case (Eqn_number)
 
@@ -192,6 +193,9 @@ contains
 
       integer :: i, j, k, differ, iteration
 
+
+
+      Write (6, *) 'Building equation... '
 !!!! Build the opeator
       allocate (temp(1:idim), U(idim))
       allocate (L_March(nband, 1:idim), L_march_unbanded(1:idim, 1:idim))
@@ -199,7 +203,7 @@ contains
       !! Obtain the original operator L
       Call equation_runner(L, RHS)
 
-      Write (6, *) 'Eqnuation Built... Starting march...'
+      Write (6, *) 'Equation Built... Starting march...'
       Write (6, *)
 
       !! Builds the operator
@@ -285,5 +289,5 @@ contains
 
    End Subroutine implicit_march
 
-End Module temporal_marching
+End Module solve_ibvp
 

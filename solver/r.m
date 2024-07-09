@@ -7,8 +7,8 @@ Sol1 = readmatrix('IBVP1_2eqn_2D.dat');
 Sol2 = readmatrix('IBVP2_2eqn_2D.dat');
 nx = height(x(:,1))
 ny = width(y(1,:))
-nt = 700
-skip = 100
+nt = 1000
+skip = 10
 
 xr = max(x(:,1))
 yr = max(y(1,:))
@@ -17,15 +17,15 @@ yr = max(y(1,:))
 % Create animated plot
 
 
-syms u x1 y1
-u(x1,y1) = sin(x1*pi) + sin(y1*pi)
+%syms u x1 y1
+%u(x1,y1) = sin(x1*pi) + sin(y1*pi)
 
-Sol = Sol1 + Sol2    
+%Sol = Sol1 + Sol2    
 
 for k = 1:skip:nt
     f=figure(1);
     f.Position = [0 0 500 500]
-    pcolor(x,y,Sol(1+(k-1)*nx:nx+(k-1)*nx,1:ny))
+    pcolor(x,y,Sol1(1+(k-1)*nx:nx+(k-1)*nx,1:ny))
     %pcolor(x,y,u(x,y))
     hold on
     colorbar

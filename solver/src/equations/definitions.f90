@@ -55,23 +55,19 @@ contains
 ! @param       v     non-linear variable
 !
 ! @return      F     Non-linear output (F is a function of u and v)
-! @return      Fu    u - Derivative of Non-linear output (F is a function of u and v)
-! @return      Fv    v - Derivative of Non-linear output (F is a function of u and v)
+! @return      Fu    u - Partial Derivative of Non-linear output (F is a function of u and v)
+! @return      Fv    v - Partial Derivative of Non-linear output (F is a function of u and v)
 !
 !!
    Subroutine equation1_non_linear(x, y, u, v, F, Fu, Fv)
       real(dp), intent(in) :: x, y, u, v
       real(dp), intent(out) :: F, Fu, Fv
-!!! F is a function of u - Fu is F'(u)
-!!!   Non linear terms do not effect boundaries
+      !!! F is a function of u - Fu is dF(u,v)/du and Fv is dF(u,v)/dv
+      !!!   Non linear terms do not effect boundaries
 
-      !F = u - u**2.d0 - 1.2d0*v*u/(0.2d0 + u)
-      !Fu =  1.d0 - 2.d0*u - 1.2d0*(v/(0.2d0 + u) - v*u/((0.2d0 + u)**2.d0))
-      !Fv = -1.2d0*u/(0.2d0 + u)
-      !
-      F = (u**2.d0)*v - u
-      Fu = 2.d0*u*v - 1.d0
-      Fv = u**2.d0
+      F = u*u*v - u
+      Fu = 2.d0*u*v - 1.d0 
+      Fv = u*u
    End Subroutine equation1_non_linear
 
 !!
@@ -228,7 +224,7 @@ contains
       
       Call random_seed()
       Call random_number(r)
-      IC = 1.d0+0.01*(2.d0*r-1.d0)
+      IC = 1.d0+0.01*(2.d0*r-1.d0)*abs(sin(5*x*pi))
       !If (x.gt.0.5d0) then
        !  IC = 1.d0 + 0.001*cos(6.d0*x*pi)
       !End If
@@ -289,7 +285,7 @@ contains
       !Fu = 1.2d0*v/(0.2d0 + u) - v*u/((0.2d0 + u)**2.d0)
       !Fv = 1.2d0*(u/(0.2d0 + u) + 0.d0)
       
-      mu = 1.5d0
+      mu = 2.5d0
       F = mu*((1.d0 - u*u*v))
       Fu = mu*(-2.d0*u*v)
       Fv = mu*(-u*u)
