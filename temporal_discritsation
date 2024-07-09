@@ -1,0 +1,8 @@
+
+- ### Step 6:
+  Include the temporal deriative:
+  $$\epsilon A_1(x,y) (\frac{\partial^2 u}{\partial x^2}+\frac{\partial^2 u}{\partial y^2}) + C_1(x,y) u + F(u,v) = D_1(x,y) \frac{\partial u}{\partial t}, \quad  A_2(x,y) (\frac{\partial^2 v}{\partial x^2}+\frac{\partial^2 v}{\partial y^2}) + C_2(x,y) v + G(u,v) = D_2(x,y)\frac{\partial v}{\partial t}.$$
+
+  The equation is now an initial boundary value problem (IBVP) and requires initial conditions to solve. These initial conditions are again given in `equations/definitions.f90` and discretised in either `equations.f90` or `equations/2D.f90` depending on the number of spatial dimensions.
+The equation is solved in a diferent way to BVP: mathematical details will be given in ----.
+We therefore have built a new module `temporal_marching.f90` which solves the equation and prints it into files dependent on the number of domains and equations specified in `settings.input`.
