@@ -32,7 +32,7 @@ contains
       real(dp), intent(out) :: Ax, Bx, Ay, By, C, D
       real(dp) :: epsi
 
-      epsi = 0.0001d0
+      epsi = 0.05d0
 
       Ax = epsi
       Bx = 0.d0
@@ -40,8 +40,8 @@ contains
       Ay = epsi
       By = 0.d0
       
-      C = -1.d0
-      D = x
+      C = 0.d0
+      D = 1.d0
 
    End Subroutine equation1_linear
 
@@ -92,12 +92,12 @@ contains
       real(dp), intent(out) :: Ax, Bx, Ay, By, C, D
 
       Ax = 0.d0
-      Bx = 0.d0
+      Bx = 1.d0
 
       Ay = 0.d0
       By = 0.d0
       
-      C = 1.d0
+      C = 0.d0
       D = 0.d0
 
    End Subroutine equation1_BC_X_Bot
@@ -125,13 +125,13 @@ contains
 
 
       Ax = 0.d0
-      Bx = 0.d0
+      Bx = 1.d0
 
       Ay = 0.d0
       By = 0.d0
       
-      C = 1.d0
-      D = 1.d0
+      C = 0.d0
+      D = 0.d0
 
    End Subroutine equation1_BC_X_Top
 

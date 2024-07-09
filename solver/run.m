@@ -1,33 +1,30 @@
 close all
 clear all
 
-x = readmatrix('BVPx.dat');
-y = readmatrix('BVPy.dat');
-Sol1 = readmatrix('BVP1.dat');
-Sol2 = readmatrix('BVP2.dat');
+BVP = readmatrix('BVP.dat');
+%y = readmatrix('BVPy.dat');
+%Sol1 = readmatrix('BVP1.dat');
+%Sol2 = readmatrix('BVP2.dat');
 
 
-syms u x1 y1
-u(x1,y1) = y1*(1-y1)*x1^3
-C = (x.^2).*(y.^2)
-%C = y*(1-y).*x.^3 - (x.^5)/10 + x/10
+epsi = 0.0001
+epsi2 = 1/sqrt(epsi)
 
+x = BVP(1:height(BVP(:,1)),1)
+y = BVP(1:height(BVP(:,1)),3)
 
+syms g x1
+g(x1)= exp(2/sqrt(epsi))*x1 + 2*exp((1-x1)/sqrt(epsi)) - 2*exp((x1+1)/sqrt(epsi)) -x1
+g(x1) = g(x1)/(1-exp(2/sqrt(epsi)))
 
 f=figure(1);
-surf(x,y,Sol1)
+
+plot(x,y,'LineStyle','-','LineWidth',3)
 hold on
-shading interp
-colorbar
-ylabel('y')
-hold off
-
-
-
-f=figure(2);
-surf(x,y,Sol2)
-hold on
-
-shading interp
-colorbar
+fplot(g,[0 1],'LineStyle','--','LineWidth',3,'color','r')
+fontsize(f, 22, "points")
+t=title('$\epsilon = 0.0001$','Interpreter','latex')
+ylabel('u')
+xlabel('x')
+legend('numerical solution','analytical solution','location','northwest','fontsize',20)
 hold off
