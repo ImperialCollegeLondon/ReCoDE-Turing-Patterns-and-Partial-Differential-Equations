@@ -63,6 +63,7 @@ contains
 !!!! second order accurate in the boundaries
 !!!! makes banded form equations slightly smaller
 
+!!!! (3rd order accurate first derivative)
 !!!! First Derivative
     !! forward 1
          D1(1, 1) = -11.d0/6.d0; D1(1, 2) = 3.d0; D1(1, 3) = -3.d0/2.d0; D1(1, 4) = 1.d0/3.d0

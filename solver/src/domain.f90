@@ -95,11 +95,6 @@ contains
       !Set up time domain
       Call time_domain
 
-      ! sets up x and xc domains and metrics
-      Call set_up_domain(nx, xl, xr, dxc, xdom, xcdom, x_grid_strech_on,&
-              &xhalf, xmetric1, xmetric1sq, xmetric2)
-      dxcsq = dxc*dxc
-
       Select Case (Domain_number)
 
       Case (1)

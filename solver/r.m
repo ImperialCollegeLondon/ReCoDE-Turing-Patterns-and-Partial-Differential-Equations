@@ -32,12 +32,15 @@ for k = 1:skip:nt
     %pcolor(x,y,u(x,y))
     hold on
     colorbar
-    title(append('Activator at time step: ',chr))
-    shading interp
     caxis([0.95 1.05])
+    fontsize(f, 12, "points")
+    title(append('Activator at time step: ',chr),'Interpreter','latex','FontSize',18)
+    shading interp
+   
     colormap('cool')
-    xlabel('x axis')
-    ylabel('y axis')
+    xlabel('x axis','Interpreter','latex','FontSize',18)
+    ylabel('y axis','Interpreter','latex','FontSize',18)
+
     ylim([0 xr]);
     xlim([0 yr])
     exportgraphics(gcf,'testAnimated1.gif','Append',true);
@@ -46,14 +49,16 @@ for k = 1:skip:nt
     f=figure(2);
     f.Position = [500 0 400 400]
     pcolor(x,y,Sol2(1+(k-1)*nx:nx+(k-1)*nx,1:ny))
-    title(append('Substrate at time step: ',chr))
     %pcolor(x,y,u(x,y))
     hold on
     colorbar
-    shading interp
     caxis([0.98 1.02])
-    xlabel('x axis')
-    ylabel('y axis')
+    colorbar
+    shading interp
+    fontsize(f, 12, "points")
+    title(append('Substrate at time step: ',chr),'Interpreter','latex','FontSize',18)
+    xlabel('x axis','Interpreter','latex','FontSize',18)
+    ylabel('y axis','Interpreter','latex','FontSize',18)
     ylim([0 xr]);
     xlim([0 yr])
     exportgraphics(gcf,'testAnimated2.gif','Append',true);

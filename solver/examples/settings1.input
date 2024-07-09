@@ -7,7 +7,7 @@ Settings ________________
 !!! xdomain settings_____
 10 					!!! nx - size of x domain
 0,1		    !!! xl, xr - start and end points of x domain
-1,0.9      !!! x strech on or off, grid strech parameter
+0,0.9      !!! x strech on or off, grid strech parameter
 
 !!! ydomain settings_____
 40          !!! ny - size of y domain
