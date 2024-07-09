@@ -1,6 +1,6 @@
 <!-- Your Project title, make it sound catchy! -->
 
-# Pufferfish Patterns and Partial Differential Equations
+# Turing Patterns and Partial Differential Equations
 
 <!-- Provide a short description to your project -->
 
