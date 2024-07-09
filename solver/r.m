@@ -7,8 +7,8 @@ Sol1 = readmatrix('IBVP1_2eqn_2D.dat');
 Sol2 = readmatrix('IBVP2_2eqn_2D.dat');
 nx = height(x(:,1))
 ny = width(y(1,:))
-nt = 1000
-skip = 10
+nt = 2000
+skip = 200
 
 xr = max(x(:,1))
 yr = max(y(1,:))
@@ -23,12 +23,16 @@ yr = max(y(1,:))
 %Sol = Sol1 + Sol2    
 
 for k = 1:skip:nt
+
+    chr = int2str(k)
+
     f=figure(1);
     f.Position = [0 0 500 500]
     pcolor(x,y,Sol1(1+(k-1)*nx:nx+(k-1)*nx,1:ny))
     %pcolor(x,y,u(x,y))
     hold on
     colorbar
+    title(chr)
     shading interp
    % caxis([0 6])
     colormap('cool')

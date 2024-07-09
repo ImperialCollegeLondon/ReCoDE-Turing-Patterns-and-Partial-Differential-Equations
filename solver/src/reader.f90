@@ -61,9 +61,7 @@ contains
 
       Select Case (Eqn_Number)
       Case (1)
-         Write (6, *) 'One Equations'
       Case (2)
-         Write (6, *) 'Two Equations'
       Case default
          Write (6, *) 'Eqn_Number can be 1 or 2!!! Stopping Program'
          Stop
@@ -71,11 +69,9 @@ contains
 
       Select Case (Time_switch)
       Case (1)
-         Write (6, *) 'Solving parabolic PDE in form  A u_xx + B u_x + C u = D u_t'
       Case (0)
-         Write (6, *) 'Solving ODE in form  A u_xx + B u_x + C u = D'
       Case default
-         Write (6, *) 'Error in settings.input.... stopping program'
+         Write (6, *) 'Error in 1 settings.input.... stopping program'
       End Select
 
       Write (6, *)

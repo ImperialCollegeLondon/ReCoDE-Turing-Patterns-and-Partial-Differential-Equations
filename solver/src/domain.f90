@@ -121,6 +121,8 @@ contains
 
       End Select
 
+      ! rescales the domain terms - depending on how many equations and domains etc
+      Call reset_domain_paramters 
 
       ! will add in y-domain in future
    End Subroutine initial_domain_settings

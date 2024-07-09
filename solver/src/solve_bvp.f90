@@ -14,28 +14,23 @@ contains
 
 !!
 ! @brief      {Subroutine that sets up a BVP solver for the equation given in definitions.f90}
-!
+! 
+! @input      L    - LHS of equation, banded matrix form. Dimension (nband * idim)
+! @input      RHS  - RHS of equation, vector. Dimension (idim)
+! 
 ! @return     Solves the BVP in the form A u_xx + B u_x + C = D. Boundary conditions can be general
 !!
-   Subroutine solve_runner
+   Subroutine bvp_runner(L, RHS)
+      real(dp), dimension(:, :), allocatable,intent(inout) :: L !! banded left hand side
+      real(dp), dimension(:), allocatable,intent(inout) :: RHS !! right hand side of equation
 
       integer :: i, j, k, iteration
       real(dp), dimension(:), allocatable :: U
       real(dp), dimension(:, :, :), allocatable :: U_2d
-      real(dp), dimension(:, :), allocatable :: L !! banded form matrix
-      real(dp), dimension(:), allocatable :: RHS !! right hand side of equation
-
-      Write (6, *) 'size of x domain::: ', nx
-      Write (6, *) 'order of the finite differences', DiffOrder
-      Write (6, *) '... Building linear matrix'
-      Write (6, *)
 
       !!! domain has been built in main
-      !!! next step is to build the discretised operators
-      !!! equation is in the form L * X = RHS
-
-      !! Set the equation
-      Call equation_runner(L, RHS)
+      !!! equation has been built: 
+      !!! system is in the form L * X = RHS
 
       !! Solve the equation
       Call solver_banded_double_precision(idim, nband, sub_diag, sup_diag, L, RHS, U)
@@ -52,7 +47,7 @@ contains
          Write (6, *) 'Linear BVP'
       End Select
 
-      deallocate (L, RHS)
+
       !! Print the results
 
       If (Domain_number == 1) then
@@ -132,7 +127,7 @@ contains
 
       Return
 
-   End Subroutine solve_runner
+   End Subroutine bvp_runner
 
 End Module solve_bvp
 

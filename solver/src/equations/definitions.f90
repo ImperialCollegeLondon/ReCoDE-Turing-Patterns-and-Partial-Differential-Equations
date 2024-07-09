@@ -32,7 +32,7 @@ contains
       real(dp), intent(out) :: Ax, Bx, Ay, By, C, D
       real(dp) :: epsi
 
-      epsi = 0.01d0
+      epsi = 0.05d0
 
       Ax = epsi
       Bx = 0.d0
@@ -224,7 +224,7 @@ contains
       
       Call random_seed()
       Call random_number(r)
-      IC = 1.d0+0.01*(2.d0*r-1.d0)*abs(sin(5*x*pi))
+      IC = 1.d0+(2.d0*r-1.d0)*0.01d0!*abs(sin(5*x*pi))*0.1d0
       !If (x.gt.0.5d0) then
        !  IC = 1.d0 + 0.001*cos(6.d0*x*pi)
       !End If
@@ -285,7 +285,7 @@ contains
       !Fu = 1.2d0*v/(0.2d0 + u) - v*u/((0.2d0 + u)**2.d0)
       !Fv = 1.2d0*(u/(0.2d0 + u) + 0.d0)
       
-      mu = 2.5d0
+      mu = 1.8d0
       F = mu*((1.d0 - u*u*v))
       Fu = mu*(-2.d0*u*v)
       Fv = mu*(-u*u)
