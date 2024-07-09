@@ -7,7 +7,7 @@ Sol1 = readmatrix('IBVP1_2eqn_2D.dat');
 Sol2 = readmatrix('IBVP2_2eqn_2D.dat');
 nx = height(x(:,1))
 ny = width(y(1,:))
-nt = 2000
+nt = 1200
 skip = 200
 
 xr = max(x(:,1))
@@ -38,6 +38,7 @@ for k = 1:skip:nt
     colormap('cool')
     ylim([0 xr]);
     xlim([0 yr])
+    exportgraphics(gcf,'testAnimated1.gif','Append',true);
     hold off
 
     f=figure(2);
@@ -50,6 +51,7 @@ for k = 1:skip:nt
     %caxis([0.8 1.2])
     ylim([0 xr]);
     xlim([0 yr])
+    exportgraphics(gcf,'testAnimated2.gif','Append',true);
     hold off
 
     f=figure(3);
