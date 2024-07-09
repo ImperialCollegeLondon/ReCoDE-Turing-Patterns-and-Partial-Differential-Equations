@@ -101,18 +101,18 @@ contains
             Do jk = 1, nt
 
                ! Convert the 1D solution vector into a 2D solution matrix
-               do j = 1, ny
-                  do i = 1, nx
+               Do j = 1, ny
+                  Do i = 1, nx
                      k = (j - 1)*nx + i
                      U_2d(i, j, 1) = Soln(k, jk)
-                  end do
-               end do
+                  end Do
+               end Do
 
                Do i = 1, nx
                   Write (10, '(20000000(f20.14,1x),e20.10)') (U_2d(i, j, 1), j=1, ny)
                End Do
 
-            end do
+            end Do
 
          Case (2)
             Open (9, file='IBVP1_2eqn_2D.dat')
@@ -130,20 +130,20 @@ contains
             Do jk = 1, nt
 
                ! Convert the 1D solution vector into a 2D solution matrix
-               do j = 1, ny
-                  do i = 1, nx
+               Do j = 1, ny
+                  Do i = 1, nx
                      k = (j - 1)*nx + i
                      U_2d(i, j, 1) = Soln(2*k - 1, jk)
                      U_2d(i, j, 2) = Soln(2*k, jk)
-                  end do
-               end do
+                  end Do
+               end Do
 
                Do i = 1, nx
                   Write (9, '(20000000(f20.14,1x),e20.10)') (U_2d(i, j, 1), j=1, ny)
                   Write (10, '(20000000(f20.14,1x),e20.10)') (U_2d(i, j, 2), j=1, ny)
                End Do
 
-            end do
+            end Do
 
          End Select
       End If
