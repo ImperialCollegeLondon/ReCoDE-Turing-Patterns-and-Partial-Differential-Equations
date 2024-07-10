@@ -8,7 +8,7 @@ Sol2 = readmatrix('IBVP2_2eqn_2D.dat');
 nx = height(x(:,1))
 ny = width(y(1,:))
 nt = 2000
-skip = 10
+skip = 20
 
 xr = max(x(:,1))
 yr = max(y(1,:))
@@ -43,7 +43,7 @@ for k = 1:skip:nt
 
     ylim([0 xr]);
     xlim([0 yr])
-    exportgraphics(gcf,'testAnimated1.gif','Append',true);
+    exportgraphics(gcf,'examples/Activator.gif','Append',true);
     hold off
     
     f=figure(2);
@@ -61,7 +61,7 @@ for k = 1:skip:nt
     ylabel('y axis','Interpreter','latex','FontSize',18)
     ylim([0 xr]);
     xlim([0 yr])
-    exportgraphics(gcf,'testAnimated2.gif','Append',true);
+    exportgraphics(gcf,'examples/Substrate.gif','Append',true);
     hold off
 
 
