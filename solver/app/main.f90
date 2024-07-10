@@ -67,11 +67,11 @@ Program main
    Select Case (Time_switch)
    Case (0)
       Write (6, *) '!!!!!! Boundary Value Problem Solver !!!!!!'
-      Call bvp_runner(L, RHS)
+      Call bvp_runner!(L, RHS)
       !Stop
    Case (1)
       Write (6, *) '!!!!!! Initial Boundary Value Problem Solver !!!!!!'
-      Call ibvp_runner(L, RHS)
+      Call ibvp_runner!(L, RHS)
       !Stop
    End Select
 

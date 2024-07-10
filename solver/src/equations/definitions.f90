@@ -32,16 +32,16 @@ contains
       real(dp), intent(out) :: Ax, Bx, Ay, By, C, D
       real(dp) :: epsi
 
-      epsi = 0.01d0
+      epsi = 1.d0
 
       Ax = epsi
-      Bx = -1.d0
+      Bx = 0.d0
 
       Ay = epsi
       By = 0.d0
       
       C = 0.d0
-      D = -1.d0
+      D = 1.d0
 
    End Subroutine equation1_linear
 
@@ -65,9 +65,9 @@ contains
       !!! F is a function of u - Fu is dF(u,v)/du and Fv is dF(u,v)/dv
       !!!   Non linear terms do not effect boundaries
 
-      F = u*u*v - u
-      Fu = 2.d0*u*v - 1.d0 
-      Fv = u*u
+      F = u*(1.d0-u) !- v*u/(1.d0+u)
+      Fu = -2.d0*u + 1.d0 !- v/(1.d0+u) + v*u/((1.d0+u)**2.d0)
+      Fv = 0.d0!-u/(1.d0+u)
    End Subroutine equation1_non_linear
 
 !!
@@ -92,13 +92,13 @@ contains
       real(dp), intent(out) :: Ax, Bx, Ay, By, C, D
 
       Ax = 0.d0
-      Bx = 0.d0
+      Bx = 1.d0
 
       Ay = 0.d0
       By = 0.d0
       
-      C = 1.d0
-      D = 1.d0
+      C = 0.d0
+      D = 0.d0
 
    End Subroutine equation1_BC_X_Bot
 
@@ -125,13 +125,13 @@ contains
 
 
       Ax = 0.d0
-      Bx = 0.d0
+      Bx = 1.d0
 
       Ay = 0.d0
       By = 0.d0
       
-      C = 1.d0
-      D = 3.d0
+      C = 0.d0
+      D = 0.d0
 
    End Subroutine equation1_BC_X_Top
 
@@ -218,13 +218,13 @@ contains
 
       !IC = sin(2.d0*pi*x)
       ! IC = sin(pi*x) + sin(pi*y)
-      ! IC = cos(2.d0*pi*x*y)**2.d0
+       IC = cos(2.d0*pi*x*y)**2.d0
       !IC = 5.d0*x*y
-      !IC = (cos(2.d0*x*y*pi))**2.d0*ex**(-(x-0.5)**2.d0-(y-0.5)**2.d0)
+     ! IC = (cos(2.d0*x*y*pi))**2.d0*ex**(-(x-0.5)**2.d0-(y-0.5)**2.d0)
       
-      Call random_seed()
-      Call random_number(r)
-      IC = 1.d0+(2.d0*r-1.d0)*0.01d0!*abs(sin(5*x*pi))*0.1d0
+     ! Call random_seed()
+     ! Call random_number(r)
+      !IC = 1.d0+(2.d0*r-1.d0)*0.01d0!*abs(sin(5*x*pi))*0.1d0
       !If (x.gt.0.5d0) then
        !  IC = 1.d0 + 0.001*cos(6.d0*x*pi)
       !End If
@@ -281,14 +281,14 @@ contains
       real(dp), intent(out) :: F, Fu, Fv
       real(dp) :: mu
 
-      !F = 1.2d0*v*(u/(0.2d0 + u) + 0.d0)
-      !Fu = 1.2d0*v/(0.2d0 + u) - v*u/((0.2d0 + u)**2.d0)
-      !Fv = 1.2d0*(u/(0.2d0 + u) + 0.d0)
+      F = v*u/(1.d0+u)
+      Fu = v/(1.d0+u) - v*u/((1.d0+u)**2.d0)
+      Fv = u/(1.d0+u)
       
-      mu = 1.8d0
-      F = mu*((1.d0 - u*u*v))
-      Fu = mu*(-2.d0*u*v)
-      Fv = mu*(-u*u)
+      !mu = 1.8d0
+      !F = mu*((1.d0 - u*u*v))
+      !Fu = mu*(-2.d0*u*v)
+      !Fv = mu*(-u*u)
 
    End Subroutine equation2_non_linear
 !!
@@ -428,7 +428,8 @@ contains
       real(dp) :: r
 
       !Call random_number(r)
-      IC = 1.d0 !+ 0.01d0*r
+      !IC = 1.d0 !+ 0.01d0*r
+      IC = 0.2 + 0.1*sin(pi*x*10.d0)
 
    End Subroutine equation2_initial_condition
 

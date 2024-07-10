@@ -15,20 +15,34 @@ contains
 
 !!
 ! @brief      {Runs the temporal march}
-! 
-! @input      L    - LHS of equation, banded matrix form. Dimension (nband * idim)
-! @input      RHS  - RHS of equation, vector. Dimension (idim)
 !
 ! @return     Solves the IBVP in the form A u_xx + B u_x + C + non_linear terms = D u_t
 !             Outputs to IVBP.dat
 !!
-   Subroutine ibvp_runner(L,RHS)
-      real(dp), dimension(:, :), allocatable,intent(inout) :: L !! left hand side
-      real(dp), dimension(:), allocatable,intent(inout) :: RHS !! right hand side of equation
-
+   Subroutine march_runner
       integer :: i, j, jk, k
       real(dp), dimension(:, :, :), allocatable :: U_2d
+
+      Write (6, *)
+      Write (6, *) 'size of x Domain::: ', nx, dxc
      
+      Select Case(Domain_number)
+      Case(2)
+         Write (6, *) 'size of y Domain::: ', ny, dyc
+      End Select
+    
+      Write (6, *) 'size of total Domain::: ', idim
+      Write (6, *)
+      Write (6, *) 'size of t Domain::: ', nt, dt
+      Write (6, *)
+      Write (6, *) 'order of the finite differences', DiffOrder
+      Write (6, *)
+     
+      Select Case(Non_Linear_switch)
+      Case(1)
+         Write (6, *) 'Non-linear iteration at error',Newton_Error
+         Write (6, *)
+      End Select
 
       allocate (Soln(1:idim, 1:nt))
 
@@ -43,7 +57,7 @@ contains
 
       !! March in time
 
-      Call implicit_march(L, RHS)
+      Call implicit_march
 
 
       !!!! Print the solution
@@ -101,18 +115,18 @@ contains
             Do jk = 1, nt
 
                ! Convert the 1D solution vector into a 2D solution matrix
-               Do j = 1, ny
-                  Do i = 1, nx
+               do j = 1, ny
+                  do i = 1, nx
                      k = (j - 1)*nx + i
                      U_2d(i, j, 1) = Soln(k, jk)
-                  end Do
-               end Do
+                  end do
+               end do
 
                Do i = 1, nx
                   Write (10, '(20000000(f20.14,1x),e20.10)') (U_2d(i, j, 1), j=1, ny)
                End Do
 
-            end Do
+            end do
 
          Case (2)
             Open (9, file='IBVP1_2eqn_2D.dat')
@@ -130,25 +144,25 @@ contains
             Do jk = 1, nt
 
                ! Convert the 1D solution vector into a 2D solution matrix
-               Do j = 1, ny
-                  Do i = 1, nx
+               do j = 1, ny
+                  do i = 1, nx
                      k = (j - 1)*nx + i
                      U_2d(i, j, 1) = Soln(2*k - 1, jk)
                      U_2d(i, j, 2) = Soln(2*k, jk)
-                  end Do
-               end Do
+                  end do
+               end do
 
                Do i = 1, nx
                   Write (9, '(20000000(f20.14,1x),e20.10)') (U_2d(i, j, 1), j=1, ny)
                   Write (10, '(20000000(f20.14,1x),e20.10)') (U_2d(i, j, 2), j=1, ny)
                End Do
 
-            end Do
+            end do
 
          End Select
       End If
       Return
-   End Subroutine ibvp_runner
+   End Subroutine march_runner
 
 !!
 ! @brief      {Sets up and solves the implicit system
@@ -165,32 +179,32 @@ contains
 !              Ltemp   Implicit marching operator
 !              temp    temporary RHS
 !              X       temporary solution
-!
-!              }
-!
-! @input      L    - LHS of equation, banded matrix form. Dimension (nband * idim)
-! @input      RHS  - RHS of equation, vector. Dimension (idim)
 ! 
+!              }
 !
 ! @return     Soln - contains the soln to the PDE
 !!
-   Subroutine implicit_march(L,RHS)
-      real(dp), dimension(:, :), allocatable,intent(inout) :: L !! left hand side
-      real(dp), dimension(:), allocatable,intent(inout) :: RHS !! right hand side of equation
-      
+   Subroutine implicit_march
+
       real(dp), dimension(:), allocatable :: U, temp ! temporary vectors
-      !! operator from equations
+      real(dp), dimension(:, :), allocatable :: L !! operator from equations
       real(dp), dimension(:, :), allocatable :: L_March, L_march_unbanded !! implicit marching operator
+      real(dp), dimension(:), allocatable :: RHS !! right hand side of equation
 
       integer :: i, j, k, differ, iteration
 
 
 
-     
+      Write (6, *) 'Building equation... '
 !!!! Build the opeator
       allocate (temp(1:idim), U(idim))
       allocate (L_March(nband, 1:idim), L_march_unbanded(1:idim, 1:idim))
 
+      !! Obtain the original operator L
+      Call equation_runner(L, RHS)
+
+      Write (6, *) 'Equation Built... Starting march...'
+      Write (6, *)
 
       !! Builds the operator
       !!! Interior points - L and L_March are in banded form - row sub_diag+1 is where the diagonals live
