@@ -22,7 +22,7 @@ As a practical example, the code addresses a PDE from a predator-prey model, kno
 - Solving Mathematical Problems (PDEs)
 - Generalising Problems
 - Discretisation in multiple dimensions
-- Use of external libraries (LAPACK)
+- Use of external libraries (LAPACK and BLAS)
 
 
 <!-- How long should they spend reading and practising using your Code.
