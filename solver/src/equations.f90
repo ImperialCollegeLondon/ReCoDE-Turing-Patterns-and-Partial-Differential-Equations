@@ -202,7 +202,7 @@ contains
 
     !!! Derivative runner moves the coefficients into a unbanded matrix L
       Call derivative_runner(n, A, B, C, L)
-    
+
     !! set the final output for RHS
       RHS = D
 

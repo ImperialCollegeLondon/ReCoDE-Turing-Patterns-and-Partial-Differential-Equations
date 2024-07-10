@@ -25,22 +25,22 @@ contains
 
       Write (6, *)
       Write (6, *) 'size of x Domain::: ', nx, dxc
-     
-      Select Case(Domain_number)
-      Case(2)
+
+      Select Case (Domain_number)
+      Case (2)
          Write (6, *) 'size of y Domain::: ', ny, dyc
       End Select
-    
+
       Write (6, *) 'size of total Domain::: ', idim
       Write (6, *)
       Write (6, *) 'size of t Domain::: ', nt, dt
       Write (6, *)
       Write (6, *) 'order of the finite differences', DiffOrder
       Write (6, *)
-     
-      Select Case(Non_Linear_switch)
-      Case(1)
-         Write (6, *) 'Non-linear iteration at error',Newton_Error
+
+      Select Case (Non_Linear_switch)
+      Case (1)
+         Write (6, *) 'Non-linear iteration at error', Newton_Error
          Write (6, *)
       End Select
 
@@ -58,7 +58,6 @@ contains
       !! March in time
 
       Call implicit_march
-
 
       !!!! Print the solution
       If (Domain_number == 1) then
@@ -179,7 +178,7 @@ contains
 !              Ltemp   Implicit marching operator
 !              temp    temporary RHS
 !              X       temporary solution
-! 
+!
 !              }
 !
 ! @return     Soln - contains the soln to the PDE
@@ -192,8 +191,6 @@ contains
       real(dp), dimension(:), allocatable :: RHS !! right hand side of equation
 
       integer :: i, j, k, differ, iteration
-
-
 
       Write (6, *) 'Building equation... '
 !!!! Build the opeator
@@ -245,8 +242,7 @@ contains
             temp(1:differ) = RHS(1:differ)
             temp(((ny - 1)*nx)*Eqn_number:idim) = RHS(((ny - 1)*nx)*Eqn_number:idim)
 
-
-         !!! Here it's quite complicated to set the correct boundary conditions to temp 
+         !!! Here it's quite complicated to set the correct boundary conditions to temp
             If (Eqn_number == 1) then
 
                Do k = 1, ny - 1
@@ -279,9 +275,9 @@ contains
 
          ! Set the solution
          Soln(:, j) = U(:)
-         
-         If (mod(j,100)==0) Then
-            Write (6, *) 'Position done::', j,'/',nt
+
+         If (mod(j, 100) == 0) Then
+            Write (6, *) 'Position done::', j, '/', nt
          End if
       End Do
 

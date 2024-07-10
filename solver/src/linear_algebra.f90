@@ -194,14 +194,14 @@ Module Kronecker
    use type_kinds, only: dp
 
 contains
-   
+
    !!
    ! @brief      Takes in Matrices A(i,j),B(k,l), assumed 2D, returns Kronecker Product C(i*k,j*l)
    !             Note a non-commutative solution
    !
    ! @param      A     Matrix (n*m)
    ! @param      B     Matrix (p*q)
-   ! 
+   !
    ! @return     C     Matrix (np * mq)
    !!
    Function KronProd(A, B) result(C)

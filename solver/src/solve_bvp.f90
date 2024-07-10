@@ -15,27 +15,29 @@ contains
 !!
 ! @brief      {Subroutine that sets up a BVP solver for the equation given in definitions.f90}
 !
+! @input      cpu_start (real number showing CPU time)
+!
 ! @return     Solves the BVP in the form A u_xx + B u_x + C = D. Boundary conditions can be general
 !!
-   Subroutine solve_runner
-
+   Subroutine bvp_runner(cpu_start)
+      real, intent(in) :: cpu_start
+      real :: cpu_eqn
       integer :: i, j, k, iteration
       real(dp), dimension(:), allocatable :: U
       real(dp), dimension(:, :, :), allocatable :: U_2d
       real(dp), dimension(:, :), allocatable :: L !! banded form matrix
       real(dp), dimension(:), allocatable :: RHS !! right hand side of equation
 
-      Write (6, *) 'size of x domain::: ', nx
-      Write (6, *) 'order of the finite differences', DiffOrder
-      Write (6, *) '... Building linear matrix'
-      Write (6, *)
-
       !!! domain has been built in main
       !!! next step is to build the discretised operators
       !!! equation is in the form L * X = RHS
 
-      !! Set the equation
+      !! Build the equation
+      Write (6, *) 'Building equation... '
       Call equation_runner(L, RHS)
+      call cpu_time(cpu_eqn)
+      Write (6, '(A,F8.3,A)') ' Equation Built... time taken:: ', cpu_eqn - cpu_start, 's'
+      Write (6, *)
 
       !! Solve the equation
       Call solver_banded_double_precision(idim, nband, sub_diag, sup_diag, L, RHS, U)
@@ -132,7 +134,7 @@ contains
 
       Return
 
-   End Subroutine solve_runner
+   End Subroutine bvp_runner
 
 End Module solve_bvp
 

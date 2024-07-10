@@ -90,7 +90,7 @@ contains
 !               above in the module}
 !!
    Subroutine initial_domain_settings
-   integer :: i
+      integer :: i
 
       !Set up time domain
       Call time_domain
@@ -117,7 +117,7 @@ contains
       End Select
 
       ! rescales the domain terms - depending on how many equations and domains etc
-      Call reset_domain_paramters 
+      Call reset_domain_paramters
 
       ! will add in y-domain in future
    End Subroutine initial_domain_settings
@@ -173,7 +173,7 @@ contains
          tdom(i) = tl + (i - 1)*dt
       End Do
 
-      If (abs(tdom(nt) - tr).lt.1.d-7) then
+      If (abs(tdom(nt) - tr) .lt. 1.d-7) then
       Else
          Write (6, *) 'Error 1 in time_domain', tdom(nt), tr
       End if

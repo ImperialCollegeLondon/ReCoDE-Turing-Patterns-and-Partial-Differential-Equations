@@ -32,7 +32,7 @@ contains
    ! @param      ymetric1sq  The ymetric 1 sq
    ! @param      ymetric2    The ymetric 2
 
-   ! @return      L           Discretised operator 
+   ! @return      L           Discretised operator
    ! @return      RHS         RHS of equation
    !!
    Subroutine equation_setup2D(L, RHS, nx, ny, idim_xy, idim, Eqn_number,&
@@ -49,7 +49,7 @@ contains
       real(dp), dimension(:), allocatable, intent(in) :: xDom, xcDom, xmetric1, xmetric1sq, xmetric2
       real(dp), dimension(:), allocatable, intent(in) :: yDom, ycDom, ymetric1, ymetric1sq, ymetric2
 
-      real(dp), dimension(:, :, :), allocatable :: Ix, Iy,L1x, L1y, L2x, L2y, ltemp1, ltemp2
+      real(dp), dimension(:, :, :), allocatable :: Ix, Iy, L1x, L1y, L2x, L2y, ltemp1, ltemp2
       real(dp), dimension(:, :), allocatable :: R1, L1, R2, L2
       real(dp), dimension(:), allocatable :: Rtemp1, Rtemp2
 
@@ -60,7 +60,6 @@ contains
 
       Ix = 0.d0; Iy = 0.d0
 
-   
       ! Build identitiy tensor where the diagonal is taken in three dimensions
       Do i = 1, nx
          Ix(i, i, i) = 1.d0
@@ -70,11 +69,9 @@ contains
          Iy(i, i, i) = 1.d0
       End Do
 
-
       ! How many equations?
       Select Case (Eqn_number)
       Case (1)
-
 
       !!! note in this case idim_xy = idim
 
@@ -107,7 +104,6 @@ contains
             Ltemp1(nx*i + nx, :, ny + nx) = 0.d0
          End Do
 
-
          ! Add up each of the contributions
 
          Do i = 1, idim_xy
@@ -116,15 +112,10 @@ contains
          End Do
          End Do
 
-
          !! Reshape the RHS into a vector size idim_xy
          RHS = reshape(R1, (/idim_xy/))
 
          deallocate (ltemp1, L1x, L1y, R1)
-
-
-
-
 
       Case (2)
 
@@ -167,7 +158,7 @@ contains
          Rtemp2 = reshape(R2, (/idim_xy/))
 
          allocate (L1(idim_xy, idim_xy), L2(idim_xy, idim_xy))
-         
+
          !Sum the operators
 
          Do i = 1, idim_xy
@@ -224,7 +215,7 @@ contains
    ! @param      metric1sq_y     The metric 1 sq y
    ! @param      metric2_y       The metric 2 y
    ! @param      which_equation  which equation 1 or 2
-   ! 
+   !
    ! @return      Lx              { parameter_description }
    ! @return      Ly              { parameter_description }
    ! @return      RHS             The rhs
@@ -260,7 +251,7 @@ contains
       real(dp), dimension(:), allocatable :: At, Bt, Ct, Dt
       real(dp), dimension(:, :), allocatable :: Lxtemp, Lytemp
       integer :: i, j, jj
-      real(dp) :: blank1 ,blank2
+      real(dp) :: blank1, blank2
 
     !! Here we run through every point - building x operators and y operators
     !! We have ny x operators size Lx and nx y operators size ny
@@ -277,24 +268,24 @@ contains
 
          !! First fill the vectors of each equation - very similar to correpsonding equations in equations.f90
          Case (1)
-         
+
          !!! Boundaries
             Call equation1_BC_X_Bot(cDom_x(1), cDom_y(jj), At(1), Bt(1), blank1, blank2, Ct(1), Dt(1))
             Call equation1_BC_X_Top(cDom_x(n_x), cDom_y(jj), At(n_x), Bt(n_x), blank1, blank2, Ct(n_x), Dt(n_x))
-        
+
          !!! Interior
-   
+
             Do i = 2, n_x - 1
                Call equation1_linear(cDom_x(i), cDom_y(jj), At(i), Bt(i), blank1, blank2, Ct(i), Dt(i))
             End Do
          Case (2)
-         
+
          !!! Boundaries
             Call equation2_BC_X_Bot(cDom_x(1), cDom_y(jj), At(1), Bt(1), blank1, blank2, Ct(1), Dt(1))
             Call equation2_BC_X_Top(cDom_x(n_x), cDom_y(jj), At(n_x), Bt(n_x), blank1, blank2, Ct(n_x), Dt(n_x))
-         
+
          !!! Interior
-   
+
             Do i = 2, n_x - 1
                Call equation2_linear(cDom_x(i), cDom_y(jj), At(i), Bt(i), blank1, blank2, Ct(i), Dt(i))
             End Do
@@ -307,11 +298,11 @@ contains
                       &ch_x, chsq_x, metric1_x(i), metric1sq_x(i), metric2_x(i))
          End Do
 
-    !!! Derivative runner moves the coefficients into a unbanded matrix 
+    !!! Derivative runner moves the coefficients into a unbanded matrix
          Call derivative_runner(n_x, A, B, C, Lxtemp)
 
          Lx(:, :, jj) = Lxtemp
-         
+
          !! We set the RHS here
          RHS(:, jj) = D
          deallocate (Dt, Ct, Bt, At, D, C, B, A, Lxtemp)
@@ -319,7 +310,7 @@ contains
       End Do
 
       !! Set up y operators
-      
+
       Do jj = 1, n_x
 
          allocate (A(n_y), B(n_y), C(n_y), D(n_y))
@@ -332,9 +323,9 @@ contains
          !!! Boundaries
             Call equation1_BC_Y_Bot(cDom_x(jj), cDom_y(1), blank1, blank2, At(1), Bt(1), Ct(1), Dt(1))
             Call equation1_BC_Y_Top(cDom_x(jj), cDom_y(n_y), blank1, blank2, At(n_y), Bt(n_y), Ct(n_y), Dt(n_y))
-         
+
          !!! Interior
-   
+
             Do i = 2, n_y - 1
                Call equation1_linear(cDom_x(jj), cDom_y(i), blank1, blank2, At(i), Bt(i), Ct(i), Dt(i))
             End Do
@@ -344,9 +335,9 @@ contains
          !!! Boundaries
             Call equation2_BC_Y_Bot(cDom_x(jj), cDom_y(1), blank1, blank2, At(1), Bt(1), Ct(1), Dt(1))
             Call equation2_BC_Y_Top(cDom_x(jj), cDom_y(n_y), blank1, blank2, At(n_y), Bt(n_y), Ct(n_y), Dt(n_y))
-         
+
          !!! Interior
-   
+
             Do i = 2, n_y - 1
                Call equation2_linear(cDom_x(jj), cDom_y(i), blank1, blank2, At(i), Bt(i), Ct(i), Dt(i))
             End Do
@@ -432,7 +423,6 @@ contains
          Rtemp1 = Reshape(temp1, (/idim_xy/))
          Rtemp2 = Reshape(temp2, (/idim_xy/))
 
-
          Do i = 1, idim_xy
             soln(2*i - 1, 1) = Rtemp1(i)
             soln(2*i, 1) = Rtemp2(i)
@@ -444,8 +434,6 @@ contains
 
    End Subroutine initial_condition2D
 
-
-   
    !!
    ! @brief      Sets up the non-linear components of the differential equation
    !
@@ -458,8 +446,8 @@ contains
    ! @param      Eqn_number  Number of equations
    ! @param      nband       Band of matrix
    ! @param      diag        Diagonals of matrix
-   ! @param      U           Current State/Soln 
-   ! 
+   ! @param      U           Current State/Soln
+   !
    ! @return      F          Non-liner function F(U)
    ! @return      Fu         u derivative of F - matrix dimension (nband idim)
    ! @return      Fv         v derivative of F - matrix dimension (nband idim)
@@ -484,7 +472,6 @@ contains
 
       Case (1)
 
-
          Do i = 2, nx - 1
          Do j = 2, ny - 1
             !! term k redistributes the nx * ny grid into a nx*ny vector - similar to reshape
@@ -493,14 +480,13 @@ contains
          End Do
          End Do
 
-
       Case (2)
          ! When there are two equations need to split up each term
 
          Do i = 2, nx - 1
          Do j = 2, ny - 1
             k = (j - 1)*nx + i
-            Call equation1_non_linear(xcDom(i), ycDom(j), U(2*k - 1), U(2*k), F(2*k - 1),  Fu_temp(2*k - 1, 2*k - 1), &
+            Call equation1_non_linear(xcDom(i), ycDom(j), U(2*k - 1), U(2*k), F(2*k - 1), Fu_temp(2*k - 1, 2*k - 1), &
                                                                                           &Fv_temp(2*k - 1, 2*k))
             Call equation2_non_linear(xcDom(i), ycDom(j), U(2*k - 1), U(2*k), F(2*k), Fu_temp(2*k, 2*k - 1), &
                                                                                           &Fv_temp(2*k, 2*k))

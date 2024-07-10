@@ -72,7 +72,7 @@ contains
          End Select
 
       !! Set up RHS of Newton Iteration
-      !
+         !
       !! Banded matrix multplication
       !! First we find L * u (the solution at the previous iteration)
          Call DGBMV('N', idim, idim, sub_diag, sup_diag, 1.d0, L, nband, X, 1, 0.d0, N_RHS, 1)

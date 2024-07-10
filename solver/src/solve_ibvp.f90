@@ -16,33 +16,15 @@ contains
 !!
 ! @brief      {Runs the temporal march}
 !
+! @input      cpu_start (real number showing CPU time)
+!
 ! @return     Solves the IBVP in the form A u_xx + B u_x + C + non_linear terms = D u_t
 !             Outputs to IVBP.dat
 !!
-   Subroutine march_runner
+   Subroutine ibvp_runner(cpu_start)
+      real, intent(in) :: cpu_start
       integer :: i, j, jk, k
       real(dp), dimension(:, :, :), allocatable :: U_2d
-
-      Write (6, *)
-      Write (6, *) 'size of x Domain::: ', nx, dxc
-     
-      Select Case(Domain_number)
-      Case(2)
-         Write (6, *) 'size of y Domain::: ', ny, dyc
-      End Select
-    
-      Write (6, *) 'size of total Domain::: ', idim
-      Write (6, *)
-      Write (6, *) 'size of t Domain::: ', nt, dt
-      Write (6, *)
-      Write (6, *) 'order of the finite differences', DiffOrder
-      Write (6, *)
-     
-      Select Case(Non_Linear_switch)
-      Case(1)
-         Write (6, *) 'Non-linear iteration at error',Newton_Error
-         Write (6, *)
-      End Select
 
       allocate (Soln(1:idim, 1:nt))
 
@@ -57,8 +39,7 @@ contains
 
       !! March in time
 
-      Call implicit_march
-
+      Call implicit_march(cpu_start)
 
       !!!! Print the solution
       If (Domain_number == 1) then
@@ -162,7 +143,7 @@ contains
          End Select
       End If
       Return
-   End Subroutine march_runner
+   End Subroutine ibvp_runner
 
 !!
 ! @brief      {Sets up and solves the implicit system
@@ -179,32 +160,32 @@ contains
 !              Ltemp   Implicit marching operator
 !              temp    temporary RHS
 !              X       temporary solution
-! 
+!
 !              }
+!
+! @input      cpu_start (real number showing CPU time)
 !
 ! @return     Soln - contains the soln to the PDE
 !!
-   Subroutine implicit_march
-
+   Subroutine implicit_march(cpu_start)
+      real, intent(in) :: cpu_start
+      real :: cpu_eqn
       real(dp), dimension(:), allocatable :: U, temp ! temporary vectors
       real(dp), dimension(:, :), allocatable :: L !! operator from equations
       real(dp), dimension(:, :), allocatable :: L_March, L_march_unbanded !! implicit marching operator
       real(dp), dimension(:), allocatable :: RHS !! right hand side of equation
-
       integer :: i, j, k, differ, iteration
 
-
-
+      !! Build the equation
       Write (6, *) 'Building equation... '
-!!!! Build the opeator
+      Call equation_runner(L, RHS)
+      call cpu_time(cpu_eqn)
+      Write (6, '(A,F8.3,A)') ' Equation Built... time taken:: ', cpu_eqn - cpu_start, 's'
+      Write (6, *)
+
+      !!!! Build the opeator
       allocate (temp(1:idim), U(idim))
       allocate (L_March(nband, 1:idim), L_march_unbanded(1:idim, 1:idim))
-
-      !! Obtain the original operator L
-      Call equation_runner(L, RHS)
-
-      Write (6, *) 'Equation Built... Starting march...'
-      Write (6, *)
 
       !! Builds the operator
       !!! Interior points - L and L_March are in banded form - row sub_diag+1 is where the diagonals live
@@ -245,8 +226,7 @@ contains
             temp(1:differ) = RHS(1:differ)
             temp(((ny - 1)*nx)*Eqn_number:idim) = RHS(((ny - 1)*nx)*Eqn_number:idim)
 
-
-         !!! Here it's quite complicated to set the correct boundary conditions to temp 
+         !!! Here it's quite complicated to set the correct boundary conditions to temp
             If (Eqn_number == 1) then
 
                Do k = 1, ny - 1
@@ -279,9 +259,9 @@ contains
 
          ! Set the solution
          Soln(:, j) = U(:)
-         
-         If (mod(j,100)==0) Then
-            Write (6, *) 'Position done::', j,'/',nt
+
+         If (mod(j, 100) == 0) Then
+            Write (6, *) 'Position done::', j, '/', nt
          End if
       End Do
 
