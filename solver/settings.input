@@ -15,8 +15,8 @@ Settings ________________
 0,2.25      !!! y strech on or off, grid strech parameter
 
 !!! temportal marching settings_____
-2000          !!! nt - size of x domain
-0.d0,1.d0    !!! tl, tr - start and end points of time domain
+6000          !!! nt - size of x domain
+0.d0,3.d0    !!! tl, tr - start and end points of time domain
 
 !!! general settings_____
 2   				!!! DiffOrder - order of finite differences scheme

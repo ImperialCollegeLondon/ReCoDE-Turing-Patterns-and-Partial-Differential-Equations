@@ -20,21 +20,52 @@ u(x1,t1) = exp(-4*pi^2*t1)*sin(2*pi*x1)
 % Create animated plot
 f=figure(1);
 
-skip = 10
+skip = 1
 
-for k = 1:1:length(t)
+for k = 1:skip:70
+    chr = int2str(k)
     plot(x, sol(:, k),'LineWidth',2,'color','k');
     hold on
     plot(x, sol(:, 1),'LineWidth',2,'color','k','LineStyle','--');
+
+    fontsize(f, 12, "points")
+    title(append('Solution at time step: ',chr),'Interpreter','latex','FontSize',18)
+
     %plot(x, sol2(:, 1),'LineWidth',2,'color','c','LineStyle','--');
     
     %plot(x, sol2(:, k),'LineWidth',2,'color','c','LineStyle','-');
     %plot(x, u(x,t(k)),'LineWidth',1,'color','c');
-    xlabel('x');
-    ylabel('y');
+    xlabel('x axis','Interpreter','latex','FontSize',18)
+    ylabel('u axis','Interpreter','latex','FontSize',18)
     %title(sprintf('t = %0.1f', t(k)));
     %ylim([0.98 1.02]);
-    pause(0.2)
+        exportgraphics(gcf,'examples/non_linear.gif','Append',true);
+    %pause(0.2)
+    clear('1')
+    hold off
+end
+
+skip = 150
+
+for k = 71:skip:length(t)
+    chr = int2str(k)
+    plot(x, sol(:, k),'LineWidth',2,'color','k');
+    hold on
+    plot(x, sol(:, 1),'LineWidth',2,'color','k','LineStyle','--');
+
+    fontsize(f, 12, "points")
+    title(append('Solution at time step: ',chr),'Interpreter','latex','FontSize',18)
+
+    %plot(x, sol2(:, 1),'LineWidth',2,'color','c','LineStyle','--');
+    
+    %plot(x, sol2(:, k),'LineWidth',2,'color','c','LineStyle','-');
+    %plot(x, u(x,t(k)),'LineWidth',1,'color','c');
+    xlabel('x axis','Interpreter','latex','FontSize',18)
+    ylabel('u axis','Interpreter','latex','FontSize',18)
+    %title(sprintf('t = %0.1f', t(k)));
+    %ylim([0.98 1.02]);
+        exportgraphics(gcf,'examples/non_linear.gif','Append',true);
+    %pause(0.2)
     clear('1')
     hold off
 end
