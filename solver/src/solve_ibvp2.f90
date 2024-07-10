@@ -1,6 +1,6 @@
 !!{Organises the temproal marching subroutines}
 !!
-Module solve_ibvp
+Module solve_ibvp2
    use type_kinds
    use reader, only: Time_switch, Non_Linear_switch, Eqn_number, Newton_Error
    use domain
@@ -289,4 +289,5 @@ contains
 
    End Subroutine implicit_march
 
-End Module solve_ibvp
+End Module solve_ibvp2
+
