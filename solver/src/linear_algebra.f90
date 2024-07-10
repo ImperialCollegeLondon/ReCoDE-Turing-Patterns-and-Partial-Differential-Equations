@@ -160,11 +160,11 @@ contains
       Else If (INFO .LT. 0) THEN
          Write (6, *) 'INFO < 0, dgbsvx, has an illegal input value'
          Write (6, *) 'INFO = ', INFO
-         Stop
+         !Stop
       Else If ((INFO .GT. 0) .AND. (INFO .LE. N)) THEN
          Write (6, *) 'Matrix l is not invertible'
          Write (6, *) 'INFO = ', INFO
-         Stop
+         !Stop
       Else If (INFO == (N + 1)) THEN
          Write (6, *) 'Matrix l is alomost singular - be careful with solution'
          Write (6, *) 'INFO = ', INFO
@@ -172,7 +172,7 @@ contains
       Else
          Write (6, *) 'Something is wrong with dgbsvx'
          Write (6, *) 'INFO = ', INFO
-         Stop
+         !Stop
       End If
 
       !! Setting up output and moving it into the soln

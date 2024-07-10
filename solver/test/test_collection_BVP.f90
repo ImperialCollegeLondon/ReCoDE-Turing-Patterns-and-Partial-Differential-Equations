@@ -81,7 +81,7 @@ contains
    !!
    Subroutine check_banded_matrix(error)
       use type_kinds, only: dp
-      use matrix_control, only: band_the_matrix
+      use linear_algebra, only: band_the_matrix
       use maths_constants, only: pi
 
       type(error_type), allocatable, intent(out) :: error
@@ -142,7 +142,7 @@ contains
    !!
    Subroutine check_banded_matrix_multiplication(error)
       use type_kinds, only: dp
-      use linear_algerba, only: band_the_matrix
+      use linear_algebra, only: band_the_matrix
       use maths_constants, only: pi
 
       external :: DGBMV
@@ -203,13 +203,13 @@ contains
 
       real(dp) :: error_value, test_value
       real(dp), dimension(:), allocatable :: X
-      integer :: j
+      integer :: j,i
       real(dp), dimension(:, :), allocatable :: L !! banded form matrix
       real(dp), dimension(:), allocatable :: RHS !! right hand side of equation
 
       !call read_me  ! opens settings.input and reads
-
-      nx = 21; nt = 20
+      Domain_number = 1
+      nx = 6; nt = 6
       xl = 0.d0; xr = 1.d0
       x_grid_strech_on = .FALSE.
       DiffOrder = 4
@@ -217,6 +217,7 @@ contains
       call diff_initialisation  ! sets the finite difference coefficients
       call initial_domain_settings !builds the domain and computational domains
       call build_the_matrix(nx, dxc, dxcsq, xcdom, xmetric1, xmetric1sq, xmetric2, 1, L, RHS)
+
       call solver_banded_double_precision(nx, nband, sub_diag, sup_diag, L, RHS, X)
       deallocate (L, RHS)
 
@@ -226,9 +227,8 @@ contains
          test_value = abs(x(j) - ex**xdom(j))
       End Do
 
-      deallocate (xdom, xcdom, X, tdom)
+      deallocate (xdom, xcdom, X, tdom, xmetric1, xmetric1sq, xmetric2)
       Write (6, '(a,1x,e12.4)') '     Error Value::', error_value
-
       Return
    End Subroutine check_bvp_solver_4th_order_no_streching
 
@@ -270,7 +270,7 @@ contains
          test_value = abs(x(j) - ex**xdom(j))
       End Do
 
-      deallocate (xdom, xcdom, X, tdom)
+      deallocate (xdom, xcdom, X, tdom, xmetric1, xmetric1sq, xmetric2)
 
       Write (6, '(a,1x,e12.4)') '     Error Value::', error_value
 

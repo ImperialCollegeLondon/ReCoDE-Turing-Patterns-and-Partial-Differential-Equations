@@ -139,7 +139,7 @@ contains
       real(dp), dimension(:), allocatable :: A, B, C, D
       real(dp), dimension(:), allocatable :: At, Bt, Ct, Dt
       integer :: i, j
-      real(dp) :: blank
+      real(dp) :: blank1, blank2
 
     !!! allocate
       allocate (L(n, n), RHS(n))
@@ -157,24 +157,24 @@ contains
       Case (1)
 
          !!! Boundaries
-         Call equation1_BC_X_Bot(cdom(1), 1.d0, At(1), Bt(1), blank, blank, Ct(1), Dt(1))
-         Call equation1_BC_X_Top(cdom(n), 1.d0, At(n), Bt(n), blank, blank, Ct(n), Dt(n))
+         Call equation1_BC_X_Bot(cdom(1), 1.d0, At(1), Bt(1), blank1, blank2, Ct(1), Dt(1))
+         Call equation1_BC_X_Top(cdom(n), 1.d0, At(n), Bt(n), blank1, blank2, Ct(n), Dt(n))
          !!! Interior
 
          Do i = 2, n - 1
-            Call equation1_linear(cdom(i), 1.d0, At(i), Bt(i), blank, blank, Ct(i), Dt(i))
+            Call equation1_linear(cdom(i), 1.d0, At(i), Bt(i), blank1, blank2, Ct(i), Dt(i))
          End Do
 
       !!! Equation 2
       Case (2)
 
          !!! Boundaries
-         Call equation2_BC_X_Bot(cdom(1), 1.d0, At(1), Bt(1), blank, blank, Ct(1), Dt(1))
-         Call equation2_BC_X_Top(cdom(n), 1.d0, At(n), Bt(n), blank, blank, Ct(n), Dt(n))
+         Call equation2_BC_X_Bot(cdom(1), 1.d0, At(1), Bt(1), blank1, blank2, Ct(1), Dt(1))
+         Call equation2_BC_X_Top(cdom(n), 1.d0, At(n), Bt(n), blank1, blank2, Ct(n), Dt(n))
          !!! Interior
 
          Do i = 2, n - 1
-            Call equation2_linear(cdom(i), 1.d0, At(i), Bt(i), blank, blank, Ct(i), Dt(i))
+            Call equation2_linear(cdom(i), 1.d0, At(i), Bt(i), blank1, blank2, Ct(i), Dt(i))
          End Do
 
       !!! Equation TEST

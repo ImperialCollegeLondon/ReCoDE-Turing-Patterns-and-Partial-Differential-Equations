@@ -24,7 +24,7 @@ implicit-external = true
 source-form = "free"
 
 [dependencies]
-openmp="*"
+#openmp="*"
 
 [[executable]]
 name = "PDE"
@@ -36,4 +36,4 @@ test-drive.tag = "v0.4.0"
 
 [library]
 source-dir="src"
-build-script="my_build_script"
+#build-script= ""

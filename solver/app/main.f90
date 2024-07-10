@@ -68,7 +68,7 @@ Program main
    !! set final computational time
    call cpu_time(cpu_end)
 
-   Write (6, '(A, F8.3, A)') 'Total time taken: ', cpu_end - cpu_start, 's'
+   Write (6, '(A, F8.3, A)') ' Total time taken: ', cpu_end - cpu_start, 's'
    Write (6, *)
 End Program main
 
