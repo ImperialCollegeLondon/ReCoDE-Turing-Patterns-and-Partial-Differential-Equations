@@ -93,19 +93,53 @@ in a tree node.
 ## Project Structure
 
 ```log
-.
-├── examples
-│   ├── ex1
-│   └── ex2
-├── src
-|   ├── file1.py
-|   ├── file2.cpp
-|   ├── ...
-│   └── data
-├── app
+├── solver
+│    ├── README.md
+│    ├── .gitignore
+│    ├── fpm.toml
+│    ├── settings.input
+│    ├── app
+│    │   └── main.f90
+│    ├── src
+│    │   └── equations
+│    │   │   └── 2D.f90
+│    │   │   └── builder.f90
+│    │   │   └── definitions.f90
+│    │   │   └── definitions_test.f90
+│    │   └── maths_constants
+│    │   │   └── diff_coeff.f90
+│    │   │   └── fundamental.f90
+│    │   └── Newtons_method.f90
+│    │   └── domain.f90
+│    │   └── equations.f90
+│    │   └── maths_constants.f90
+│    │   └── linear_algebra.f90
+│    │   └── reader.f90
+│    │   └── solve_bvp.f90
+│    │   └── solve_ibvp.f90
+│    │   └── type_kinds.f90
+│    ├── test
+│    │   └── check.f90
+│    │   └── test_collection_BVP.f90
+│    │   └── test_collection_lapack.f90
+│    ├── examples
+│    │   └── definitions1.f90
+│    │   └── definitions2.f90
+│    │   └── definitions3.f90
+│    │   └── definitions4.f90
+│    │   └── settings1.f90
+│    │   └── settings2.f90
+│    │   └── settings3.f90
+│    │   └── settings4.f90
+│    │   └── Activator.gif
+│    │   └── Substrate.gif
+│    │   └── non_linear.gif
+│    │   └── predator_prey.gif
+│    └── LICENSE
+├── notebooks
+├── fortran_fibonacci
 ├── docs
-├── main
-└── test
+└── .github
 ```
 
 <!-- Change this to your License. Make sure you have added the file on GitHub -->
