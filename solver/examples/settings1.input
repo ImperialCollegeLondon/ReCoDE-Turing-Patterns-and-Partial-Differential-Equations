@@ -1,0 +1,25 @@
+Settings ________________
+0           !!! Time_switch (time marching if 1)
+0           !!! Non_Linear_switch (non linear if 1)
+1           !!! Eqn_number
+1           !!! Domain_number
+
+!!! xdomain settings_____
+10 					!!! nx - size of x domain
+0,1		    !!! xl, xr - start and end points of x domain
+0,0.9      !!! x strech on or off, grid strech parameter
+
+!!! ydomain settings_____
+40          !!! ny - size of y domain
+0,20        !!! yl, yr - start and end points of y domain
+0,2.25      !!! y strech on or off, grid strech parameter
+
+!!! temportal marching settings_____
+2000          !!! nt - size of x domain
+0.d0,10.d0    !!! tl, tr - start and end points of time domain
+
+!!! general settings_____
+2   				!!! DiffOrder - order of finite differences scheme
+1.d-6       !!! Newton_Error
+2000        !!! Max_iter - max Newton iterations
+
