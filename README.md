@@ -1,44 +1,44 @@
 <!-- Your Project title, make it sound catchy! -->
 
-# Project title
+# Turing Patterns and Partial Differential Equations
 
 <!-- Provide a short description to your project -->
 
 ## Description
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam vitae pulvinar
-mauris. Praesent sollicitudin rutrum mauris sed congue. Donec vel orci elit.
-Phasellus luctus sodales elementum. Donec lacinia semper lorem, volutpat
-molestie arcu bibendum mollis. Nulla nec massa vitae sapien varius vulputate
-vel vitae ex. Curabitur convallis iaculis elit at faucibus. Sed eget facilisis
-orci, ut consequat neque.
+This code is part of the Research Computing and Data Science Examples (ReCoDE) project. 
+It is a non-linear partial differential equation (PDE) solver written in Fortran, designed to tackle both boundary value problems (BVP) and initial boundary value problems (IBVP) with temporal marching.
+The solver is versatile, capable of handling problems in one or two dimensions and can solve single equations or pairs of coupled equations. This exemplar highlights the code's useful features, including the use of the Fortran Package Manager (FPM), use of LAPACK and the codes modular nature.
+As a practical example, the code addresses a PDE from a predator-prey model, known for producing solutions that feature Turing patterns - the patterns that feature on many animals such as pufferfish. While knowledge of PDEs and predator-prey models is not required, all necessary mathematical concepts will be explained below.
 
 <!-- What should the students going through your exemplar learn -->
 
 ## Learning Outcomes
 
-- Skill 1
-- Skill 2
-- Skill 3
+- Complied Codes
+- Fortran Package Manager (FPM)
+- Modular Codes
+- Multipurpose Codes
+- Solving Mathematical Problems (PDEs)
+- Generalising Problems
+- Discretisation in multiple dimensions
+- Use of external libraries (LAPACK and BLAS)
+- Testing Fortran code
+
 
 <!-- How long should they spend reading and practising using your Code.
 Provide your best estimate -->
 
 | Task       | Time    |
 | ---------- | ------- |
-| Reading    | 3 hours |
-| Practising | 3 hours |
+| Reading    | 5 hours |
+| Practising | 5 hours |
 
 ## Requirements
 
-<!--
-If your exemplar requires students to have a background knowledge of something
-especially this is the place to mention that.
+This exemplar is for entry-level researchers with basic knowledge of Fortran syntax. An [Introduction to Fortran Course](https://www.imperial.ac.uk/students/academic-support/graduate-school/professional-development/doctoral-students/research-computing-data-science/courses/intro-to-fortran/) 
+is available to help you get started.
 
-List any resources you would recommend to get the students started.
-
-If there is an existing exemplar in the ReCoDE repositories link to that.
--->
 
 ### Academic
 
@@ -91,23 +91,6 @@ in a tree node.
 
 -->
 
-## Project Structure
-
-```log
-.
-├── examples
-│   ├── ex1
-│   └── ex2
-├── src
-|   ├── file1.py
-|   ├── file2.cpp
-|   ├── ...
-│   └── data
-├── app
-├── docs
-├── main
-└── test
-```
 
 <!-- Change this to your License. Make sure you have added the file on GitHub -->
 
