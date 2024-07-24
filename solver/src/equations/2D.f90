@@ -229,14 +229,14 @@ contains
       real(dp), intent(in) :: ch_x, chsq_x !computational distance/squared
       real(dp), dimension(:), allocatable, intent(in) :: cDom_x ! computational Domain
 
-    !! grid streching metric terms
+    !! grid stretching metric terms
       real(dp), dimension(:), allocatable, intent(in) :: metric1_x, metric1sq_x, metric2_x
 
       integer, intent(in) :: n_y !! size of Domain
       real(dp), intent(in) :: ch_y, chsq_y !computational distance/squared
       real(dp), dimension(:), allocatable, intent(in) :: cDom_y ! computational Domain
 
-    !! grid streching metric terms
+    !! grid stretching metric terms
       real(dp), dimension(:), allocatable, intent(in) :: metric1_y, metric1sq_y, metric2_y
 
     !! which equation?

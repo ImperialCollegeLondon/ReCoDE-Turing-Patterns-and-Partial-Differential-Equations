@@ -1,9 +1,9 @@
 name = "PDE"
 version = "0.1.0"
 license = "license"
-author = "Elliot Jmaes"
+author = "Elliot James"
 maintainer = "ejb321@ic.ac.uk"
-copyright = "Copyright 2024, Elliot Jmaes"
+copyright = "Copyright 2024, Elliot James"
 
 
 [build]

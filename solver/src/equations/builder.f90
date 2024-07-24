@@ -1,4 +1,4 @@
-!!{This module sets up the subroutines so an equation can be discretised onto a streched grid}
+!!{This module sets up the subroutines so an equation can be discretised onto a stretched grid}
 !!
 Module equations_builder
    use type_kinds, only: dp
@@ -8,7 +8,7 @@ contains
 
 !!
 ! @brief      {This Subroutine takes the coefficient of the differential equation
-!              and scales them with the correct grid streching terms and step sizes.
+!              and scales them with the correct grid stretching terms and step sizes.
 !              The main scaling is the new B term: this has contribution from both ai and bi.
 !              We additionally multiply out all the scalings
 !              so the second order derivative coefficients remains unchanged.
