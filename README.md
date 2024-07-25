@@ -31,8 +31,8 @@ Provide your best estimate -->
 
 | Task       | Time    |
 | ---------- | ------- |
-| Reading    | 5 hours |
-| Practising | 5 hours |
+| Reading    | 7 hours |
+| Practising | 7 hours |
 
 ## Requirements
 
@@ -42,57 +42,27 @@ is available to help you get started.
 
 ### Academic
 
-<!-- List the system requirements and how to obtain them, that can be as simple
-as adding a hyperlink to as detailed as writting step-by-step instructions.
-How detailed the instructions should be will vary on a case-by-case basis.
-
-Here are some examples:
-
-- 50 GB of disk space to hold Dataset X
-- Anaconda
-- Python 3.11 or newer
-- Access to the HPC
-- PETSc v3.16
-- gfortran compiler
-- Paraview
--->
-
+A basic overview of differential equations is required:
+- A discussion on ordinary differential equaitons can be found [here[(https://math.libretexts.org/Courses/Monroe_Community_College/MTH_211_Calculus_II/Chapter_8%3A_Introduction_to_Differential_Equations/8.1%3A_Basics_of_Differential_Equations#:~:text=A%20differential%20equation%20is%20an,are%20substituted%20into%20the%20equation.)
+- We will be looking at partial differential equations, which are equations dependent on more than one variable. The numerical techniques to solve these are very similar to the ones for ordinary differential equations. A discussion on partial differential equations can be found [here](https://en.wikipedia.org/wiki/Partial_differential_equation).
+- We will solve our equations using [finite differences](https://en.wikipedia.org/wiki/Finite_difference_method).
+  
 ### System
 
-<!-- Instructions on how the student should start going through the exemplar.
+- A Fortran compiler, such as `gfortran`: see [here](https://fortran-lang.org/learn/os_setup/install_gfortran/) for an installation guide.
+- Fortran Package Manager (FPM): see [here](https://fpm.fortran-lang.org/install/index.html) for an installation guide.
+- `BLAS` external library: see here for a `BLAS` installationa guide [here](https://coral.ise.lehigh.edu/jild13/2016/07/27/install-lapack-and-blas-on-linux-based-systems/). Mac users can install with homebrew. 
+- `LAPACK` external library: see the `LAPACK` documentaion [here](https://www.netlib.org/lapack/) and [here](https://coral.ise.lehigh.edu/jild13/2016/07/27/install-lapack-and-blas-on-linux-based-systems/) for an intallation guide. Mac users can install with homebrew. `BLAS` must be installed first.
+- Optional: For visualisation of solutions we have made use of `MATLAB_R2023a`. Other visulation software can be used.
 
-Structure this section as you see fit but try to be clear, concise and accurate
-when writing your instructions.
-
-For example:
-Start by watching the introduction video,
-then study Jupyter notebooks 1-3 in the `intro` folder
-and attempt to complete exercise 1a and 1b.
-
-Once done, start going through through the PDF in the `main` folder.
-By the end of it you should be able to solve exercises 2 to 4.
-
-A final exercise can be found in the `final` folder.
-
-Solutions to the above can be found in `solutions`.
--->
 
 ## Getting Started
 
-<!-- An overview of the files and folder in the exemplar.
-Not all files and directories need to be listed, just the important
-sections of your project, like the learning material, the code, the tests, etc.
-
-A good starting point is using the command `tree` in a terminal(Unix),
-copying its output and then removing the unimportant parts.
-
-You can use ellipsis (...) to suggest that there are more files or folders
-in a tree node.
-
--->
-
-
-<!-- Change this to your License. Make sure you have added the file on GitHub -->
+- Start by going through the notebook [`00.fortran_package_manager.md`](https://github.com/ImperialCollegeLondon/ReCoDE-Solving-Singular-PDEs-in-Fortran/blob/main/notebooks/00.fortran_package_manager.md). This will give you an introduction into FPM by going through and running the code in the repository `fortran_fibonacci`. 
+- Then read the [`01.theory.md`](https://github.com/ImperialCollegeLondon/ReCoDE-Solving-Singular-PDEs-in-Fortran/blob/main/notebooks/01.theory.md). This will give a general overview of the problem we are trying to solve, and discuss the basic techniques will will use.
+- Reading through notebooks [`03-1.solver_settings.md`](https://github.com/ImperialCollegeLondon/ReCoDE-Solving-Singular-PDEs-in-Fortran/blob/main/notebooks/03-1.solver_settings.md), [`03-2.equation_definitions.md`](https://github.com/ImperialCollegeLondon/ReCoDE-Solving-Singular-PDEs-in-Fortran/blob/main/notebooks/03-2.equation_definitions.md) and [`03-3.fpm_settings.md`](https://github.com/ImperialCollegeLondon/ReCoDE-Solving-Singular-PDEs-in-Fortran/blob/main/notebooks/03-3.fpm_settings.md) will enable you to run and use the code.
+- Following these, notebook [09.example_equations.md](https://github.com/ImperialCollegeLondon/ReCoDE-Solving-Singular-PDEs-in-Fortran/blob/main/notebooks/09.example_equations.md) will demonstrate how to solve particular problems with the code.
+- The remaining notebooks explain techniques used in the coding process.
 
 ## License
 
