@@ -58,11 +58,11 @@ A basic overview of differential equations is required:
 
 ## Getting Started
 
-- Start by going through the notebook [`00.fortran_package_manager.md`](https://github.com/ImperialCollegeLondon/ReCoDE-Solving-Singular-PDEs-in-Fortran/blob/main/notebooks/00.fortran_package_manager.md). This will give you an introduction into FPM by going through and running the code in the repository `fortran_fibonacci`. 
+- Start by going through the notebook [`00.fortran_package_manager.md`](notebooks/00.fortran_package_manager.md). This will give you an introduction into FPM by going through and running the code in the repository `fortran_fibonacci`. 
 - Then read the [`01.theory.md`](https://github.com/ImperialCollegeLondon/ReCoDE-Solving-Singular-PDEs-in-Fortran/blob/main/notebooks/01.theory.md). This will give a general overview of the problem we are trying to solve, and discuss the basic techniques will will use.
-- Reading through notebooks [`03-1.solver_settings.md`](https://github.com/ImperialCollegeLondon/ReCoDE-Solving-Singular-PDEs-in-Fortran/blob/main/notebooks/03-1.solver_settings.md), [`03-2.equation_definitions.md`](https://github.com/ImperialCollegeLondon/ReCoDE-Solving-Singular-PDEs-in-Fortran/blob/main/notebooks/03-2.equation_definitions.md) and [`03-3.fpm_settings.md`](https://github.com/ImperialCollegeLondon/ReCoDE-Solving-Singular-PDEs-in-Fortran/blob/main/notebooks/03-3.fpm_settings.md) will enable you to run and use the code.
-- Following these, notebook [09.example_equations.md](https://github.com/ImperialCollegeLondon/ReCoDE-Solving-Singular-PDEs-in-Fortran/blob/main/notebooks/09.example_equations.md) will demonstrate how to solve particular problems with the code.
-- The remaining notebooks explain techniques used in the coding process.
+- Reading through notebooks [`03-1.solver_settings.md`](notebooks/03-1.solver_settings.md), [`03-2.equation_definitions.md`](notebooks/03-2.equation_definitions.md) and [`03-3.fpm_settings.md`](main/notebooks/03-3.fpm_settings.md) will enable you to run and use the code.
+- Following these, notebook [`09.example_equations.md`](notebooks/09.example_equations.md) will detail how to solve particular problems with the code.
+- The remaining notebooks explain specific techniques used in the coding process.
 
 ## License
 
