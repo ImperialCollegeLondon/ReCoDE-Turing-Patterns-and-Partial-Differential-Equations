@@ -28,7 +28,7 @@ contains
 !
 !!
    Subroutine equation1_linear(x, y, Ax, Bx, Ay, By, C, D)
-      real(dp), intent(in) :: x, y ! xpoisiton in the domain
+      real(dp), intent(in) :: x, y ! xposition in the domain
       real(dp), intent(out) :: Ax, Bx, Ay, By, C, D
       real(dp) :: epsi
 
@@ -88,7 +88,7 @@ contains
 !
 !!
    Subroutine equation1_BC_X_Bot(x, y, Ax, Bx, Ay, By, C, D)
-      real(dp), intent(in) :: x, y ! xpoisiton in the domain
+      real(dp), intent(in) :: x, y ! xposition in the domain
       real(dp), intent(out) :: Ax, Bx, Ay, By, C, D
 
       Ax = 0.d0
@@ -120,7 +120,7 @@ contains
 !
 !!
    Subroutine equation1_BC_X_Top(x, y, Ax, Bx, Ay, By, C, D)
-      real(dp), intent(in) :: x, y ! xpoisiton in the domain
+      real(dp), intent(in) :: x, y ! xposition in the domain
       real(dp), intent(out) :: Ax, Bx, Ay, By, C, D
 
       Ax = 0.d0
@@ -153,7 +153,7 @@ contains
 !!
    Subroutine equation1_BC_Y_Bot(x, y, Ax, Bx, Ay, By, C, D)
       !!! Note that the boundary conditions at the corners are governed by BC_Y
-      real(dp), intent(in) :: x, y ! xpoisiton in the domain
+      real(dp), intent(in) :: x, y ! xposition in the domain
       real(dp), intent(out) :: Ax, Bx, Ay, By, C, D
 
       Ax = 0.d0
@@ -187,7 +187,7 @@ contains
 !!
    Subroutine equation1_BC_Y_Top(x, y, Ax, Bx, Ay, By, C, D)
    !!! Note that the boundary conditions at the corners are governed by BC_Y
-      real(dp), intent(in) :: x, y ! xpoisiton in the domain
+      real(dp), intent(in) :: x, y ! xposition in the domain
       real(dp), intent(out) :: Ax, Bx, Ay, By, C, D
 
       Ax = 0.d0
@@ -211,7 +211,7 @@ contains
 !
 !!
    Subroutine equation1_initial_condition(x, y, IC)
-      real(dp), intent(in) :: x, y ! xpoisiton in the domain
+      real(dp), intent(in) :: x, y ! xposition in the domain
       real(dp), intent(out) :: IC
       real(dp) :: r
 
@@ -246,7 +246,7 @@ contains
 !
 !!
    Subroutine equation2_linear(x, y, Ax, Bx, Ay, By, C, D)
-      real(dp), intent(in) :: x, y ! xpoisiton in the domain
+      real(dp), intent(in) :: x, y ! xposition in the domain
       real(dp), intent(out) :: Ax, Bx, Ay, By, C, D
 
       Ax = 1.d0
@@ -307,7 +307,7 @@ contains
 !
 !!
    Subroutine equation2_BC_X_Bot(x, y, Ax, Bx, Ay, By, C, D)
-      real(dp), intent(in) :: x, y ! xpoisiton in the domain
+      real(dp), intent(in) :: x, y ! xposition in the domain
       real(dp), intent(out) :: Ax, Bx, Ay, By, C, D
 
       Ax = 0.d0
@@ -337,7 +337,7 @@ contains
 !
 !!
    Subroutine equation2_BC_X_Top(x, y, Ax, Bx, Ay, By, C, D)
-      real(dp), intent(in) :: x, y ! xpoisiton in the domain
+      real(dp), intent(in) :: x, y ! xposition in the domain
       real(dp), intent(out) :: Ax, Bx, Ay, By, C, D
 
       Ax = 0.d0
@@ -367,7 +367,7 @@ contains
 !
 !!
    Subroutine equation2_BC_Y_Bot(x, y, Ax, Bx, Ay, By, C, D)
-      real(dp), intent(in) :: x, y ! xpoisiton in the domain
+      real(dp), intent(in) :: x, y ! xposition in the domain
       real(dp), intent(out) :: Ax, Bx, Ay, By, C, D
 
       Ax = 0.d0
@@ -396,7 +396,7 @@ contains
 !
 !!
    Subroutine equation2_BC_Y_Top(x, y, Ax, Bx, Ay, By, C, D)
-      real(dp), intent(in) :: x, y ! xpoisiton in the domain
+      real(dp), intent(in) :: x, y ! xposition in the domain
       real(dp), intent(out) :: Ax, Bx, Ay, By, C, D
 
       Ax = 0.d0
@@ -420,7 +420,7 @@ contains
 !
 !!
    Subroutine equation2_initial_condition(x, y, IC)
-      real(dp), intent(in) :: x, y ! xpoisiton in the domain
+      real(dp), intent(in) :: x, y ! xposition in the domain
       real(dp), intent(out) :: IC
       real(dp) :: r
 

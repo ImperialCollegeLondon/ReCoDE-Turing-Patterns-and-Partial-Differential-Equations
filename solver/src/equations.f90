@@ -125,7 +125,7 @@ contains
       real(dp), intent(in) :: ch, chsq !computational distance/squared
       real(dp), dimension(:), allocatable, intent(in) :: cdom ! computational domain
 
-    !! grid streching metric terms
+    !! grid stretching metric terms
       real(dp), dimension(:), allocatable, intent(in) :: metric1, metric1sq, metric2
 
     !! which equation?
@@ -147,7 +147,7 @@ contains
       allocate (At(n), Bt(n), Ct(n), Dt(n))
 
     !! At,Bt,Ct and Dt form the coefficients of the discretised equation in the form Atu'' + Btu' + Ctu = Dt
-    !! A,B,C and D are then the corrected coefficients given grid streching transfomations
+    !! A,B,C and D are then the corrected coefficients given grid stretching transfomations
 
     !! here we use OpenMP to parallelise the Do Loops - no infomation is shared between loops
 

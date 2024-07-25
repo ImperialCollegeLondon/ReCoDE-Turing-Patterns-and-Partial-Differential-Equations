@@ -12,13 +12,13 @@ Module reader
    ! Domain Terms
    integer :: nx, ny, nt, Domain_number
    real(dp) :: xl, xr, xhalf, yl, yr, yhalf, tl, tr
-   logical :: x_grid_strech_on, y_grid_strech_on
+   logical :: x_grid_stretch_on, y_grid_stretch_on
 
 contains
 
    Subroutine read_me
       use maths_constants, only: DiffOrder
-      integer :: x_grid_strech_on_integer, y_grid_strech_on_integer
+      integer :: x_grid_stretch_on_integer, y_grid_stretch_on_integer
 
 !!! opens settings.input file and reads data
 
@@ -41,12 +41,12 @@ contains
       Read (1, *) ! x settings
       Read (1, *) nx
       Read (1, *) xl, xr
-      Read (1, *) x_grid_strech_on_integer, xhalf
+      Read (1, *) x_grid_stretch_on_integer, xhalf
       Read (1, *)
       Read (1, *) ! y settings
       Read (1, *) ny
       Read (1, *) yl, yr
-      Read (1, *) y_grid_strech_on_integer, yhalf
+      Read (1, *) y_grid_stretch_on_integer, yhalf
       Read (1, *)
       Read (1, *) ! t settings
       Read (1, *) nt
@@ -76,16 +76,16 @@ contains
 
       Write (6, *)
 
-      Select Case (x_grid_strech_on_integer)
+      Select Case (x_grid_stretch_on_integer)
       Case (1)
-         x_grid_strech_on = .TRUE.
-         Write (6, *) 'X Grid streching ON'
+         x_grid_stretch_on = .TRUE.
+         Write (6, *) 'X Grid stretching ON'
       Case (0)
-         x_grid_strech_on = .FALSE.
-         Write (6, *) 'X Grid streching OFF'
+         x_grid_stretch_on = .FALSE.
+         Write (6, *) 'X Grid stretching OFF'
       Case default
          Write (6, *) 'Error in settings.input.... stopping program'
-         Write (6, *) 'x_grid_strech_on_integer should be 1 or 0'
+         Write (6, *) 'x_grid_stretch_on_integer should be 1 or 0'
       End Select
 
       Select Case (nx)
@@ -98,16 +98,16 @@ contains
          Stop
       End Select
 
-      Select Case (y_grid_strech_on_integer)
+      Select Case (y_grid_stretch_on_integer)
       Case (1)
-         y_grid_strech_on = .TRUE.
-         Write (6, *) 'Y Grid streching ON'
+         y_grid_stretch_on = .TRUE.
+         Write (6, *) 'Y Grid stretching ON'
       Case (0)
-         y_grid_strech_on = .FALSE.
-         Write (6, *) 'Y Grid streching OFF'
+         y_grid_stretch_on = .FALSE.
+         Write (6, *) 'Y Grid stretching OFF'
       Case default
          Write (6, *) 'Error in settings.input.... stopping program'
-         Write (6, *) 'y_grid_strech_on_integer should be 1 or 0'
+         Write (6, *) 'y_grid_stretch_on_integer should be 1 or 0'
       End Select
 
       Select Case (ny)

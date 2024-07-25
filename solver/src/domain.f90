@@ -22,7 +22,7 @@
 ! xmetric1          dx/dc vector
 ! xmetric1sq        dx/dc vector squared
 ! xmetric2          dx^2/dc^2 vector
-! x_grid_strech_on  turns on (TRUE) or off (FALSE) grid stretch function
+! x_grid_stretch_on  turns on (TRUE) or off (FALSE) grid stretch function
 ! xhalf             puts half the points intbetween left boundary and xhalf
 !
 ! ydomain parameters
@@ -37,7 +37,7 @@
 ! ymetric1          dy/dc vector
 ! ymetric1sq        dy/dc vector squared
 ! ymetric2          dy^2/dc^2 vector
-! y_grid_strech_on  turns on (TRUE) or off (FALSE) grid stretch function
+! y_grid_stretch_on  turns on (TRUE) or off (FALSE) grid stretch function
 ! yhalf             puts half the points intbetween left boundary and yhalf
 !
 ! time domain parameters
@@ -49,8 +49,8 @@
 !!
 Module domain
    use type_kinds, only: dp
-   use reader, only: nx, xl, xr, xhalf, x_grid_strech_on,&
-            & ny, yl, yr, yhalf, y_grid_strech_on,&
+   use reader, only: nx, xl, xr, xhalf, x_grid_stretch_on,&
+            & ny, yl, yr, yhalf, y_grid_stretch_on,&
             & nt, tl, tr, Domain_number
 
 !!!! overall
@@ -65,7 +65,7 @@ Module domain
 !   real(dp) :: xl, xr
    real(dp) :: dxc, dxcsq
    real(dp), dimension(:), allocatable :: xmetric1, xmetric1sq, xmetric2
-!   logical :: x_grid_strech_on
+!   logical :: x_grid_stretch_on
 !   real(dp) :: xhalf
 
 !!! y domain
@@ -74,7 +74,7 @@ Module domain
 !   real(dp) :: yl, yr
    real(dp) :: dyc, dycsq
    real(dp), dimension(:), allocatable :: ymetric1, ymetric1sq, ymetric2
-!   logical :: y_grid_strech_on
+!   logical :: y_grid_stretch_on
 !   real(dp) :: yhalf
 
 !!! time domain
@@ -99,18 +99,18 @@ contains
 
       Case (1)
          ! sets up x and xc domains and metrics
-         Call set_up_domain(nx, xl, xr, dxc, xdom, xcdom, x_grid_strech_on,&
+         Call set_up_domain(nx, xl, xr, dxc, xdom, xcdom, x_grid_stretch_on,&
            &xhalf, xmetric1, xmetric1sq, xmetric2)
          dxcsq = dxc*dxc
 
       Case (2)
          ! sets up x and xc domains and metrics
-         Call set_up_domain(nx, xl, xr, dxc, xdom, xcdom, x_grid_strech_on,&
+         Call set_up_domain(nx, xl, xr, dxc, xdom, xcdom, x_grid_stretch_on,&
                  &xhalf, xmetric1, xmetric1sq, xmetric2)
          dxcsq = dxc*dxc
 
          ! sets up y and yc domains and metrics
-         Call set_up_domain(ny, yl, yr, dyc, ydom, ycdom, y_grid_strech_on,&
+         Call set_up_domain(ny, yl, yr, dyc, ydom, ycdom, y_grid_stretch_on,&
                  &yhalf, ymetric1, ymetric1sq, ymetric2)
          dycsq = dyc*dyc
 
@@ -182,14 +182,14 @@ contains
 
 !!
 ! @brief      { Set up domain builds a physical domain whihch is mapped to a
-!               computational domain via grid streching.
+!               computational domain via grid stretching.
 !               The computational domain will have evenly space grid points}
 !
 ! @param      n             How many points in domain
 ! @param      left          The left boundary
 ! @param      right         The right bounday
-! @param      gs_on         Grid strech on - is the grid streching on? (logical)
-! @param      gs            The grid strech parameter
+! @param      gs_on         Grid stretch on - is the grid stretching on? (logical)
+! @param      gs            The grid stretch parameter
 !                            - If gs_on true then half the grid points will be clustered
 !                            - between the left boundary and gs
 !
@@ -208,7 +208,7 @@ contains
       real(dp), intent(out) :: d
       real(dp), intent(out), dimension(:), allocatable :: x, c
 
-!!!! grid streching settings
+!!!! grid stretching settings
       logical, intent(in)  :: gs_on
       real(dp), intent(in) :: gs
       real(dp), intent(out), dimension(:), allocatable :: metric1, metric2, metric1sq
@@ -237,9 +237,9 @@ contains
 
       Select Case (gs_on)
       Case (.FALSE.)
-         Call mapping_no_strech(c, left, sizer, x)
+         Call mapping_no_stretch(c, left, sizer, x)
       Case (.TRUE.)
-         Call mapping_strech(n, c, left, sizer, gs, x)
+         Call mapping_stretch(n, c, left, sizer, gs, x)
       End Select
 
       ! find the derivatives xdom.. i.e. the metrics
@@ -264,7 +264,7 @@ contains
 !
 ! @Return     mapping  Physical domain coordinate corresponding to computational domain gird
 !!
-   Subroutine mapping_no_strech(c, left, size, mapping)
+   Subroutine mapping_no_stretch(c, left, size, mapping)
       real(dp), dimension(:), allocatable, intent(in) :: c
       real(dp), intent(in) :: left, size
       real(dp), dimension(:), allocatable, intent(inout) ::  mapping
@@ -277,10 +277,10 @@ contains
 
 !!
 ! @brief  {builds the mapping from the computational plane to the physical plane
-!          depEndEndent on grid streching.
-!          If grid streching is on then the function clusters
+!          depEndEndent on grid stretching.
+!          If grid stretching is on then the function clusters
 !          half the points between left boundary and the variable gs
-!          If grid streching is off then the function is a linear map
+!          If grid stretching is off then the function is a linear map
 !
 !          The function is defined by::
 
@@ -295,7 +295,7 @@ contains
 !          (h must be between 0 and 1 and not 1/2)}
 !
 ! @param      n          Size of the domain
-! @param      on_off     Turns on the grid streching If true
+! @param      on_off     Turns on the grid stretching If true
 ! @param      c          Computational domain
 ! @param      left       The left boundary
 ! @param      size       The size of the domain
@@ -303,7 +303,7 @@ contains
 !
 ! @Return     mapping    Physical domain coordinate corresponding to computational domain gird
 !!
-   Subroutine mapping_strech(n, c, left, size, gs, mapping)
+   Subroutine mapping_stretch(n, c, left, size, gs, mapping)
 
       integer, intent(in) :: n
       real(dp), dimension(:), allocatable, intent(in) :: c
@@ -332,7 +332,7 @@ contains
       mapping(:) = mapping(:)*size + left
 
       Return
-   End Subroutine mapping_strech
+   End Subroutine mapping_stretch
 
 !!
 ! @brief      {Computes the metrics of the coordinate mapping}

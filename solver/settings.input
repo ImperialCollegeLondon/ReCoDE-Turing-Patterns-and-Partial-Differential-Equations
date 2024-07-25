@@ -7,14 +7,14 @@ Settings ________________
 !!! xdomain settings_____
 400           !!! nx - size of x domain
 0,1       !!! xl, xr - start and end points of x domain
-0,0.9      !!! x strech on or off, grid strech parameter
+0,0.9      !!! x stretch on or off, grid stretch parameter
 
 !!! ydomain settings_____
 40          !!! ny - size of y domain
 0,20        !!! yl, yr - start and end points of y domain
-0,2.25      !!! y strech on or off, grid strech parameter
+0,2.25      !!! y stretch on or off, grid stretch parameter
 
-!!! temportal marching settings_____
+!!! temporal marching settings_____
 100          !!! nt - size of x domain
 0.d0,1.d0    !!! tl, tr - start and end points of time domain
 
