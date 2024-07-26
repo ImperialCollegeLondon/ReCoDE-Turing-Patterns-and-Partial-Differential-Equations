@@ -1,1 +1,0 @@
-![Animation showing density of activator over time]( assets/Activator.gif ) 
