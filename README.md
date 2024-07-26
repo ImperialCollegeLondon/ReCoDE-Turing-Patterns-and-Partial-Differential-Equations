@@ -46,10 +46,10 @@ is available to help you get started.
 
 ## Academic
 
-- Ordinary Differential Equations (ODEs): Ordinary differential equations are equations that involve functions of a single independent variable and their derivatives. These equations are fundamental in modeling various physical, biological, and economic phenomena where the rate of change of a quantity is related to the quantity itself. A discussion on ordinary differential equaitons can be found [here[(https://math.libretexts.org/Courses/Monroe_Community_College/MTH_211_Calculus_II/Chapter_8%3A_Introduction_to_Differential_Equations/8.1%3A_Basics_of_Differential_Equations#:~:text=A%20differential%20equation%20is%20an,are%20substituted%20into%20the%20equation.)
+- Ordinary Differential Equations (ODEs): Ordinary differential equations are equations that involve functions of a single independent variable and their derivatives. These equations are fundamental in modeling various physical, biological, and economic phenomena where the rate of change of a quantity is related to the quantity itself. A discussion on ordinary differential equations can be found [here](https://math.libretexts.org/Courses/Monroe_Community_College/MTH_211_Calculus_II/Chapter_8%3A_Introduction_to_Differential_Equations/8.1%3A_Basics_of_Differential_Equations)
 - Partial Differential Equations (PDEs): Partial differential equations are more complex than ODEs, as they involve functions of multiple independent variables and their partial derivatives. PDEs are crucial in describing many natural phenomena, including heat transfer, fluid dynamics, and quantum mechanics. They allow us to model systems that change with respect to multiple variables simultaneously, such as time and space. A discussion on partial differential equations can be found [here](https://en.wikipedia.org/wiki/Partial_differential_equation).
 - Numerical Techniques: While some differential equations can be solved analytically, many real-world problems require numerical methods for approximation. The numerical techniques used for solving PDEs are often similar to those used for ODEs, but they must account for the additional complexity introduced by multiple variables.
-- [Finite Difference Method](https://en.wikipedia.org/wiki/Finite_difference_method).): One common numerical approach for solving PDEs is the finite difference method. This technique approximates derivatives by differences over small intervals. It discretizes the continuous domain of the PDE into a grid or mesh, and the solution is computed at discrete points. This method is particularly useful for problems with regular geometries and is relatively straightforward to implement.
+- [Finite Difference Method](https://en.wikipedia.org/wiki/Finite_difference_method): One common numerical approach for solving PDEs is the finite difference method. This technique approximates derivatives by differences over small intervals. It discretises the continuous domain of the PDE into a grid or mesh, and the solution is computed at discrete points. This method is particularly useful for problems with regular geometries and is relatively straightforward to implement.
 
 Understanding these concepts is crucial for working with the non-linear PDE solver included in this exemplar. The solver's ability to handle both BVPs and IVBPs makes it a versatile tool for a wide range of applications in scientific computing and mathematical modeling.
 
@@ -58,32 +58,23 @@ Understanding these concepts is crucial for working with the non-linear PDE solv
 
 - A Fortran compiler, such as `gfortran`: see [here](https://fortran-lang.org/learn/os_setup/install_gfortran/) for an installation guide.
 - Fortran Package Manager (FPM): see [here](https://fpm.fortran-lang.org/install/index.html) for an installation guide.
-- `BLAS` external library: see here for a `BLAS` installationa guide [here](https://coral.ise.lehigh.edu/jild13/2016/07/27/install-lapack-and-blas-on-linux-based-systems/). Mac users can install with homebrew. 
-- `LAPACK` external library: see the `LAPACK` documentaion [here](https://www.netlib.org/lapack/) and [here](https://coral.ise.lehigh.edu/jild13/2016/07/27/install-lapack-and-blas-on-linux-based-systems/) for an intallation guide. Mac users can install with homebrew. `BLAS` must be installed first.
-- Optional: For visualisation of solutions we have made use of `MATLAB_R2023a` code. These are given in the `solver/examples` directory. Other visulation software can be used.
+- `BLAS` external library: see here for a `BLAS` installation guide [here](https://coral.ise.lehigh.edu/jild13/2016/07/27/install-lapack-and-blas-on-linux-based-systems/). Mac users can install with homebrew. 
+- `LAPACK` external library: see the `LAPACK` documentation [here](https://www.netlib.org/lapack/) and [here](https://coral.ise.lehigh.edu/jild13/2016/07/27/install-lapack-and-blas-on-linux-based-systems/) for an installation guide. Mac users can install with homebrew. `BLAS` must be installed first.
+- Optional: For visualisation of solutions we have made use of `MATLAB_R2023a` code. These are given in the `solver/examples` directory. Other visualisation software can be used.
 
 
 ## Getting Started
 To begin working with this PDE solver, please follow these steps:
 
-Introduction to Fortran Package Manager (FPM):
-- Start by reviewing the [`00.fortran_package_manager.md`](notebooks/00.fortran_package_manager.md). This will provide an introduction to FPM using the `fortran_fibonacci` repository as an example.
+* **Introduction to Fortran Package Manager (FPM)**: Start by reading the review of Fortran Package Manager in Section 00 which is required for compiling this project. This will provide an introduction to FPM using the `fortran_fibonacci` repository as an example.
 
-Theoretical Background:
-- [`01.theory.md`](notebooks/01.theory.md) for a general overview of the problem and the basic techniques employed in the solution.
+* **Theoretical Background**: Section 01 provides a general overview of the problem and the basic techniques employed in the solution.
 
-Solver Configuration and Usage:
-- Review the following notebooks to understand how to run and use the code:
+* **Solver Configuration and Usage**: The three parts of Section 03 describes how to run and use the code.
 
-    - [`03-1.solver_settings.md`](notebooks/03-1.solver_settings.md)
-    - [`03-2.equation_definitions.md`](notebooks/03-2.equation_definitions.md)
-    - [`03-3.fpm_settings.md`](main/notebooks/03-3.fpm_settings.md)
+* **Example Problems**: Consult Section 9 for detailed instructions on solving specific problems using this code.
 
-Example Problems:
-- Consult [`09.example_equations.md`](notebooks/09.example_equations.md) for detailed instructions on solving specific problems using this code.
-
-Advanced Techniques:
-- The remaining notebooks in the series explain specific coding techniques used in the development of this solver.
+* **Advanced Techniques**: The remaining sections explain specific coding techniques used in the development of this solver.
 
 This structured learning sequence provides a comprehensive overview of the PDE solver, encompassing its theoretical foundations, practical implementation, operational use, and critically, the coding techniques employed in its development.
 
